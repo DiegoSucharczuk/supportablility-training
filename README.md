@@ -1,34 +1,93 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Supportability Training Website
 
-## Getting Started
+A comprehensive training website for client-facing technical teams to learn professional communication principles and best practices.
 
-First, run the development server:
+## 🎯 Purpose
+
+This website provides training on:
+- **Communication Principles**: Building trust, ownership, and clarity in client interactions
+- **Best Practices**: Active listening, empathy, and effective problem-solving techniques
+- **Real-world Examples**: Practical scenarios and communication templates
+- **Quick References**: Checklists and do's/don'ts for immediate application
+
+## 🚀 Getting Started
+
+### Prerequisites
+- Node.js 18+ installed
+- npm or yarn package manager
+
+### Installation
+
+```bash
+# Install dependencies
+npm install
+```
+
+### Development
+
+Run the development server:
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open [http://localhost:3000](http://localhost:3000) to view the website.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+### Build for Production
 
-## Learn More
+```bash
+npm run build
+npm start
+```
 
-To learn more about Next.js, take a look at the following resources:
+## 📚 Content Structure
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The website includes the following sections:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- **Home**: Overview and key topics
+- **Introduction**: What is supportability and why it matters
+- **Core Principles**: 7 foundational principles for effective communication
+- **Best Practices**: Practical techniques for handling client interactions
+- **Examples**: Workshop notes and real-world insights
+- **Resources**: Quick reference guides, checklists, and practice scenarios
 
-## Deploy on Vercel
+## 🛠️ Tech Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+- **Framework**: Next.js 16 (App Router)
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **Deployment**: Ready for Vercel, Netlify, or any Node.js hosting
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## 📝 Customization
+
+To update training content:
+1. Navigate to `src/app/[page-name]/page.tsx`
+2. Edit the content directly in the React components
+3. Changes will hot-reload in development mode
+
+## 🌐 Deployment
+
+### Deploy on Vercel (Recommended)
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new)
+
+1. Push your code to GitHub
+2. Import the repository in Vercel
+3. Deploy with one click
+
+### Other Platforms
+
+The site can be deployed to any platform supporting Next.js:
+- Netlify
+- AWS Amplify
+- Google Cloud Run
+- Docker containers
+
+## 📄 License
+
+Internal training resource for team use.
+
+---
+
+Built with ❤️ for technical support excellence
+
