@@ -11,6 +11,7 @@ interface AuthContextType {
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 // הגדרות התחברות - שנה את אלה לפי מה שאתה רוצה
+// Updated credentials
 const VALID_CREDENTIALS = {
   username: 'cyberark',
   password: '123Cyber'
