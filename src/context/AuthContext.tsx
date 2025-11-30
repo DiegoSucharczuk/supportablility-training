@@ -13,7 +13,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 // הגדרות התחברות - שנה את אלה לפי מה שאתה רוצה
 const VALID_CREDENTIALS = {
   username: 'cyberark',
-  password: 'support2024'
+  password: '123Cyber'
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
