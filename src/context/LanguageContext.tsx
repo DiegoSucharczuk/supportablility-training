@@ -14,8 +14,23 @@ const LanguageContext = createContext<LanguageContextType | undefined>(undefined
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [language, setLanguage] = useState<Language>('en');
+  const [mounted, setMounted] = useState(false);
 
+  // Load saved language on mount
   useEffect(() => {
+    const savedLang = localStorage.getItem('language') as Language;
+    if (savedLang && (savedLang === 'en' || savedLang === 'he')) {
+      setLanguage(savedLang);
+    }
+    setMounted(true);
+  }, []);
+
+  // Save language and apply RTL
+  useEffect(() => {
+    if (!mounted) return;
+    
+    localStorage.setItem('language', language);
+    
     // Apply RTL for Hebrew
     if (language === 'he') {
       document.documentElement.dir = 'rtl';
@@ -24,7 +39,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
       document.documentElement.dir = 'ltr';
       document.documentElement.lang = 'en';
     }
-  }, [language]);
+  }, [language, mounted]);
 
   const t = (key: string) => key; // Placeholder - translation will be in components
 
