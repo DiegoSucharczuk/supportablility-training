@@ -18,16 +18,50 @@ export default function Home() {
           title: 'Introduction',
           description: 'Learn the fundamentals of professional client communication and why it matters.',
           link: 'Learn More →',
+          href: '/introduction',
+          icon: '📚',
         },
         {
           title: 'Core Principles',
           description: 'Master the 12 foundational principles for effective client communication (8 communication + 4 general principles).',
           link: 'Explore →',
+          href: '/core-principles',
+          icon: '⚙️',
         },
         {
           title: 'Best Practices',
           description: 'Practical techniques for active listening, empathy, and professional client interactions.',
           link: 'Discover →',
+          href: '/best-practices',
+          icon: '✅',
+        },
+        {
+          title: 'Phrases',
+          description: 'Ready-to-use professional phrases and examples for various client situations.',
+          link: 'Browse →',
+          href: '/examples',
+          icon: '💬',
+        },
+        {
+          title: 'Escalations',
+          description: 'Professional strategies for handling escalated situations and writing effective case responses.',
+          link: 'Learn →',
+          href: '/escalation-response',
+          icon: '🔥',
+        },
+        {
+          title: 'Quick Guide',
+          description: 'Fast reference with key communication principles, techniques, and language tips.',
+          link: 'View →',
+          href: '/communication-guide',
+          icon: '⚡',
+        },
+        {
+          title: 'Resources',
+          description: 'Additional tools, templates, and reference materials for professional communication.',
+          link: 'Access →',
+          href: '/resources',
+          icon: '📖',
         },
       ],
       skills: {
@@ -57,16 +91,50 @@ export default function Home() {
           title: 'מבוא',
           description: 'למדו את היסודות של תקשורת מקצועית מול לקוחות ומדוע זה חשוב.',
           link: 'למד עוד ←',
+          href: '/introduction',
+          icon: '📚',
         },
         {
           title: 'עקרונות יסוד',
           description: 'שלטו ב-12 העקרונות היסודיים לתקשורת יעילה מול לקוחות (8 עקרונות תקשורת + 4 עקרונות כלליים).',
           link: 'גלה ←',
+          href: '/core-principles',
+          icon: '⚙️',
         },
         {
           title: 'שיטות עבודה מומלצות',
           description: 'טכניקות מעשיות להקשבה פעילה, אמפתיה ואינטראקציה מקצועית עם לקוחות.',
           link: 'למד ←',
+          href: '/best-practices',
+          icon: '✅',
+        },
+        {
+          title: 'משפטים',
+          description: 'משפטים ודוגמאות מקצועיות מוכנות לשימוש למצבי לקוח שונים.',
+          link: 'עיין ←',
+          href: '/examples',
+          icon: '💬',
+        },
+        {
+          title: 'טיפול באסקלציות',
+          description: 'אסטרטגיות מקצועיות לטיפול במצבי הסלמה וכתיבת תגובות יעילות.',
+          link: 'למד ←',
+          href: '/escalation-response',
+          icon: '🔥',
+        },
+        {
+          title: 'מדריך מקוצר',
+          description: 'עזר מהיר עם עקרונות תקשורת מרכזיים, טכניקות וטיפים לשוניים.',
+          link: 'צפה ←',
+          href: '/communication-guide',
+          icon: '⚡',
+        },
+        {
+          title: 'משאבים',
+          description: 'כלים נוספים, תבניות וחומרי עזר לתקשורת מקצועית.',
+          link: 'גש ←',
+          href: '/resources',
+          icon: '📖',
         },
       ],
       skills: {
@@ -103,51 +171,35 @@ export default function Home() {
       </section>
 
       {/* Main Content Cards */}
-      <section className="grid md:grid-cols-3 gap-8 mb-16">
-        <div className="animate-slide-in-left">
-          <Card
-            title={t.cards[0].title}
-            description={t.cards[0].description}
-            icon="📚"
-          >
-            <Link 
-              href="/introduction" 
-              className="inline-block mt-4 text-blue-600 hover:text-blue-800 font-semibold transition-all hover:scale-105"
-            >
-              {t.cards[0].link}
-            </Link>
-          </Card>
-        </div>
-
-        <div className="animate-bounce-in">
-          <Card
-            title={t.cards[1].title}
-            description={t.cards[1].description}
-            icon="⚙️"
-          >
-            <Link 
-              href="/core-principles" 
-              className="inline-block mt-4 text-blue-600 hover:text-blue-800 font-semibold transition-all hover:scale-105"
-            >
-              {t.cards[1].link}
-            </Link>
-          </Card>
-        </div>
-
-        <div className="animate-slide-in-right">
-          <Card
-            title={t.cards[2].title}
-            description={t.cards[2].description}
-            icon="✅"
-          >
-            <Link 
-              href="/best-practices" 
-              className="inline-block mt-4 text-blue-600 hover:text-blue-800 font-semibold transition-all hover:scale-105"
-            >
-              {t.cards[2].link}
-            </Link>
-          </Card>
-        </div>
+      <section className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-16">
+        {t.cards.map((card, idx) => {
+          const animations = [
+            'animate-slide-in-left',
+            'animate-bounce-in',
+            'animate-slide-in-right',
+            'animate-fade-in',
+            'animate-slide-up',
+            'animate-scale-in',
+            'animate-slide-in-left',
+          ];
+          
+          return (
+            <div key={idx} className={animations[idx % animations.length]}>
+              <Card
+                title={card.title}
+                description={card.description}
+                icon={card.icon}
+              >
+                <Link 
+                  href={card.href}
+                  className="inline-block mt-4 text-blue-600 hover:text-blue-800 font-semibold transition-all hover:scale-105"
+                >
+                  {card.link}
+                </Link>
+              </Card>
+            </div>
+          );
+        })}
       </section>
 
       {/* Key Topics */}
