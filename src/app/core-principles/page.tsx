@@ -75,6 +75,107 @@ export default function CorePrinciples() {
           </div>
         </section>
 
+        {/* Principle 4 */}
+        <section className="bg-white rounded-lg shadow-md p-8 mb-8 card-hover animate-slide-in-left">
+          <h2 className="text-2xl font-bold text-blue-600 mb-4">
+            Small Talk - ושבירת קרח
+          </h2>
+          
+          <p className="text-gray-700 mb-6">
+            מתאים בעיקר בשיחה ראשונית או במצבים נינוחים.
+          </p>
+
+          <div className="bg-green-50 border-r-4 border-green-500 p-6 rounded">
+            <h3 className="font-semibold text-gray-900 mb-3">✓ דוגמאות</h3>
+            <ul className="space-y-2 text-gray-700">
+              <li className="pr-4">"איך עובר היום שלך?"</li>
+              <li className="pr-4">"עובד מהבית או מהמשרד?"</li>
+              <li className="pr-4">"מקווה שהשאר עובד חלק – חוץ מהעניין הזה :)"</li>
+            </ul>
+          </div>
+        </section>
+
+        {/* Principle 5 */}
+        <section className="bg-white rounded-lg shadow-md p-8 mb-8 card-hover animate-fade-in">
+          <h2 className="text-2xl font-bold text-blue-600 mb-4">
+            הקשבה פעילה
+          </h2>
+          
+          <div className="mb-6 space-y-2">
+            <p className="text-gray-700">• תנו ללקוח לדבר – אל תקטעו.</p>
+            <p className="text-gray-700">• חזרו על דבריו במילים שלכם.</p>
+            <p className="text-gray-700">• שאלו שאלות שמחדדות.</p>
+          </div>
+
+          <div className="bg-green-50 border-r-4 border-green-500 p-6 rounded">
+            <h3 className="font-semibold text-gray-900 mb-3">✓ דוגמאות</h3>
+            <ul className="space-y-2 text-gray-700">
+              <li className="pr-4">"אם אני מבין נכון, אתה אומר ש..."</li>
+              <li className="pr-4">"אז בעצם כל פעם שאתה לוחץ על X – קורה Y?"</li>
+            </ul>
+          </div>
+        </section>
+
+        {/* Principle 6 */}
+        <section className="bg-white rounded-lg shadow-md p-8 mb-8 card-hover animate-slide-in-right">
+          <h2 className="text-2xl font-bold text-blue-600 mb-4">
+            לשאול שאלות בשלבים מוקדמים
+          </h2>
+          
+          <p className="text-gray-700 mb-6">
+            חסכו זמן ע"י איסוף מידע בהתחלה.
+          </p>
+
+          <div className="bg-green-50 border-r-4 border-green-500 p-6 rounded">
+            <h3 className="font-semibold text-gray-900 mb-3">✓ שאלות שימושיות</h3>
+            <ul className="space-y-2 text-gray-700">
+              <li className="pr-4">"מתי התחילה הבעיה?"</li>
+              <li className="pr-4">"האם נעשו שינויים לאחרונה?"</li>
+              <li className="pr-4">"האם זה קרה בעבר?"</li>
+            </ul>
+          </div>
+        </section>
+
+        {/* Principle 7 */}
+        <section className="bg-white rounded-lg shadow-md p-8 mb-8 card-hover animate-slide-in-left">
+          <h2 className="text-2xl font-bold text-blue-600 mb-4">
+            להראות הבנה ולקחת אחריות
+          </h2>
+          
+          <p className="text-gray-700 mb-6">
+            אשרו את הבעיה והסבירו על תוכנית הפעולה.
+          </p>
+
+          <div className="bg-green-50 border-r-4 border-green-500 p-6 rounded">
+            <h3 className="font-semibold text-gray-900 mb-3">✓ דוגמאות</h3>
+            <ul className="space-y-2 text-gray-700">
+              <li className="pr-4">"זה נראה כמו XYZ, אני בודק את זה כעת."</li>
+              <li className="pr-4">"השלבים הבאים: קודם כל X, אח"כ Y..."</li>
+              <li className="pr-4">"אעדכן גם אם לא תהיה התקדמות – עד שנסגור."</li>
+            </ul>
+          </div>
+        </section>
+
+        {/* Principle 8 */}
+        <section className="bg-white rounded-lg shadow-md p-8 mb-8 card-hover animate-fade-in">
+          <h2 className="text-2xl font-bold text-blue-600 mb-4">
+            תחושת דחיפות (Sense of Urgency)
+          </h2>
+          
+          <p className="text-gray-700 mb-6">
+            חשוב לשדר מחויבות גם אם התקלה לא קריטית.
+          </p>
+
+          <div className="bg-green-50 border-r-4 border-green-500 p-6 rounded">
+            <h3 className="font-semibold text-gray-900 mb-3">✓ דוגמאות</h3>
+            <ul className="space-y-2 text-gray-700">
+              <li className="pr-4">"מבין שזה משפיע עליך – זה בתעדוף."</li>
+              <li className="pr-4">"אני בודק את זה עכשיו."</li>
+              <li className="pr-4">"ברגע שיהיה חדש – תדע מזה."</li>
+            </ul>
+          </div>
+        </section>
+
         {/* General Principles */}
         <section className="bg-white rounded-lg shadow-md p-8 card-hover animate-bounce-in">
           <h2 className="text-2xl font-bold text-blue-600 mb-6">

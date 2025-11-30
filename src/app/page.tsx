@@ -21,7 +21,7 @@ export default function Home() {
         },
         {
           title: 'Core Principles',
-          description: 'Master the 7 foundational principles for effective client communication.',
+          description: 'Master the 12 foundational principles for effective client communication (8 communication + 4 general principles).',
           link: 'Explore →',
         },
         {
@@ -60,7 +60,7 @@ export default function Home() {
         },
         {
           title: 'עקרונות יסוד',
-          description: 'שלטו ב-7 העקרונות היסודיים לתקשורת יעילה מול לקוחות.',
+          description: 'שלטו ב-12 העקרונות היסודיים לתקשורת יעילה מול לקוחות (8 עקרונות תקשורת + 4 עקרונות כלליים).',
           link: 'גלה ←',
         },
         {
