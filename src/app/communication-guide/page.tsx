@@ -9,8 +9,8 @@ export default function CommunicationGuidePage() {
 
   const content = {
     he: {
-      title: "מדריך תקשורת מקצועית",
-      subtitle: "עקרונות תקשורת ותפעול מקצועי מול לקוחות",
+      title: "מדריך מקוצר לתקשורת מקצועית",
+      subtitle: "תמצית מהירה של עקרונות ודוגמאות לתקשורת יומיומית",
       tabs: {
         foundations: "יסודות התקשורת",
         techniques: "טכניקות מתקדמות", 
@@ -19,8 +19,8 @@ export default function CommunicationGuidePage() {
       }
     },
     en: {
-      title: "Professional Communication Guide",
-      subtitle: "Communication and operational principles for customer-facing teams",
+      title: "Quick Communication Guide",
+      subtitle: "Fast reference for daily communication principles and examples",
       tabs: {
         foundations: "Communication Foundations",
         techniques: "Advanced Techniques",
