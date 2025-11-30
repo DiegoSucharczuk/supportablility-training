@@ -12,6 +12,7 @@ const navItems = {
     { href: '/best-practices', label: 'Best Practices' },
     { href: '/examples', label: 'Phrases' },
     { href: '/escalation-response', label: 'Escalations' },
+    { href: '/communication-guide', label: 'Communication Guide' },
     { href: '/resources', label: 'Resources' },
   ],
   he: [
@@ -21,6 +22,7 @@ const navItems = {
     { href: '/best-practices', label: 'שיטות עבודה' },
     { href: '/examples', label: 'משפטים' },
     { href: '/escalation-response', label: 'טיפול באסקלציות' },
+    { href: '/communication-guide', label: 'מדריך תקשורת' },
     { href: '/resources', label: 'משאבים' },
   ],
 };

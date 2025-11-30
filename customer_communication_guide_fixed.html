@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>מדריך תקשורת מקצועית עם לקוחות</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700&display=swap');
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Heebo', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            text-align: center;
+            padding: 40px 20px;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .nav-tabs {
+            display: flex;
+            background: #f8f9fa;
+            border-bottom: 3px solid #e9ecef;
+            overflow-x: auto;
+        }
+        
+        .nav-tab {
+            padding: 15px 25px;
+            cursor: pointer;
+            border: none;
+            background: transparent;
+            font-size: 16px;
+            font-weight: 600;
+            color: #666;
+            transition: all 0.3s ease;
+            white-space: nowrap;
+            font-family: 'Heebo', sans-serif;
+        }
+        
+        .nav-tab:hover {
+            background: #e9ecef;
+            color: #333;
+        }
+        
+        .nav-tab.active {
+            background: white;
+            color: #2c3e50;
+            border-bottom: 3px solid #3498db;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .principle-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+            gap: 25px;
+            margin-top: 20px;
+        }
+        
+        .principle-card {
+            background: #f8f9fa;
+            border: 1px solid #e9ecef;
+            border-radius: 15px;
+            padding: 25px;
+            transition: all 0.3s ease;
+            border-right: 4px solid #3498db;
+        }
+        
+        .principle-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        }
+        
+        .principle-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .principle-icon {
+            width: 30px;
+            height: 30px;
+            background: #3498db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+        
+        .principle-content ul {
+            list-style: none;
+            margin: 15px 0;
+        }
+        
+        .principle-content li {
+            padding: 8px 0;
+            padding-right: 20px;
+            position: relative;
+        }
+        
+        .principle-content li:before {
+            content: "✓";
+            position: absolute;
+            right: 0;
+            color: #27ae60;
+            font-weight: bold;
+        }
+        
+        .example-box {
+            background: #e8f5e8;
+            border: 1px solid #27ae60;
+            border-radius: 10px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+        
+        .example-title {
+            font-weight: 700;
+            color: #27ae60;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .do-dont {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 20px 0;
+        }
+        
+        .do, .dont {
+            padding: 15px;
+            border-radius: 10px;
+        }
+        
+        .do {
+            background: #e8f5e8;
+            border-right: 4px solid #27ae60;
+        }
+        
+        .dont {
+            background: #ffe8e8;
+            border-right: 4px solid #e74c3c;
+        }
+        
+        .do h4, .dont h4 {
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .do h4 {
+            color: #27ae60;
+        }
+        
+        .dont h4 {
+            color: #e74c3c;
+        }
+        
+        .quick-tips {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin: 30px 0;
+        }
+        
+        .quick-tips h3 {
+            margin-bottom: 15px;
+            font-size: 1.4em;
+        }
+        
+        .tips-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 15px;
+        }
+        
+        .tip-item {
+            background: rgba(255,255,255,0.1);
+            padding: 15px;
+            border-radius: 10px;
+            backdrop-filter: blur(10px);
+        }
+        
+        .highlight {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-right: 4px solid #fdcb6e;
+        }
+        
+        .english-text {
+            direction: ltr;
+            text-align: left;
+            font-family: 'Arial', sans-serif;
+        }
+        
+        @media (max-width: 768px) {
+            .principle-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .do-dont {
+                grid-template-columns: 1fr;
+            }
+            
+            .nav-tabs {
+                flex-wrap: wrap;
+            }
+            
+            .header h1 {
+                font-size: 2em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>מדריך תקשורת מקצועית</h1>
+            <p>עקרונות תקשורת ותפעול מקצועי מול לקוחות</p>
+        </div>
+        
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('foundations')">יסודות התקשורת</button>
+            <button class="nav-tab" onclick="showTab('techniques')">טכניקות מתקדמות</button>
+            <button class="nav-tab" onclick="showTab('language')">שפה מקצועית</button>
+            <button class="nav-tab" onclick="showTab('principles')">עקרונות מנחים</button>
+        </div>
+        
+        <div class="content">
+            <!-- יסודות התקשורת -->
+            <div id="foundations" class="tab-content active">
+                <div class="principle-grid">
+                    <div class="principle-card">
+                        <div class="principle-title">
+                            <div class="principle-icon">1</div>
+                            בניית אמון עם הלקוח
+                        </div>
+                        <div class="principle-content">
+                            <ul>
+                                <li>היו עקביים, שקופים ואמינים</li>
+                                <li>אל תבטיחו מה שלא תוכלו לקיים</li>
+                                <li>השתמשו בשפה מקצועית, סבלנית ומכבדת -- גם כשיש לחץ</li>
+                                <li>שתפו בתהליך, גם אם אין תשובות עדיין</li>
+                            </ul>
+                            <div class="example-box">
+                                <div class="example-title">💬 דוגמאות</div>
+                                <p>"אני רוצה להבין את הבעיה לעומק כדי שנוכל לפתור אותה יחד"</p>
+                                <p>"אני כאן איתך עד שנסיים לטפל בזה"</p>
+                                <p>"כרגע אני בודק את הלוגים, ייתכן שאצטרך עזרה מצוות נוסף -- אעדכן אותך כשיהיה חדש"</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="principle-card">
+                        <div class="principle-title">
+                            <div class="principle-icon">2</div>
+                            כשאין תשובה -- איך מגיבים?
+                        </div>
+                        <div class="principle-content">
+                            <p><strong>לעולם לא לומר "אני לא יודע" בלי המשך ברור</strong></p>
+                            <div class="example-box">
+                                <div class="example-title">✅ במקום זה תגיד</div>
+                                <p>"שאלה מצוינת -- אני בודק וחוזר עם תשובה מדויקת"</p>
+                                <p>"זה תלוי בכמה פרמטרים, חשוב לי לוודא לפני שאשיב"</p>
+                                <p>"יש כמה אפשרויות -- אני בודק מה רלוונטי כאן"</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="principle-card">
+                        <div class="principle-title">
+                            <div class="principle-icon">3</div>
+                            אחריות משותפת לבעיה
+                        </div>
+                        <div class="principle-content">
+                            <p><strong>הימנע ממשפטים מאשימים כמו "יש לכם תקלה"</strong></p>
+                            <div class="example-box">
+                                <div class="example-title">✅ עדיף לומר</div>
+                                <p>"אנחנו רואים התנהגות חריגה..."</p>
+                                <p>"בוא נבדוק את זה יחד..."</p>
+                                <p>"נראה שיש משהו שדורש בדיקה משותפת"</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="principle-card">
+                        <div class="principle-title">
+                            <div class="principle-icon">4</div>
+                            Small Talk - ושבירת קרח
+                        </div>
+                        <div class="principle-content">
+                            <p><strong>מתאים בעיקר בשיחה ראשונית או במצבים נינוחים</strong></p>
+                            <div class="example-box">
+                                <div class="example-title">💬 דוגמאות</div>
+                                <p>"איך עובר היום שלך?"</p>
+                                <p>"עובד מהבית או מהמשרד?"</p>
+                                <p>"מקווה שהשאר עובד חלק -- חוץ מהעניין הזה :)"</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="principle-card">
+                        <div class="principle-title">
+                            <div class="principle-icon">5</div>
+                            הקשבה פעילה
+                        </div>
+                        <div class="principle-content">
+                            <ul>
+                                <li>תנו ללקוח לדבר -- אל תקטעו</li>
+                                <li>חזרו על דבריו במילים שלכם</li>
+                                <li>שאלו שאלות שמחדדות</li>
+                            </ul>
+                            <div class="example-box">
+                                <div class="example-title">💬 דוגמאות</div>
+                                <p>"אם אני מבין נכון, אתה אומר ש..."</p>
+                                <p>"אז בעצם כל פעם שאתה לוחץ על X -- קורה Y?"</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="principle-card">
+                        <div class="principle-title">
+                            <div class="principle-icon">6</div>
+                            לשאול שאלות בשלבים מוקדמים
+                        </div>
+                        <div class="principle-content">
+                            <p><strong>חסכו זמן ע"י איסוף מידע בהתחלה</strong></p>
+                            <div class="example-box">
+                                <div class="example-title">❓ שאלות שימושיות</div>
+                                <p>"מתי התחילה הבעיה?"</p>
+                                <p>"האם נעשו שינויים לאחרונה?"</p>
+                                <p>"האם זה קרה בעבר?"</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="principle-card">
+                        <div class="principle-title">
+                            <div class="principle-icon">7</div>
+                            להראות הבנה ולקחת אחריות
+                        </div>
+                        <div class="principle-content">
+                            <p><strong>אשרו את הבעיה והסבירו על תוכנית הפעולה</strong></p>
+                            <div class="example-box">
+                                <div class="example-title">💬 דוגמאות</div>
+                                <p>"זה נראה כמו XYZ, אני בודק את זה כעת"</p>
+                                <p>"השלבים הבאים: קודם כל X, אח"כ Y..."</p>
+                                <p>"אעדכן גם אם לא תהיה התקדמות -- עד שנסגור"</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="principle-card">
+                        <div class="principle-title">
+                            <div class="principle-icon">8</div>
+                            תחושת דחיפות (Sense of Urgency)
+                        </div>
+                        <div class="principle-content">
+                            <p><strong>חשוב לשדר מחויבות גם אם התקלה לא קריטית</strong></p>
+                            <div class="example-box">
+                                <div class="example-title">💬 דוגמאות</div>
+                                <p>"מבין שזה משפיע עליך -- זה בתעדוף"</p>
+                                <p>"אני בודק את זה עכשיו"</p>
+                                <p>"ברגע שיהיה חדש -- תדע מזה"</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="highlight">
+                    <strong>💡 זכור:</strong> אנחנו לא מספקים רק תשובות -- אנחנו מייצרים חוויה. הרבה פעמים הלקוח לא יזכור את פרטי הפתרון -- הוא יזכור איך גרמת לו להרגיש.
+                </div>
+            </div>
+            
+            <!-- טכניקות מתקדמות -->
+            <div id="techniques" class="tab-content">
+                <div class="principle-grid">
+                    <div class="principle-card">
+                        <div class="principle-title">
+                            <div class="principle-icon">9</div>
+                            עדכונים פרואקטיביים
+                        </div>
+                        <div class="principle-content">
+                            <p><strong>אל תתנו ללקוח לרדוף אחריכם</strong></p>
+                            <div class="example-box">
+                                <div class="example-title">💬 דוגמאות</div>
+                                <p>"עדכון ביניים -- עדיין בבדיקה. נעדכן שוב תוך שעה"</p>
+                                <p>"כרגע מול Tier 3, אעדכן ברגע שנקבל תשובה"</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="principle-card">
+                        <div class="principle-title">
+                            <div class="principle-icon">10</div>
+                            כבוד והכרת תודה
+                        </div>
+                        <div class="principle-content">
+                            <p><strong>תמיד לשמור על כבוד הדדי</strong></p>
+                            <div class="example-box">
+                                <div class="example-title">💝 משפטים חשובים</div>
+                                <p>"תודה על הסבלנות"</p>
+                                <p>"ההסבר שלך עזר לי להבין"</p>
+                                <p>"אני מעריך את שיתוף הפעולה שלך"</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="principle-card">
+                        <div class="principle-title">
+                            <div class="principle-icon">11</div>
+                            סגירת השיחה
+                        </div>
+                        <div class="principle-content">
+                            <p><strong>ודאו שהכל סגור וברור ללקוח</strong></p>
+                            <div class="example-box">
+                                <div class="example-title">❓ שאלות לסיום</div>
+                                <p>"האם הכל עובד כמו שצריך עכשיו?"</p>
+                                <p>"יש משהו נוסף שאוכל לעזור בו?"</p>
+                                <p>"תודה שהקדשת זמן -- מעריך את זה"</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="principle-card">
+                        <div class="principle-title">
+                            <div class="principle-icon">12</div>
+                            גמישות מחשבתית והתאמה ללקוח
+                        </div>
+                        <div class="principle-content">
+                            <p><strong>כל לקוח הוא עולם בפני עצמו</strong></p>
+                            <div class="example-box">
+                                <div class="example-title">🎯 התאמה אישית</div>
+                                <p>תכני לקוח - יותר פורמלי</p>
+                                <p>לקוח צעיר - יותר נוח ופתוח</p>
+                                <p>לקוח לחוץ - ישירות ומהירות</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- שפה מקצועית -->
+            <div id="language" class="tab-content">
+                <div class="quick-tips">
+                    <h3>🎯 עקרונות שפה מקצועית</h3>
+                    <div class="tips-grid">
+                        <div class="tip-item">
+                            <strong>פשטות</strong><br>
+                            השתמש במילים פשוטות וברורות
+                        </div>
+                        <div class="tip-item">
+                            <strong>חיוביות</strong><br>
+                            התמקד בפתרונות, לא בבעיות
+                        </div>
+                        <div class="tip-item">
+                            <strong>בהירות</strong><br>
+                            אל תשאיר מקום לפרשנויות
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="do-dont">
+                    <div class="do">
+                        <h4>✅ כדאי לומר</h4>
+                        <p>"אני בודק את זה כעת"</p>
+                        <p>"בוא נפתור את זה יחד"</p>
+                        <p>"אני כאן לעזור"</p>
+                        <p>"תן לי רגע לבדוק"</p>
+                        <p>"אני מבין את הקושי"</p>
+                    </div>
+                    <div class="dont">
+                        <h4>❌ עדיף להימנע</h4>
+                        <p>"אני לא יודע"</p>
+                        <p>"זה לא באחריותי"</p>
+                        <p>"יש לכם בעיה"</p>
+                        <p>"זה לא אמור לקרות"</p>
+                        <p>"זה מסובך"</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- עקרונות מנחים -->
+            <div id="principles" class="tab-content">
+                <div class="principle-grid">
+                    <div class="principle-card">
+                        <div class="principle-title">
+                            <div class="principle-icon">★</div>
+                            האדם קודם לטכנולוגיה
+                        </div>
+                        <div class="principle-content">
+                            <p>זכור שמאחורי כל כרטיס יש אדם עם יום עבודה, לחצים ותחושות.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="principle-card">
+                        <div class="principle-title">
+                            <div class="principle-icon">★</div>
+                            אמפתיה אמיתית
+                        </div>
+                        <div class="principle-content">
+                            <p>תמיד נסה לראות את המצב מנקודת המבט של הלקוח.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="principle-card">
+                        <div class="principle-title">
+                            <div class="principle-icon">★</div>
+                            תקשורת שקופה
+                        </div>
+                        <div class="principle-content">
+                            <p>עדיף להגיד "אני לא יודע אבל אברר" מאשר להמציא תשובות.</p>
+                        </div>
+                    </div>
+                    
+                    <div class="principle-card">
+                        <div class="principle-title">
+                            <div class="principle-icon">★</div>
+                            מחויבות מלאה
+                        </div>
+                        <div class="principle-content">
+                            <p>אל תעזוב אף לקוח באמצע. עד שהבעיה נפתרת - אתה שותף.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showTab(tabName) {
+            // הסתר את כל התכנים
+            const allTabs = document.querySelectorAll('.tab-content');
+            allTabs.forEach(tab => tab.classList.remove('active'));
+            
+            // הסתר את כל הכפתורים
+            const allButtons = document.querySelectorAll('.nav-tab');
+            allButtons.forEach(button => button.classList.remove('active'));
+            
+            // הצג את התכן הנבחר
+            document.getElementById(tabName).classList.add('active');
+            
+            // הדגש את הכפתור הנבחר
+            event.target.classList.add('active');
+        }
+    </script>
+</body>
+</html>
