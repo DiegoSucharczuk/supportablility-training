@@ -29,13 +29,6 @@ export default function Home() {
           icon: '⚙️',
         },
         {
-          title: 'Best Practices',
-          description: 'Practical techniques for active listening, empathy, and professional client interactions.',
-          link: 'Discover →',
-          href: '/best-practices',
-          icon: '✅',
-        },
-        {
           title: 'Phrases',
           description: 'Ready-to-use professional phrases and examples for various client situations.',
           link: 'Browse →',
@@ -106,13 +99,6 @@ export default function Home() {
           link: 'גלה ←',
           href: '/core-principles',
           icon: '⚙️',
-        },
-        {
-          title: 'שיטות עבודה מומלצות',
-          description: 'טכניקות מעשיות להקשבה פעילה, אמפתיה ואינטראקציה מקצועית עם לקוחות.',
-          link: 'למד ←',
-          href: '/best-practices',
-          icon: '✅',
         },
         {
           title: 'משפטים',
