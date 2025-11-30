@@ -211,93 +211,207 @@ export default function CorePrinciples() {
     );
   }
 
-  // English version (original content)
+  // English version
   return (
     <main className="container mx-auto px-4 py-12 max-w-4xl">
       <h1 className="text-4xl md:text-5xl font-bold mb-8 gradient-text animate-scale-in">
-        Foundational Principles
+        Core Principles
       </h1>
 
-      {/* Principle 1.1 */}
+      {/* Principle 1 */}
       <section className="bg-white rounded-lg shadow-md p-8 mb-8 card-hover animate-slide-in-left">
         <h2 className="text-2xl font-bold text-blue-600 mb-4">
-          Build Trust Through Consistency
+          Building Trust with Customers
         </h2>
         
-        <div className="mb-6">
-          <p className="text-gray-700 mb-3">Maintain transparency, reliability, and clear communication.</p>
-          <p className="text-gray-700 mb-3">Do not promise outcomes or timelines you cannot meet.</p>
-          <p className="text-gray-700 mb-3">Use professional, patient, respectful language.</p>
+        <div className="mb-6 space-y-2">
+          <p className="text-gray-700">• Be consistent, transparent, and reliable.</p>
+          <p className="text-gray-700">• Don't promise what you can't deliver.</p>
+          <p className="text-gray-700">• Use professional, patient, respectful language – even under pressure.</p>
+          <p className="text-gray-700">• Share the process, even if there are no answers yet.</p>
         </div>
 
         <div className="bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 p-6 rounded glow-effect">
           <h3 className="font-semibold text-gray-900 mb-3"><span className="floating inline-block">✓</span> Examples</h3>
           <ul className="space-y-2 text-gray-700">
-            <li className="pl-4">"I want to understand this fully so we can solve it together."</li>
-            <li className="pl-4">"I'm with you until we close this."</li>
-            <li className="pl-4">"I'm checking the logs now. I may involve another team. I'll update you as soon as I have more."</li>
+            <li className="pl-4">"I want to understand the issue thoroughly so we can solve it together."</li>
+            <li className="pl-4">"I'm here with you until we finish handling this."</li>
+            <li className="pl-4">"Currently checking the logs, might need help from additional team – will update you when there's news."</li>
           </ul>
         </div>
       </section>
 
-      {/* Principle 1.2 */}
+      {/* Principle 2 */}
       <section className="bg-white rounded-lg shadow-md p-8 mb-8 card-hover animate-fade-in">
         <h2 className="text-2xl font-bold text-blue-600 mb-4">
-          Under-Promise and Over-Deliver
+          When You Don't Have an Answer – How to Respond?
         </h2>
         
-        <div className="mb-6">
-          <p className="text-gray-700 mb-3">Set realistic update expectations.</p>
-          <p className="text-gray-700 mb-3">Deliver faster or with more detail when possible.</p>
-        </div>
+        <p className="text-gray-700 mb-6 font-semibold">
+          Never say "I don't know" without a clear follow-up.
+        </p>
 
         <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded">
-          <h3 className="font-semibold text-gray-900 mb-3">✓ Example</h3>
-          <p className="text-gray-700 pl-4">Promise an update in two hours, deliver in one.</p>
+          <h3 className="font-semibold text-gray-900 mb-3">✓ Say This Instead</h3>
+          <ul className="space-y-2 text-gray-700">
+            <li className="pl-4">"Great question – let me check and get back with an accurate answer."</li>
+            <li className="pl-4">"It depends on several parameters, important for me to verify before responding."</li>
+            <li className="pl-4">"There are several possibilities – let me check what's relevant here."</li>
+          </ul>
         </div>
       </section>
 
-      {/* Principle 1.3 */}
+      {/* Principle 3 */}
       <section className="bg-white rounded-lg shadow-md p-8 mb-8 card-hover animate-slide-in-right">
         <h2 className="text-2xl font-bold text-blue-600 mb-4">
-          Shared Ownership
+          Shared Responsibility for the Problem
         </h2>
         
         <p className="text-gray-700 mb-6">
-          Avoid framing the problem as "the client's issue". Use collaborative language.
+          Avoid accusatory statements like "you have an issue".
         </p>
 
-        <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded">
-            <h3 className="font-semibold text-gray-900 mb-3">✗ Avoid</h3>
-            <ul className="space-y-2 text-gray-700">
-              <li className="pl-4">"You have a problem."</li>
-              <li className="pl-4">"Your system is broken."</li>
-            </ul>
-          </div>
-
-          <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded">
-            <h3 className="font-semibold text-gray-900 mb-3">✓ Preferred</h3>
-            <ul className="space-y-2 text-gray-700">
-              <li className="pl-4">"We are seeing unusual behavior."</li>
-              <li className="pl-4">"Let's review this together."</li>
-              <li className="pl-4">"Something here requires a joint investigation."</li>
-            </ul>
-          </div>
+        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded">
+          <h3 className="font-semibold text-gray-900 mb-3">✓ Better to Say</h3>
+          <ul className="space-y-2 text-gray-700">
+            <li className="pl-4">"We're seeing unusual behavior..."</li>
+            <li className="pl-4">"Let's check this together..."</li>
+            <li className="pl-4">"Seems like there's something that requires joint investigation."</li>
+          </ul>
         </div>
       </section>
 
-      {/* More principles truncated for brevity - keeping same structure */}
-      <section className="bg-white rounded-lg shadow-md p-8 card-hover animate-bounce-in">
+      {/* Principle 4 */}
+      <section className="bg-white rounded-lg shadow-md p-8 mb-8 card-hover animate-slide-in-left">
         <h2 className="text-2xl font-bold text-blue-600 mb-4">
-          Additional Core Principles
+          Small Talk - Breaking the Ice
         </h2>
-        <ul className="space-y-3 text-gray-700">
-          <li><strong>Positive, Direct Language:</strong> Keep wording factual and concise</li>
-          <li><strong>Disagree Without Being Disagreeable:</strong> Correct respectfully</li>
-          <li><strong>Look for Win-Win Outcomes:</strong> Satisfy both client needs and technical realities</li>
-          <li><strong>Tailor Communication:</strong> Adjust detail level based on your audience</li>
-        </ul>
+        
+        <p className="text-gray-700 mb-6">
+          Mainly appropriate in initial conversations or relaxed situations.
+        </p>
+
+        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded">
+          <h3 className="font-semibold text-gray-900 mb-3">✓ Examples</h3>
+          <ul className="space-y-2 text-gray-700">
+            <li className="pl-4">"How's your day going?"</li>
+            <li className="pl-4">"Working from home or the office?"</li>
+            <li className="pl-4">"Hope everything else is running smoothly – except this issue :)"</li>
+          </ul>
+        </div>
+      </section>
+
+      {/* Principle 5 */}
+      <section className="bg-white rounded-lg shadow-md p-8 mb-8 card-hover animate-fade-in">
+        <h2 className="text-2xl font-bold text-blue-600 mb-4">
+          Active Listening
+        </h2>
+        
+        <div className="mb-6 space-y-2">
+          <p className="text-gray-700">• Let the customer speak – don't interrupt.</p>
+          <p className="text-gray-700">• Repeat their words back in your own words.</p>
+          <p className="text-gray-700">• Ask clarifying questions.</p>
+        </div>
+
+        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded">
+          <h3 className="font-semibold text-gray-900 mb-3">✓ Examples</h3>
+          <ul className="space-y-2 text-gray-700">
+            <li className="pl-4">"If I understand correctly, you're saying that..."</li>
+            <li className="pl-4">"So basically every time you click X – Y happens?"</li>
+          </ul>
+        </div>
+      </section>
+
+      {/* Principle 6 */}
+      <section className="bg-white rounded-lg shadow-md p-8 mb-8 card-hover animate-slide-in-right">
+        <h2 className="text-2xl font-bold text-blue-600 mb-4">
+          Ask Questions Early
+        </h2>
+        
+        <p className="text-gray-700 mb-6">
+          Save time by gathering information at the beginning.
+        </p>
+
+        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded">
+          <h3 className="font-semibold text-gray-900 mb-3">✓ Useful Questions</h3>
+          <ul className="space-y-2 text-gray-700">
+            <li className="pl-4">"When did the problem start?"</li>
+            <li className="pl-4">"Were any changes made recently?"</li>
+            <li className="pl-4">"Has this happened before?"</li>
+          </ul>
+        </div>
+      </section>
+
+      {/* Principle 7 */}
+      <section className="bg-white rounded-lg shadow-md p-8 mb-8 card-hover animate-slide-in-left">
+        <h2 className="text-2xl font-bold text-blue-600 mb-4">
+          Show Understanding and Take Ownership
+        </h2>
+        
+        <p className="text-gray-700 mb-6">
+          Acknowledge the problem and explain the action plan.
+        </p>
+
+        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded">
+          <h3 className="font-semibold text-gray-900 mb-3">✓ Examples</h3>
+          <ul className="space-y-2 text-gray-700">
+            <li className="pl-4">"This looks like XYZ, I'm checking it now."</li>
+            <li className="pl-4">"Next steps: first X, then Y..."</li>
+            <li className="pl-4">"I'll update even if there's no progress – until we close this."</li>
+          </ul>
+        </div>
+      </section>
+
+      {/* Principle 8 */}
+      <section className="bg-white rounded-lg shadow-md p-8 mb-8 card-hover animate-fade-in">
+        <h2 className="text-2xl font-bold text-blue-600 mb-4">
+          Sense of Urgency
+        </h2>
+        
+        <p className="text-gray-700 mb-6">
+          Important to convey commitment even if the issue isn't critical.
+        </p>
+
+        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded">
+          <h3 className="font-semibold text-gray-900 mb-3">✓ Examples</h3>
+          <ul className="space-y-2 text-gray-700">
+            <li className="pl-4">"I understand this is affecting you – it's prioritized."</li>
+            <li className="pl-4">"I'm checking this right now."</li>
+            <li className="pl-4">"The moment there's news – you'll know."</li>
+          </ul>
+        </div>
+      </section>
+
+      {/* General Principles */}
+      <section className="bg-white rounded-lg shadow-md p-8 card-hover animate-bounce-in">
+        <h2 className="text-2xl font-bold text-blue-600 mb-6">
+          💡 General Principles
+        </h2>
+
+        <div className="space-y-6">
+          <div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Under-promise / Over-deliver</h3>
+            <p className="text-gray-700 mb-2"><strong>Meaning:</strong> Make careful promises – and try to surprise positively.</p>
+            <p className="text-gray-700"><strong>Why:</strong> When you promise less and deliver more, you create a sense of reliability and professionalism.</p>
+          </div>
+
+          <div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Disagree without being disagreeable</h3>
+            <p className="text-gray-700 mb-2"><strong>Meaning:</strong> It's okay to disagree – but in a respectful and non-confrontational way.</p>
+            <p className="text-gray-700"><strong>Why:</strong> The customer isn't always right, but they always deserve respect.</p>
+          </div>
+
+          <div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Look for Win-Win</h3>
+            <p className="text-gray-700 mb-2"><strong>Meaning:</strong> Look for solutions that are good for both the customer and you/your team.</p>
+            <p className="text-gray-700"><strong>Why:</strong> One-sided solutions create frustration. Solutions where both parties benefit strengthen the relationship.</p>
+          </div>
+
+          <div>
+            <h3 className="text-xl font-semibold text-gray-900 mb-2">Positive, Honest, Direct, and Concise Language</h3>
+            <p className="text-gray-700">Positive – don't convey negativity or despair | Honest – don't make up answers | Direct – don't wrap things up too much | Concise – don't confuse, don't dig too deep</p>
+          </div>
+        </div>
       </section>
     </main>
   );

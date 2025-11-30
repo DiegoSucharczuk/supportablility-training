@@ -110,40 +110,97 @@ export default function Examples() {
   return (
     <main className="container mx-auto px-4 py-12 max-w-4xl">
       <h1 className="text-4xl md:text-5xl font-bold mb-8 gradient-text animate-scale-in">
-        Additional Notes from Team Workshops
+        Advanced Techniques
       </h1>
 
       <section className="bg-white rounded-lg shadow-md p-8 mb-8 card-hover animate-slide-in-left">
         <h2 className="text-2xl font-bold text-blue-600 mb-4">
-          Experience Matters More Than the Fix
+          Communicate Effort - Full Reflection
         </h2>
-        <div className="space-y-4">
-          <p className="text-gray-700 text-lg">
-            Clients often remember how they were treated, not the technical steps.
-          </p>
-          <p className="text-gray-700 text-lg font-semibold">
-            Consistency, tone, and clarity define the overall experience.
+        <p className="text-gray-700 mb-4">Don't just say "checking".</p>
+        <div className="bg-gradient-to-r from-yellow-50 to-amber-50 border-l-4 border-yellow-500 p-6 rounded glow-effect">
+          <h3 className="font-semibold text-gray-900 mb-3">Example</h3>
+          <p className="text-gray-700 pl-4">
+            "We checked the logs, found no unusual errors but identified a recurring pattern. 
+            We ran tests A and B to rule out network-level issues."
           </p>
         </div>
       </section>
 
       <section className="bg-white rounded-lg shadow-md p-8 mb-8 card-hover animate-fade-in">
         <h2 className="text-2xl font-bold text-blue-600 mb-4">
-          Mental Flexibility
+          Thought Progress - Share Your Thinking
         </h2>
-        <p className="text-gray-700 mb-6">
-          Adapt communication to the caller. Different clients have different needs.
-        </p>
+        <p className="text-gray-700 mb-4">Share what you're seeing, understanding, or trying to verify.</p>
+        <ul className="space-y-2 text-gray-700 mb-4 ml-6">
+          <li>• We saw...</li>
+          <li>• We know...</li>
+          <li>• We understand...</li>
+          <li>• We're trying to confirm...</li>
+        </ul>
+        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded">
+          <h3 className="font-semibold text-gray-900 mb-3">Example</h3>
+          <p className="text-gray-700 pl-4">
+            "From our tests so far, we understand that the issue occurs after X. 
+            We're trying to verify if Y is the cause."
+          </p>
+        </div>
+      </section>
+
+      <section className="bg-white rounded-lg shadow-md p-8 mb-8 card-hover animate-slide-in-right">
+        <h2 className="text-2xl font-bold text-blue-600 mb-4">
+          Smart and Effective Empathy – No Clichés
+        </h2>
+        
+        <div className="grid md:grid-cols-2 gap-6 mb-6">
+          <div className="bg-red-50 border-l-4 border-red-500 p-6 rounded">
+            <h3 className="font-semibold text-gray-900 mb-3">✗ Don't Say</h3>
+            <ul className="space-y-2 text-gray-700">
+              <li className="pl-4">"We know how you feel"</li>
+              <li className="pl-4">"We understand your frustration"</li>
+            </ul>
+          </div>
+
+          <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded">
+            <h3 className="font-semibold text-gray-900 mb-3">✓ Say This Instead</h3>
+            <p className="text-gray-700 pl-4">
+              "I understand that [what they said] is affecting your team. We're prioritizing this accordingly."
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section className="bg-white rounded-lg shadow-md p-8 mb-8">
+        <h2 className="text-2xl font-bold text-blue-600 mb-4">
+          Reflection and Context to the Request
+        </h2>
+        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded">
+          <h3 className="font-semibold text-gray-900 mb-3">Example</h3>
+          <p className="text-gray-700 pl-4">
+            "As you explained that the system crashes when there are more than 100 connections, that's exactly why 
+            we asked you to run a test under load."
+          </p>
+        </div>
+      </section>
+
+      <section className="bg-white rounded-lg shadow-md p-8 mb-8">
+        <h2 className="text-2xl font-bold text-blue-600 mb-4">
+          Executive Summary - Summary at Start of Message
+        </h2>
+        <p className="text-gray-700 mb-4">In any long communication – start with a 2-line summary.</p>
+        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded">
+          <h3 className="font-semibold text-gray-900 mb-3">Example</h3>
+          <p className="text-gray-700 pl-4">
+            "We completed the log analysis and saw an auth failure pattern repeated every hour. 
+            Next, we will test X."
+          </p>
+        </div>
       </section>
 
       <section className="bg-gradient-to-r from-blue-600 via-purple-600 to-pink-600 text-white rounded-lg p-8 animate-bounce-in pulse-glow">
-        <h2 className="text-2xl font-bold mb-4">Remember</h2>
-        <p className="text-lg mb-4">
-          Technical problems are temporary, but relationships are long-term.
-        </p>
+        <h2 className="text-2xl font-bold mb-4">Not Just Answers – A Complete Experience</h2>
         <p className="text-lg">
-          How you make clients feel during challenging moments defines the strength of your 
-          professional partnerships.
+          The customer won't always remember the solution, but they'll always remember how you made them feel.
         </p>
       </section>
     </main>
