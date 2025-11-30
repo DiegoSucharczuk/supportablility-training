@@ -10,7 +10,8 @@ const navItems = {
     { href: '/introduction', label: 'Introduction' },
     { href: '/core-principles', label: 'Core Principles' },
     { href: '/best-practices', label: 'Best Practices' },
-    { href: '/examples', label: 'Examples' },
+    { href: '/examples', label: 'Phrases' },
+    { href: '/escalation-response', label: 'Escalations' },
     { href: '/resources', label: 'Resources' },
   ],
   he: [
@@ -18,7 +19,8 @@ const navItems = {
     { href: '/introduction', label: 'מבוא' },
     { href: '/core-principles', label: 'עקרונות יסוד' },
     { href: '/best-practices', label: 'שיטות עבודה' },
-    { href: '/examples', label: 'דוגמאות' },
+    { href: '/examples', label: 'משפטים' },
+    { href: '/escalation-response', label: 'טיפול באסקלציות' },
     { href: '/resources', label: 'משאבים' },
   ],
 };
