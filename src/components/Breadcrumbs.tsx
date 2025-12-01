@@ -18,6 +18,7 @@ export default function Breadcrumbs() {
       'communication-guide': 'Quick Guide',
       resources: 'Resources',
       feedback: 'Feedback',
+      bookmarks: 'Bookmarks',
     },
     he: {
       home: 'בית',
@@ -28,6 +29,7 @@ export default function Breadcrumbs() {
       'communication-guide': 'מדריך מקוצר',
       resources: 'משאבים',
       feedback: 'משוב',
+      bookmarks: 'מועדפים',
     },
   };
 

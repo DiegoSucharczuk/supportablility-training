@@ -26,6 +26,7 @@ export default function SearchBar() {
     { title: language === 'he' ? 'מדריך מקוצר' : 'Quick Guide', description: language === 'he' ? 'עזר מהיר' : 'Fast reference', url: '/communication-guide', category: language === 'he' ? 'עמודים' : 'Pages' },
     { title: language === 'he' ? 'משאבים' : 'Resources', description: language === 'he' ? 'כלים ומשאבים נוספים' : 'Additional tools and resources', url: '/resources', category: language === 'he' ? 'עמודים' : 'Pages' },
     { title: language === 'he' ? 'משוב' : 'Feedback', description: language === 'he' ? 'שלח משוב על האתר' : 'Send feedback about the site', url: '/feedback', category: language === 'he' ? 'עמודים' : 'Pages' },
+    { title: language === 'he' ? 'מועדפים' : 'Bookmarks', description: language === 'he' ? 'העמודים השמורים שלך' : 'Your saved pages', url: '/bookmarks', category: language === 'he' ? 'עמודים' : 'Pages' },
   ];
 
   useEffect(() => {
