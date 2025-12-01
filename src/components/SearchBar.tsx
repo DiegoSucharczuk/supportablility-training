@@ -109,7 +109,7 @@ export default function SearchBar() {
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
                 placeholder={text.placeholder}
-                className="w-full px-4 py-3 text-lg border-none outline-none"
+                className="w-full px-4 py-3 text-lg border-none outline-none text-gray-900"
                 autoFocus
                 aria-label={text.search}
               />

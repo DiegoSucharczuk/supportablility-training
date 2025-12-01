@@ -55,26 +55,28 @@ export default function Navigation() {
             </span>
           </Link>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-8 ml-auto">
             <SearchBar />
             
-            <button
-              onClick={() => setLanguage(language === 'en' ? 'he' : 'en')}
-              className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-lg hover:bg-white/30 transition-all duration-300 font-semibold hover:scale-110 shadow-lg border border-white/30"
-              aria-label={language === 'en' ? 'Switch to Hebrew' : 'Switch to English'}
-            >
-              {language === 'en' ? '🇮🇱 עברית' : '🇺🇸 English'}
-            </button>
-            
-            <button
-              onClick={logout}
-              className="px-4 py-2 bg-red-500/90 backdrop-blur-sm rounded-lg hover:bg-red-600 transition-all duration-300 font-semibold hover:scale-110 shadow-lg border border-red-400/30 flex items-center gap-2"
-              aria-label={language === 'en' ? 'Logout' : 'התנתק'}
-              title={language === 'en' ? 'Logout' : 'התנתק'}
-            >
-              <span>🚪</span>
-              <span className="hidden sm:inline">{language === 'en' ? 'Logout' : 'התנתק'}</span>
-            </button>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setLanguage(language === 'en' ? 'he' : 'en')}
+                className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-lg hover:bg-white/30 transition-all duration-300 font-semibold hover:scale-110 shadow-lg border border-white/30"
+                aria-label={language === 'en' ? 'Switch to Hebrew' : 'Switch to English'}
+              >
+                {language === 'en' ? '🇮🇱 עברית' : '🇺🇸 English'}
+              </button>
+              
+              <button
+                onClick={logout}
+                className="px-4 py-2 bg-red-500/90 backdrop-blur-sm rounded-lg hover:bg-red-600 transition-all duration-300 font-semibold hover:scale-110 shadow-lg border border-red-400/30 flex items-center gap-2"
+                aria-label={language === 'en' ? 'Logout' : 'התנתק'}
+                title={language === 'en' ? 'Logout' : 'התנתק'}
+              >
+                <span>🚪</span>
+                <span className="hidden sm:inline">{language === 'en' ? 'Logout' : 'התנתק'}</span>
+              </button>
+            </div>
           </div>
         </div>
         
