@@ -44,58 +44,60 @@ export default function Navigation() {
       aria-label="Main navigation"
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        {/* Title Row */}
+        <div className="flex items-center justify-center py-3 border-b border-white/10">
           <Link 
             href="/" 
-            className="text-xl font-bold hover:scale-110 transition-transform duration-300"
+            className="text-2xl font-bold hover:scale-110 transition-transform duration-300"
             aria-label={title}
           >
             <span className="bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
               {title}
             </span>
           </Link>
+        </div>
+        
+        {/* Navigation Row */}
+        <div className="flex items-center justify-between py-3">
+          <SearchBar />
           
-          <div className="flex items-center gap-6">
-            <SearchBar />
+          <ul className="flex space-x-1 mx-auto" role="menubar">
+            {items.map((item) => (
+              <li key={item.href} role="none">
+                <Link
+                  href={item.href}
+                  role="menuitem"
+                  className={`px-4 py-2 rounded-lg transition-all duration-300 ${
+                    pathname === item.href
+                      ? 'bg-white/20 font-semibold shadow-lg scale-105'
+                      : 'hover:bg-white/10 hover:scale-105'
+                  }`}
+                  aria-current={pathname === item.href ? 'page' : undefined}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
+          
+          <div className="flex items-center gap-3">
+            <button
+              onClick={() => setLanguage(language === 'en' ? 'he' : 'en')}
+              className="px-5 py-2 bg-white/20 backdrop-blur-sm rounded-lg hover:bg-white/30 transition-all duration-300 font-semibold hover:scale-110 shadow-lg border border-white/30"
+              aria-label={language === 'en' ? 'Switch to Hebrew' : 'Switch to English'}
+            >
+              {language === 'en' ? '🇮🇱 עברית' : '🇺🇸 English'}
+            </button>
             
-            <ul className="flex space-x-1" role="menubar">
-              {items.map((item) => (
-                <li key={item.href} role="none">
-                  <Link
-                    href={item.href}
-                    role="menuitem"
-                    className={`px-4 py-2 rounded-lg transition-all duration-300 ${
-                      pathname === item.href
-                        ? 'bg-white/20 font-semibold shadow-lg scale-105'
-                        : 'hover:bg-white/10 hover:scale-105'
-                    }`}
-                    aria-current={pathname === item.href ? 'page' : undefined}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-            
-            <div className="flex items-center gap-3">
-              <button
-                onClick={() => setLanguage(language === 'en' ? 'he' : 'en')}
-                className="px-5 py-2 bg-white/20 backdrop-blur-sm rounded-lg hover:bg-white/30 transition-all duration-300 font-semibold hover:scale-110 shadow-lg border border-white/30"
-                aria-label={language === 'en' ? 'Switch to Hebrew' : 'Switch to English'}
-              >
-                {language === 'en' ? '🇮🇱 עברית' : '🇺🇸 English'}
-              </button>
-              
-              <button
-                onClick={logout}
-                className="px-4 py-2 bg-red-500/90 backdrop-blur-sm rounded-lg hover:bg-red-600 transition-all duration-300 font-semibold hover:scale-110 shadow-lg border border-red-400/30 flex items-center gap-2"
-                aria-label={language === 'en' ? 'Logout' : 'התנתק'}
-                title={language === 'en' ? 'Logout' : 'התנתק'}
-              >
-                <span>🚪</span>
-                <span className="hidden sm:inline">{language === 'en' ? 'Logout' : 'התנתק'}</span>
-              </button>
-            </div>
+            <button
+              onClick={logout}
+              className="px-4 py-2 bg-red-500/90 backdrop-blur-sm rounded-lg hover:bg-red-600 transition-all duration-300 font-semibold hover:scale-110 shadow-lg border border-red-400/30 flex items-center gap-2"
+              aria-label={language === 'en' ? 'Logout' : 'התנתק'}
+              title={language === 'en' ? 'Logout' : 'התנתק'}
+            >
+              <span>🚪</span>
+              <span className="hidden sm:inline">{language === 'en' ? 'Logout' : 'התנתק'}</span>
+            </button>
           </div>
         </div>
       </div>
