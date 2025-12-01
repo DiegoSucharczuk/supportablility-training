@@ -1,14 +1,35 @@
 'use client';
 
-import { useEffect } from 'react';
-import { useSearchParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { useSearchParams, useRouter, usePathname } from 'next/navigation';
 
 export default function TextHighlighter() {
   const searchParams = useSearchParams();
+  const router = useRouter();
+  const pathname = usePathname();
   const highlight = searchParams.get('highlight');
+  const [isVisible, setIsVisible] = useState(false);
+
+  const clearHighlights = () => {
+    // Remove all highlights from DOM
+    document.querySelectorAll('.search-highlight').forEach(el => {
+      const parent = el.parentNode;
+      if (parent) {
+        parent.replaceChild(document.createTextNode(el.textContent || ''), el);
+        parent.normalize();
+      }
+    });
+    
+    // Remove highlight parameter from URL
+    router.replace(pathname);
+    setIsVisible(false);
+  };
 
   useEffect(() => {
-    if (!highlight) return;
+    if (!highlight) {
+      setIsVisible(false);
+      return;
+    }
 
     const highlightText = () => {
       // Remove previous highlights
@@ -64,8 +85,11 @@ export default function TextHighlighter() {
         }
       });
 
-      // Scroll to first match
+      // Show clear button if matches found
       if (firstMatch) {
+        setIsVisible(true);
+        
+        // Scroll to first match
         setTimeout(() => {
           if (firstMatch) {
             firstMatch.scrollIntoView({ behavior: 'smooth', block: 'center' });
@@ -79,5 +103,19 @@ export default function TextHighlighter() {
     return () => clearTimeout(timer);
   }, [highlight]);
 
-  return null;
+  if (!isVisible) return null;
+
+  return (
+    <button
+      onClick={clearHighlights}
+      className="fixed bottom-24 left-4 z-50 bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-semibold px-4 py-2 rounded-lg shadow-lg flex items-center gap-2 transition-all duration-300 hover:scale-110"
+      aria-label="Clear highlights"
+      title="Clear search highlights"
+    >
+      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+      </svg>
+      <span className="text-sm">נקה סימונים / Clear</span>
+    </button>
+  );
 }
