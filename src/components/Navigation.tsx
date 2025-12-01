@@ -44,7 +44,7 @@ export default function Navigation() {
       aria-label="Main navigation"
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between py-3 border-b border-white/10">
+        <div className="flex items-center justify-between h-16">
           <Link 
             href="/" 
             className="text-xl font-bold hover:scale-110 transition-transform duration-300"
@@ -55,13 +55,32 @@ export default function Navigation() {
             </span>
           </Link>
           
-          <div className="flex items-center gap-8 ml-auto">
+          <div className="flex items-center gap-6">
             <SearchBar />
+            
+            <ul className="flex space-x-1" role="menubar">
+              {items.map((item) => (
+                <li key={item.href} role="none">
+                  <Link
+                    href={item.href}
+                    role="menuitem"
+                    className={`px-4 py-2 rounded-lg transition-all duration-300 ${
+                      pathname === item.href
+                        ? 'bg-white/20 font-semibold shadow-lg scale-105'
+                        : 'hover:bg-white/10 hover:scale-105'
+                    }`}
+                    aria-current={pathname === item.href ? 'page' : undefined}
+                  >
+                    {item.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
             
             <div className="flex items-center gap-3">
               <button
                 onClick={() => setLanguage(language === 'en' ? 'he' : 'en')}
-                className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-lg hover:bg-white/30 transition-all duration-300 font-semibold hover:scale-110 shadow-lg border border-white/30"
+                className="px-5 py-2 bg-white/20 backdrop-blur-sm rounded-lg hover:bg-white/30 transition-all duration-300 font-semibold hover:scale-110 shadow-lg border border-white/30"
                 aria-label={language === 'en' ? 'Switch to Hebrew' : 'Switch to English'}
               >
                 {language === 'en' ? '🇮🇱 עברית' : '🇺🇸 English'}
@@ -78,27 +97,6 @@ export default function Navigation() {
               </button>
             </div>
           </div>
-        </div>
-        
-        <div className="flex items-center justify-center py-2">
-          <ul className="flex space-x-1" role="menubar">
-            {items.map((item) => (
-              <li key={item.href} role="none">
-                <Link
-                  href={item.href}
-                  role="menuitem"
-                  className={`px-3 py-2 rounded-lg transition-all duration-300 text-sm ${
-                    pathname === item.href
-                      ? 'bg-white/20 font-semibold shadow-lg scale-105'
-                      : 'hover:bg-white/10 hover:scale-105'
-                  }`}
-                  aria-current={pathname === item.href ? 'page' : undefined}
-                >
-                  {item.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
         </div>
       </div>
     </nav>
