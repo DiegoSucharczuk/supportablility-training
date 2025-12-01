@@ -153,7 +153,9 @@ export default function SearchBar() {
   }, [query, language]);
 
   const handleSelect = (url: string) => {
-    router.push(url);
+    // Add search query as URL parameter to highlight in page
+    const urlWithQuery = query.trim() ? `${url}?highlight=${encodeURIComponent(query.trim())}` : url;
+    router.push(urlWithQuery);
     setIsOpen(false);
     setQuery('');
   };
