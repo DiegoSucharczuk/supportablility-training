@@ -18,13 +18,23 @@ export default function Feedback() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Note: This is a demo form. In production, you would send to a backend API
-    // For now, you can manually collect feedback via email or integrate with a service
-    console.log('Feedback submitted:', formData);
     
-    // TODO: Replace with actual backend API call
-    // Example: fetch('/api/feedback', { method: 'POST', body: JSON.stringify(formData) })
+    // Create email body with all form data
+    const emailSubject = `Feedback: ${formData.category || 'General'}`;
+    const emailBody = `
+Name: ${formData.name || 'Anonymous'}
+Email: ${formData.email || 'Not provided'}
+Category: ${formData.category}
+
+Message:
+${formData.message}
+    `.trim();
     
+    // Open default email client with pre-filled data
+    const mailtoLink = `mailto:diego.sucharczuk@cyberark.com?subject=${encodeURIComponent(emailSubject)}&body=${encodeURIComponent(emailBody)}`;
+    window.location.href = mailtoLink;
+    
+    // Show success message
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);
@@ -71,7 +81,7 @@ export default function Feedback() {
       },
       note: {
         title: '📧 Where does feedback go?',
-        text: 'Currently, feedback is logged locally. To send feedback directly to the team, please email: diego.sucharczuk@cyberark.com',
+        text: 'When you submit feedback, your default email client will open with a pre-filled message to diego.sucharczuk@cyberark.com. Simply click send!',
       },
     },
     he: {
@@ -105,7 +115,7 @@ export default function Feedback() {
       },
       note: {
         title: '📧 לאן הולך המשוב?',
-        text: 'כרגע, המשוב נשמר מקומית. לשליחת משוב ישירות לצוות, אנא שלח אימייל ל: diego.sucharczuk@cyberark.com',
+        text: 'כשאתה שולח משוב, תוכנת המייל שלך תיפתח עם הודעה מוכנה ל-diego.sucharczuk@cyberark.com. פשוט תלחץ שלח!',
       },
     },
   };
