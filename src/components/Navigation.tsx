@@ -16,7 +16,6 @@ const navItems = {
     { href: '/communication-guide', label: 'Quick Guide' },
     { href: '/resources', label: 'Resources' },
     { href: '/feedback', label: 'Feedback' },
-    { href: '/bookmarks', label: '🔖 Bookmarks' },
   ],
   he: [
     { href: '/', label: 'דף הבית' },
@@ -27,7 +26,6 @@ const navItems = {
     { href: '/communication-guide', label: 'מדריך מקוצר' },
     { href: '/resources', label: 'משאבים' },
     { href: '/feedback', label: 'משוב' },
-    { href: '/bookmarks', label: '🔖 מועדפים' },
   ],
 };
 
@@ -46,7 +44,7 @@ export default function Navigation() {
       aria-label="Main navigation"
     >
       <div className="container mx-auto px-4">
-        <div className="flex items-center justify-between h-16">
+        <div className="flex items-center justify-between py-3 border-b border-white/10">
           <Link 
             href="/" 
             className="text-xl font-bold hover:scale-110 transition-transform duration-300"
@@ -57,33 +55,12 @@ export default function Navigation() {
             </span>
           </Link>
           
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-4">
             <SearchBar />
             
-            <ul className="flex space-x-1" role="menubar">
-              {items.map((item) => (
-                <li key={item.href} role="none">
-                  <Link
-                    href={item.href}
-                    role="menuitem"
-                    className={`px-4 py-2 rounded-lg transition-all duration-300 ${
-                      pathname === item.href
-                        ? 'bg-white/20 font-semibold shadow-lg scale-105'
-                        : 'hover:bg-white/10 hover:scale-105'
-                    }`}
-                    aria-current={pathname === item.href ? 'page' : undefined}
-                  >
-                    {item.label}
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          </div>
-          
-          <div className="flex items-center gap-4">
             <button
               onClick={() => setLanguage(language === 'en' ? 'he' : 'en')}
-              className="px-5 py-2 bg-white/20 backdrop-blur-sm rounded-lg hover:bg-white/30 transition-all duration-300 font-semibold hover:scale-110 shadow-lg border border-white/30"
+              className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-lg hover:bg-white/30 transition-all duration-300 font-semibold hover:scale-110 shadow-lg border border-white/30"
               aria-label={language === 'en' ? 'Switch to Hebrew' : 'Switch to English'}
             >
               {language === 'en' ? '🇮🇱 עברית' : '🇺🇸 English'}
@@ -91,7 +68,7 @@ export default function Navigation() {
             
             <button
               onClick={logout}
-              className="px-5 py-2 bg-red-500/90 backdrop-blur-sm rounded-lg hover:bg-red-600 transition-all duration-300 font-semibold hover:scale-110 shadow-lg border border-red-400/30 flex items-center gap-2"
+              className="px-4 py-2 bg-red-500/90 backdrop-blur-sm rounded-lg hover:bg-red-600 transition-all duration-300 font-semibold hover:scale-110 shadow-lg border border-red-400/30 flex items-center gap-2"
               aria-label={language === 'en' ? 'Logout' : 'התנתק'}
               title={language === 'en' ? 'Logout' : 'התנתק'}
             >
@@ -99,6 +76,27 @@ export default function Navigation() {
               <span className="hidden sm:inline">{language === 'en' ? 'Logout' : 'התנתק'}</span>
             </button>
           </div>
+        </div>
+        
+        <div className="flex items-center justify-center py-2">
+          <ul className="flex space-x-1" role="menubar">
+            {items.map((item) => (
+              <li key={item.href} role="none">
+                <Link
+                  href={item.href}
+                  role="menuitem"
+                  className={`px-3 py-2 rounded-lg transition-all duration-300 text-sm ${
+                    pathname === item.href
+                      ? 'bg-white/20 font-semibold shadow-lg scale-105'
+                      : 'hover:bg-white/10 hover:scale-105'
+                  }`}
+                  aria-current={pathname === item.href ? 'page' : undefined}
+                >
+                  {item.label}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
       </div>
     </nav>
