@@ -53,7 +53,7 @@ export default function Navigation() {
             </span>
           </Link>
           
-          <div className="flex items-center gap-4">
+          <div className="flex items-center gap-6">
             <SearchBar />
             
             <ul className="flex space-x-1" role="menubar">

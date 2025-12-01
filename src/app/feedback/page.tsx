@@ -18,8 +18,13 @@ export default function Feedback() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // In a real implementation, this would send to a backend
+    // Note: This is a demo form. In production, you would send to a backend API
+    // For now, you can manually collect feedback via email or integrate with a service
     console.log('Feedback submitted:', formData);
+    
+    // TODO: Replace with actual backend API call
+    // Example: fetch('/api/feedback', { method: 'POST', body: JSON.stringify(formData) })
+    
     setSubmitted(true);
     setTimeout(() => {
       setSubmitted(false);
@@ -64,6 +69,10 @@ export default function Feedback() {
           'Tell us what training topics you\'d like to see added',
         ],
       },
+      note: {
+        title: '📧 Where does feedback go?',
+        text: 'Currently, feedback is logged locally. To send feedback directly to the team, please email: diego.sucharczuk@cyberark.com',
+      },
     },
     he: {
       title: 'שלח לנו משוב',
@@ -93,6 +102,10 @@ export default function Feedback() {
           'תאר כל בעיה טכנית בפירוט',
           'ספר לנו אילו נושאי הדרכה תרצה לראות',
         ],
+      },
+      note: {
+        title: '📧 לאן הולך המשוב?',
+        text: 'כרגע, המשוב נשמר מקומית. לשליחת משוב ישירות לצוות, אנא שלח אימייל ל: diego.sucharczuk@cyberark.com',
       },
     },
   };
@@ -204,7 +217,7 @@ export default function Feedback() {
         </div>
 
         <div className="md:col-span-1">
-          <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg shadow-md p-6 sticky top-24 animate-slide-in-right">
+          <div className="bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg shadow-md p-6 sticky top-24 animate-slide-in-right mb-6">
             <h3 className="text-xl font-bold text-gray-900 mb-4">{t.tips.title}</h3>
             <ul className="space-y-3">
               {t.tips.items.map((tip, index) => (
@@ -214,6 +227,11 @@ export default function Feedback() {
                 </li>
               ))}
             </ul>
+          </div>
+
+          <div className="bg-gradient-to-br from-yellow-50 to-orange-50 rounded-lg shadow-md p-6 border-2 border-orange-200 animate-fade-in">
+            <h3 className="text-lg font-bold text-gray-900 mb-3">{t.note.title}</h3>
+            <p className="text-gray-700 text-sm leading-relaxed">{t.note.text}</p>
           </div>
         </div>
       </div>

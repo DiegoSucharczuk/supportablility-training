@@ -31,7 +31,7 @@ export default function BookmarkButton() {
   return (
     <button
       onClick={() => toggleBookmark(pathname)}
-      className={`fixed ${language === 'he' ? 'left-8' : 'right-8'} bottom-24 z-40 p-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 ${
+      className={`fixed ${language === 'he' ? 'left-8' : 'right-8'} bottom-24 z-[90] p-4 rounded-full shadow-lg hover:shadow-xl transform hover:scale-110 transition-all duration-300 ${
         bookmarked
           ? 'bg-gradient-to-r from-yellow-400 to-orange-500 text-white'
           : 'bg-white text-gray-600 border-2 border-gray-300'
