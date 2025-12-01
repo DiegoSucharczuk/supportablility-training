@@ -45,15 +45,17 @@ export default function Navigation() {
     >
       <div className="container mx-auto px-4">
         {/* Title Row */}
-        <div className="flex items-center justify-center py-3 border-b border-white/10">
+        <div className="flex items-center justify-center py-4 border-b border-white/10">
           <Link 
             href="/" 
-            className="text-2xl font-bold hover:scale-110 transition-transform duration-300"
+            className="group transition-transform duration-300 hover:scale-105"
             aria-label={title}
           >
-            <span className="bg-gradient-to-r from-white to-blue-100 bg-clip-text text-transparent">
-              {title}
-            </span>
+            <h1 className="text-3xl md:text-4xl font-extrabold tracking-wide">
+              <span className="bg-gradient-to-r from-yellow-200 via-white to-yellow-200 bg-clip-text text-transparent drop-shadow-[0_2px_4px_rgba(0,0,0,0.3)] group-hover:drop-shadow-[0_4px_8px_rgba(255,255,255,0.5)] transition-all duration-300">
+                {title}
+              </span>
+            </h1>
           </Link>
         </div>
         
