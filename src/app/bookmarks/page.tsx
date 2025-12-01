@@ -24,20 +24,20 @@ export default function BookmarksPage() {
   const content = {
     en: {
       title: 'My Bookmarks',
-      subtitle: 'Quick access to your saved pages',
+      subtitle: 'Quick access to your saved pages. You can manage bookmarks from this page.',
       empty: {
         title: 'No bookmarks yet',
-        text: 'Click the bookmark button (🔖) on any page to save it here for quick access.',
+        text: 'Visit any page and you\'ll see a bookmark option in the page header to save it here for quick access.',
       },
       remove: 'Remove',
       visitPage: 'Visit Page →',
     },
     he: {
       title: 'המועדפים שלי',
-      subtitle: 'גישה מהירה לעמודים השמורים שלך',
+      subtitle: 'גישה מהירה לעמודים השמורים שלך. תוכל לנהל מועדפים מדף זה.',
       empty: {
         title: 'אין מועדפים עדיין',
-        text: 'לחץ על כפתור המועדפים (🔖) בכל עמוד כדי לשמור אותו כאן לגישה מהירה.',
+        text: 'בקר בכל עמוד ותראה אפשרות להוסיף למועדפים בכותרת העמוד כדי לשמור אותו כאן לגישה מהירה.',
       },
       remove: 'הסר',
       visitPage: 'עבור לעמוד ←',

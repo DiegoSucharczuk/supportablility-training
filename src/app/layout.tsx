@@ -6,7 +6,6 @@ import { AuthProvider } from "@/context/AuthContext";
 import { BookmarksProvider } from "@/context/BookmarksContext";
 import ProtectedLayout from "@/components/ProtectedLayout";
 import ScrollToTop from "@/components/ScrollToTop";
-import BookmarkButton from "@/components/BookmarkButton";
 
 export const metadata: Metadata = {
   title: "Professional Communication Training | CyberArk",
@@ -44,7 +43,6 @@ export default function RootLayout({
                 <div className="flex-grow animate-fade-in">{children}</div>
                 <Footer />
                 <ScrollToTop />
-                <BookmarkButton />
               </ProtectedLayout>
             </BookmarksProvider>
           </LanguageProvider>
