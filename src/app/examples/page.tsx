@@ -32,10 +32,10 @@ export default function Examples() {
           </h2>
           <p className="text-gray-700 mb-4">שתף את מה שאתה רואה, מבין או מנסה לאמת.</p>
           <ul className="space-y-2 text-gray-700 mb-4 mr-6">
-            <li>• We saw...</li>
-            <li>• We know...</li>
-            <li>• We understand...</li>
-            <li>• We're trying to confirm...</li>
+            <li>• ראינו...</li>
+            <li>• אנחנו יודעים...</li>
+            <li>• אנחנו מבינים...</li>
+            <li>• אנחנו מנסים לאמת...</li>
           </ul>
           <div className="bg-green-50 border-r-4 border-green-500 p-6 rounded">
             <h3 className="font-semibold text-gray-900 mb-3">דוגמה</h3>
@@ -90,8 +90,8 @@ export default function Examples() {
           <div className="bg-green-50 border-r-4 border-green-500 p-6 rounded">
             <h3 className="font-semibold text-gray-900 mb-3">דוגמה</h3>
             <p className="text-gray-700 pr-4">
-              "We completed the log analysis and saw an auth failure pattern repeated every hour. 
-              Next, we will test X."
+              "סיימנו את ניתוח הלוגים וזיהינו pattern של כשלון אימות שחוזר על עצמו כל שעה. 
+              השלב הבא יהיה לבדוק X."
             </p>
           </div>
         </section>
