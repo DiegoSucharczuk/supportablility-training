@@ -19,14 +19,41 @@ export default function SearchBar() {
   const { language } = useLanguage();
 
   const searchData: SearchResult[] = [
+    // Pages
     { title: language === 'he' ? 'מבוא' : 'Introduction', description: language === 'he' ? 'למדו את היסודות של תקשורת מקצועית' : 'Learn the fundamentals of professional communication', url: '/introduction', category: language === 'he' ? 'עמודים' : 'Pages' },
-    { title: language === 'he' ? 'עקרונות יסוד' : 'Core Principles', description: language === 'he' ? '12 עקרונות יסודיים' : '12 foundational principles', url: '/core-principles', category: language === 'he' ? 'עמודים' : 'Pages' },
-    { title: language === 'he' ? 'משפטים' : 'Phrases', description: language === 'he' ? 'משפטים מוכנים לשימוש' : 'Ready-to-use phrases', url: '/examples', category: language === 'he' ? 'עמודים' : 'Pages' },
-    { title: language === 'he' ? 'טיפול באסקלציות' : 'Escalations', description: language === 'he' ? 'אסטרטגיות לטיפול בהסלמות' : 'Strategies for handling escalations', url: '/escalation-response', category: language === 'he' ? 'עמודים' : 'Pages' },
-    { title: language === 'he' ? 'מדריך מקוצר' : 'Quick Guide', description: language === 'he' ? 'עזר מהיר' : 'Fast reference', url: '/communication-guide', category: language === 'he' ? 'עמודים' : 'Pages' },
-    { title: language === 'he' ? 'משאבים' : 'Resources', description: language === 'he' ? 'כלים ומשאבים נוספים' : 'Additional tools and resources', url: '/resources', category: language === 'he' ? 'עמודים' : 'Pages' },
+    { title: language === 'he' ? 'עקרונות יסוד' : 'Core Principles', description: language === 'he' ? '12 עקרונות יסודיים לתקשורת יעילה' : '12 foundational principles for effective communication', url: '/core-principles', category: language === 'he' ? 'עמודים' : 'Pages' },
+    { title: language === 'he' ? 'משפטים' : 'Phrases', description: language === 'he' ? 'משפטים מוכנים לשימוש במצבי לקוח שונים' : 'Ready-to-use phrases for various client situations', url: '/examples', category: language === 'he' ? 'עמודים' : 'Pages' },
+    { title: language === 'he' ? 'טיפול באסקלציות' : 'Escalations', description: language === 'he' ? 'אסטרטגיות לטיפול בהסלמות ומצבים מאתגרים' : 'Strategies for handling escalations and challenging situations', url: '/escalation-response', category: language === 'he' ? 'עמודים' : 'Pages' },
+    { title: language === 'he' ? 'מדריך מקוצר' : 'Quick Guide', description: language === 'he' ? 'מדריך מהיר לתקשורת מקצועית' : 'Quick guide for professional communication', url: '/communication-guide', category: language === 'he' ? 'עמודים' : 'Pages' },
+    { title: language === 'he' ? 'משאבים' : 'Resources', description: language === 'he' ? 'כלים ומשאבים נוספים לשיפור התקשורת' : 'Additional tools and resources for improving communication', url: '/resources', category: language === 'he' ? 'עמודים' : 'Pages' },
     { title: language === 'he' ? 'משוב' : 'Feedback', description: language === 'he' ? 'שלח משוב על האתר' : 'Send feedback about the site', url: '/feedback', category: language === 'he' ? 'עמודים' : 'Pages' },
-    { title: language === 'he' ? 'מועדפים' : 'Bookmarks', description: language === 'he' ? 'העמודים השמורים שלך' : 'Your saved pages', url: '/bookmarks', category: language === 'he' ? 'עמודים' : 'Pages' },
+    
+    // Core Principles - Communication
+    { title: language === 'he' ? 'בניית אמון' : 'Building Trust', description: language === 'he' ? 'עקביות, שקיפות ואמינות בכל אינטראקציה' : 'Consistency, transparency and reliability in every interaction', url: '/core-principles#trust', category: language === 'he' ? 'עקרונות' : 'Principles' },
+    { title: language === 'he' ? 'הקשבה פעילה' : 'Active Listening', description: language === 'he' ? 'הבנת צרכי הלקוח דרך שיקוף והבהרה' : 'Understanding client needs through reflection and clarification', url: '/core-principles#listening', category: language === 'he' ? 'עקרונות' : 'Principles' },
+    { title: language === 'he' ? 'תקשורת ברורה' : 'Clear Communication', description: language === 'he' ? 'שפה חיובית וישירה שנמנעת מעמימות' : 'Positive, direct language that avoids ambiguity', url: '/core-principles#clarity', category: language === 'he' ? 'עקרונות' : 'Principles' },
+    { title: language === 'he' ? 'לקיחת אחריות' : 'Taking Ownership', description: language === 'he' ? 'הפגנת מנהיגות ואחריות על הבעיה' : 'Demonstrating leadership and responsibility for the issue', url: '/core-principles#ownership', category: language === 'he' ? 'עקרונות' : 'Principles' },
+    { title: language === 'he' ? 'אמפתיה חכמה' : 'Smart Empathy', description: language === 'he' ? 'קישור השפעה על הלקוח לפעולה מיידית' : 'Linking client impact to immediate action', url: '/core-principles#empathy', category: language === 'he' ? 'עקרונות' : 'Principles' },
+    { title: language === 'he' ? 'עדכונים פרואקטיביים' : 'Proactive Updates', description: language === 'he' ? 'עדכון לקוחות לפני שהם שואלים' : 'Updating clients before they ask', url: '/core-principles#proactive', category: language === 'he' ? 'עקרונות' : 'Principles' },
+    { title: language === 'he' ? 'שבירת קרח' : 'Ice Breaking', description: language === 'he' ? 'יצירת אווירה נעימה ושיחה קלה עם לקוחות' : 'Creating a pleasant atmosphere and easy conversation', url: '/core-principles#icebreaking', category: language === 'he' ? 'עקרונות' : 'Principles' },
+    { title: language === 'he' ? 'שאילת שאלות מוקדמות' : 'Early Questions', description: language === 'he' ? 'איסוף מידע חשוב בתחילת השיחה' : 'Gathering important information early in the conversation', url: '/core-principles#questions', category: language === 'he' ? 'עקרונות' : 'Principles' },
+    
+    // Core Principles - General
+    { title: language === 'he' ? 'תחושת דחיפות' : 'Sense of Urgency', description: language === 'he' ? 'שידור מחויבות ומהירות בטיפול בבעיה' : 'Conveying commitment and speed in handling the issue', url: '/core-principles#urgency', category: language === 'he' ? 'עקרונות כלליים' : 'General Principles' },
+    { title: language === 'he' ? 'אחריות משותפת' : 'Shared Responsibility', description: language === 'he' ? 'שימוש בשפה שיתופית ולא מאשימה' : 'Using collaborative rather than blaming language', url: '/core-principles#shared', category: language === 'he' ? 'עקרונות כלליים' : 'General Principles' },
+    { title: language === 'he' ? 'פתרונות Win-Win' : 'Win-Win Solutions', description: language === 'he' ? 'חיפוש אחר פתרונות טובים לשני הצדדים' : 'Seeking solutions that benefit both parties', url: '/core-principles#winwin', category: language === 'he' ? 'עקרונות כלליים' : 'General Principles' },
+    { title: language === 'he' ? 'תגובות מבניות' : 'Structured Responses', description: language === 'he' ? 'כתיבה ברורה ומסודרת של עדכונים ופתרונות' : 'Clear, organized writing of updates and solutions', url: '/core-principles#structured', category: language === 'he' ? 'עקרונות כלליים' : 'General Principles' },
+    
+    // Phrases categories
+    { title: language === 'he' ? 'משפטי פתיחה' : 'Opening Phrases', description: language === 'he' ? 'איך להתחיל שיחה בצורה מקצועית' : 'How to start a conversation professionally', url: '/examples#opening', category: language === 'he' ? 'משפטים' : 'Phrases' },
+    { title: language === 'he' ? 'משפטי סגירה' : 'Closing Phrases', description: language === 'he' ? 'איך לסיים שיחה בצורה חיובית' : 'How to end a conversation positively', url: '/examples#closing', category: language === 'he' ? 'משפטים' : 'Phrases' },
+    { title: language === 'he' ? 'התנצלות ואחריות' : 'Apology and Responsibility', description: language === 'he' ? 'איך להתנצל ולקחת אחריות' : 'How to apologize and take responsibility', url: '/examples#apology', category: language === 'he' ? 'משפטים' : 'Phrases' },
+    { title: language === 'he' ? 'עדכוני סטטוס' : 'Status Updates', description: language === 'he' ? 'איך לעדכן על התקדמות בצורה ברורה' : 'How to update on progress clearly', url: '/examples#status', category: language === 'he' ? 'משפטים' : 'Phrases' },
+    
+    // Escalation topics
+    { title: language === 'he' ? 'זיהוי אסקלציה מוקדמת' : 'Early Escalation Detection', description: language === 'he' ? 'איך לזהות סימנים מוקדמים של תסכול' : 'How to identify early signs of frustration', url: '/escalation-response#detection', category: language === 'he' ? 'אסקלציות' : 'Escalations' },
+    { title: language === 'he' ? 'טכניקות דה-אסקלציה' : 'De-escalation Techniques', description: language === 'he' ? 'שיטות להרגעת לקוחות מתוסכלים' : 'Methods for calming frustrated clients', url: '/escalation-response#techniques', category: language === 'he' ? 'אסקלציות' : 'Escalations' },
+    { title: language === 'he' ? 'תקשורת במצבי לחץ' : 'Communication Under Pressure', description: language === 'he' ? 'איך לתקשר אפקטיבית במצבים מאתגרים' : 'How to communicate effectively in challenging situations', url: '/escalation-response#pressure', category: language === 'he' ? 'אסקלציות' : 'Escalations' },
   ];
 
   useEffect(() => {
