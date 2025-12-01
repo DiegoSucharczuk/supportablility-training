@@ -1,13 +1,19 @@
 'use client';
 
 import { useLanguage } from '@/context/LanguageContext';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import ReadingProgress from '@/components/ReadingProgress';
+import ScrollToTop from '@/components/ScrollToTop';
 
 export default function EscalationResponse() {
   const { language } = useLanguage();
 
   if (language === 'he') {
     return (
-      <main className="container mx-auto px-4 py-12 max-w-4xl">
+      <main className="container mx-auto px-4 py-12 max-w-4xl" dir="rtl">
+        <ReadingProgress />
+        <ScrollToTop />
+        <Breadcrumbs />
         <h1 className="text-4xl md:text-5xl font-bold mb-8 gradient-text animate-scale-in">
           איך לכתוב תגובה מקצועית בקייס
         </h1>
@@ -227,6 +233,9 @@ export default function EscalationResponse() {
   // English version
   return (
     <main className="container mx-auto px-4 py-12 max-w-4xl">
+      <ReadingProgress />
+      <ScrollToTop />
+      <Breadcrumbs />
       <h1 className="text-4xl md:text-5xl font-bold mb-8 gradient-text animate-scale-in">
         How to Write Professional Case Responses
       </h1>

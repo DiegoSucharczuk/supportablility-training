@@ -56,6 +56,13 @@ export default function Home() {
           href: '/resources',
           icon: '📖',
         },
+        {
+          title: 'Feedback',
+          description: 'Share your thoughts and help us improve this training resource.',
+          link: 'Send →',
+          href: '/feedback',
+          icon: '💭',
+        },
       ],
       skills: {
         title: 'Key Communication Skills Covered',
@@ -127,6 +134,13 @@ export default function Home() {
           link: 'גש ←',
           href: '/resources',
           icon: '📖',
+        },
+        {
+          title: 'משוב',
+          description: 'שתף את המחשבות שלך ועזור לנו לשפר את משאב ההדרכה.',
+          link: 'שלח ←',
+          href: '/feedback',
+          icon: '💭',
         },
       ],
       skills: {

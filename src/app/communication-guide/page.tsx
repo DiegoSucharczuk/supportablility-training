@@ -1,7 +1,10 @@
-'use client'
+'use client';
 
-import { useState } from 'react'
-import { useLanguage } from '@/context/LanguageContext'
+import { useState } from 'react';
+import { useLanguage } from '@/context/LanguageContext';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import ReadingProgress from '@/components/ReadingProgress';
+import ScrollToTop from '@/components/ScrollToTop';
 
 export default function CommunicationGuidePage() {
   const { language } = useLanguage()
@@ -398,7 +401,10 @@ export default function CommunicationGuidePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-indigo-50 to-cyan-50 p-4" dir={language === 'he' ? 'rtl' : 'ltr'}>
+      <ReadingProgress />
+      <ScrollToTop />
       <div className="max-w-7xl mx-auto">
+        <Breadcrumbs />
         {/* Header */}
         <div className="bg-gradient-to-r from-slate-700 to-slate-800 text-white rounded-2xl p-8 mb-8 text-center">
           <h1 className="text-4xl font-bold mb-4 animate-fade-in">

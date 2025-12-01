@@ -1,6 +1,9 @@
 'use client';
 
 import { useLanguage } from '@/context/LanguageContext';
+import Breadcrumbs from '@/components/Breadcrumbs';
+import ReadingProgress from '@/components/ReadingProgress';
+import ScrollToTop from '@/components/ScrollToTop';
 
 export default function Introduction() {
   const { language } = useLanguage();
@@ -65,7 +68,10 @@ export default function Introduction() {
   const t = content[language];
 
   return (
-    <main className="container mx-auto px-4 py-12 max-w-4xl">
+    <main className="container mx-auto px-4 py-12 max-w-4xl" dir={language === 'he' ? 'rtl' : 'ltr'}>
+      <ReadingProgress />
+      <ScrollToTop />
+      <Breadcrumbs />
       <h1 className="text-4xl md:text-5xl font-bold mb-6 gradient-text animate-scale-in">
         {t.title}
       </h1>
