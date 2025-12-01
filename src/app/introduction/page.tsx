@@ -10,7 +10,7 @@ export default function Introduction() {
 
   const content = {
     en: {
-      title: 'Professional Communication Guide for Client-Facing Technical Teams',
+      title: 'About',
       subtitle: 'I\'m Diego Sucharczuk, Escalations Manager at the Tequila team at CyberArk. I wrote these principles from experience working closely with clients in high-pressure situations and complex incidents. I wanted to consolidate what really works in professional communication – how to maintain trust, ownership, and a true sense of partnership.',
       whatIs: {
         title: 'What is Supportability?',
@@ -37,7 +37,7 @@ export default function Introduction() {
       },
     },
     he: {
-      title: 'עקרונות תקשורת ותפעול מקצועי מול לקוחות',
+      title: 'אודות',
       subtitle: 'אני דיאגו סוצ׳רצ׳וק, מנהל הסקלציות בצוות טקילה בחברת CyberArk. כתבתי את העקרונות האלה מתוך ניסיון בעבודה צמודה עם לקוחות במצבי לחץ ותקלות מורכבות. רציתי לרכז את מה שבאמת עובד בתקשורת מקצועית – איך לשמור על אמון, אחריות ותחושת שותפות אמיתית.',
       whatIs: {
         title: 'מהי תמיכה מקצועית?',
