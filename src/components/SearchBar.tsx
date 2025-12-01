@@ -18,17 +18,110 @@ export default function SearchBar() {
   const router = useRouter();
   const { language } = useLanguage();
 
-  const searchData: SearchResult[] = [
-    // Main Pages
-    { title: language === 'he' ? 'דף הבית' : 'Home', description: language === 'he' ? 'עקרונות תקשורת מקצועית מול לקוחות' : 'Professional customer communication principles', url: '/', category: language === 'he' ? 'עמודים' : 'Pages' },
-    { title: language === 'he' ? 'מבוא' : 'Introduction', description: language === 'he' ? 'למדו את היסודות של תקשורת מקצועית ולמה זה חשוב' : 'Learn the fundamentals and importance of professional communication', url: '/introduction', category: language === 'he' ? 'עמודים' : 'Pages' },
-    { title: language === 'he' ? 'עקרונות יסוד' : 'Core Principles', description: language === 'he' ? '12 עקרונות תקשורת: אמון, הקשבה, בהירות, אחריות, אמפתיה ועוד' : '12 communication principles: trust, listening, clarity, ownership, empathy and more', url: '/core-principles', category: language === 'he' ? 'עקרונות' : 'Principles' },
-    { title: language === 'he' ? 'משפטים' : 'Phrases', description: language === 'he' ? 'משפטי פתיחה, סגירה, התנצלות ועדכוני סטטוס מוכנים לשימוש' : 'Ready-to-use opening, closing, apology and status update phrases', url: '/examples', category: language === 'he' ? 'משפטים' : 'Phrases' },
-    { title: language === 'he' ? 'טיפול באסקלציות' : 'Escalation Response', description: language === 'he' ? 'זיהוי מוקדם, דה-אסקלציה ותקשורת במצבי לחץ' : 'Early detection, de-escalation and communication under pressure', url: '/escalation-response', category: language === 'he' ? 'אסקלציות' : 'Escalations' },
-    { title: language === 'he' ? 'מדריך מקוצר' : 'Quick Guide', description: language === 'he' ? 'מדריך מהיר ונגיש לתקשורת מקצועית' : 'Quick and accessible professional communication guide', url: '/communication-guide', category: language === 'he' ? 'מדריכים' : 'Guides' },
-    { title: language === 'he' ? 'משאבים' : 'Resources', description: language === 'he' ? 'כלים, תבניות, צ\'קליסטים ומשאבים נוספים' : 'Tools, templates, checklists and additional resources', url: '/resources', category: language === 'he' ? 'משאבים' : 'Resources' },
-    { title: language === 'he' ? 'משוב' : 'Feedback', description: language === 'he' ? 'שתף משוב, הצעות או דווח על בעיות באתר' : 'Share feedback, suggestions or report site issues', url: '/feedback', category: language === 'he' ? 'משוב' : 'Feedback' },
-  ];
+  // Comprehensive search data with actual page content
+  const getSearchData = (): SearchResult[] => {
+    if (language === 'he') {
+      return [
+        // דף הבית
+        { title: 'דף הבית', description: 'עקרונות תקשורת מקצועית מול לקוחות - בניית אמון, הקשבה פעילה, תקשורת ברורה, אחריות, אמפתיה', url: '/', category: 'עמודים' },
+        
+        // מבוא
+        { title: 'מבוא', description: 'מהי תמיכה מקצועית - אמון, אחריות, בהירות, שותפות חיובית עם לקוחות', url: '/introduction', category: 'מבוא' },
+        { title: 'למה זה חשוב', description: 'החוויה חשובה יותר מהתיקון - איך לקוחות זוכרים את האופן שבו התייחסו אליהם', url: '/introduction', category: 'מבוא' },
+        
+        // עקרונות יסוד
+        { title: 'עקרונות תקשורת', description: '12 עקרונות יסודיים לתקשורת אפקטיבית מול לקוחות', url: '/core-principles', category: 'עקרונות' },
+        { title: 'בניית אמון', description: 'עקביות, שקיפות ואמינות בכל אינטראקציה עם לקוח', url: '/core-principles', category: 'עקרונות' },
+        { title: 'הקשבה פעילה', description: 'הבנת צרכי הלקוח דרך שיקוף, הבהרה ושאלות מבהירות', url: '/core-principles', category: 'עקרונות' },
+        { title: 'תקשורת ברורה', description: 'שפה חיובית, ישירה ונגישה שנמנעת מז\'רגון ועמימות', url: '/core-principles', category: 'עקרונות' },
+        { title: 'לקיחת אחריות', description: 'הפגנת מנהיגות, אחריות אישית ומחויבות לפתרון הבעיה', url: '/core-principles', category: 'עקרונות' },
+        { title: 'אמפתיה חכמה', description: 'קישור השפעת הבעיה על הלקוח לפעולות מיידיות שאנחנו נוקטים', url: '/core-principles', category: 'עקרונות' },
+        { title: 'עדכונים פרואקטיביים', description: 'עדכון לקוחות לפני שהם שואלים, תקשורת יזומה ושקיפות מלאה', url: '/core-principles', category: 'עקרונות' },
+        { title: 'שבירת קרח', description: 'יצירת אווירה נעימה, בניית קשר אישי וחיבור עם הלקוח', url: '/core-principles', category: 'עקרונות' },
+        { title: 'שאלות מוקדמות', description: 'איסוף מידע קריטי בתחילת השיחה להבנת ההקשר המלא', url: '/core-principles', category: 'עקרונות' },
+        { title: 'תחושת דחיפות', description: 'שידור מחויבות, מהירות וחשיבות בטיפול בבעיית הלקוח', url: '/core-principles', category: 'עקרונות' },
+        { title: 'אחריות משותפת', description: 'שימוש בשפה שיתופית - אנחנו במקום אתם, פתרון משותף', url: '/core-principles', category: 'עקרונות' },
+        { title: 'פתרונות Win-Win', description: 'חיפוש אחר פתרונות שמועילים לשני הצדדים, לא רק לצד אחד', url: '/core-principles', category: 'עקרונות' },
+        { title: 'תגובות מבניות', description: 'כתיבה מסודרת, ברורה ועם מבנה לוגי של עדכונים ופתרונות', url: '/core-principles', category: 'עקרונות' },
+        
+        // משפטים
+        { title: 'משפטים מוכנים', description: 'משפטים מקצועיים לשימוש יומיומי בתקשורת עם לקוחות', url: '/examples', category: 'משפטים' },
+        { title: 'משפטי פתיחה', description: 'איך להתחיל שיחה, לברך לקוח ולהציג את עצמך בצורה מקצועית', url: '/examples', category: 'משפטים' },
+        { title: 'משפטי סגירה', description: 'איך לסיים שיחה בצורה חיובית, מקצועית ונעימה', url: '/examples', category: 'משפטים' },
+        { title: 'התנצלות', description: 'איך להתנצל, לקחת אחריות ולהפגין אמפתיה כלפי הלקוח', url: '/examples', category: 'משפטים' },
+        { title: 'עדכוני סטטוס', description: 'איך לעדכן על התקדמות, סטטוס ושלבים הבאים בצורה ברורה', url: '/examples', category: 'משפטים' },
+        
+        // אסקלציות
+        { title: 'טיפול באסקלציות', description: 'איך להתמודד עם לקוחות כועסים, מתוסכלים ומצבי לחץ', url: '/escalation-response', category: 'אסקלציות' },
+        { title: 'זיהוי מוקדם', description: 'איך לזהות סימני אזהרה ולמנוע הסלמה של המצב', url: '/escalation-response', category: 'אסקלציות' },
+        { title: 'דה-אסקלציה', description: 'טכניקות להרגעת לקוח כועס והורדת המתח', url: '/escalation-response', category: 'אסקלציות' },
+        { title: 'תקשורת בלחץ', description: 'איך לתקשר אפקטיבית כשהלחץ גבוה והמצב מאתגר', url: '/escalation-response', category: 'אסקלציות' },
+        { title: 'לקוח כועס', description: 'איך להגיב ללקוח מתוסכל, כועס או לא שבע רצון', url: '/escalation-response', category: 'אסקלציות' },
+        
+        // מדריך מקוצר
+        { title: 'מדריך מקוצר', description: 'מדריך מהיר לתקשורת מקצועית - טיפים וכלים מעשיים', url: '/communication-guide', category: 'מדריכים' },
+        { title: 'טיפים מהירים', description: 'עצות מהירות לשיפור התקשורת היומיומית עם לקוחות', url: '/communication-guide', category: 'מדריכים' },
+        
+        // משאבים
+        { title: 'משאבים', description: 'כלים, תבניות, צ\'קליסטים ומשאבים נוספים לשיפור התקשורת', url: '/resources', category: 'משאבים' },
+        { title: 'תבניות', description: 'תבניות מוכנות למיילים, עדכונים ותקשורת עם לקוחות', url: '/resources', category: 'משאבים' },
+        { title: 'צ\'קליסט', description: 'רשימות בדיקה לתקשורת אפקטיבית במצבים שונים', url: '/resources', category: 'משאבים' },
+        
+        // משוב
+        { title: 'משוב', description: 'שלח משוב, הצעות לשיפור או דווח על בעיות באתר', url: '/feedback', category: 'משוב' },
+      ];
+    } else {
+      return [
+        // Home
+        { title: 'Home', description: 'Professional customer communication principles - trust, active listening, clear communication, ownership, empathy', url: '/', category: 'Pages' },
+        
+        // Introduction
+        { title: 'Introduction', description: 'What is professional support - trust, ownership, clarity, positive partnership with clients', url: '/introduction', category: 'Introduction' },
+        { title: 'Why This Matters', description: 'Experience matters more than the fix - how clients remember the way they were treated', url: '/introduction', category: 'Introduction' },
+        
+        // Core Principles
+        { title: 'Communication Principles', description: '12 foundational principles for effective client communication', url: '/core-principles', category: 'Principles' },
+        { title: 'Building Trust', description: 'Consistency, transparency and reliability in every client interaction', url: '/core-principles', category: 'Principles' },
+        { title: 'Active Listening', description: 'Understanding client needs through reflection, clarification and probing questions', url: '/core-principles', category: 'Principles' },
+        { title: 'Clear Communication', description: 'Positive, direct and accessible language that avoids jargon and ambiguity', url: '/core-principles', category: 'Principles' },
+        { title: 'Taking Ownership', description: 'Demonstrating leadership, personal responsibility and commitment to solving the problem', url: '/core-principles', category: 'Principles' },
+        { title: 'Smart Empathy', description: 'Linking the problem\'s impact on the client to immediate actions we\'re taking', url: '/core-principles', category: 'Principles' },
+        { title: 'Proactive Updates', description: 'Updating clients before they ask, proactive communication and full transparency', url: '/core-principles', category: 'Principles' },
+        { title: 'Ice Breaking', description: 'Creating a pleasant atmosphere, building personal rapport and connecting with the client', url: '/core-principles', category: 'Principles' },
+        { title: 'Early Questions', description: 'Gathering critical information early in the conversation to understand the full context', url: '/core-principles', category: 'Principles' },
+        { title: 'Sense of Urgency', description: 'Conveying commitment, speed and importance in handling the client\'s issue', url: '/core-principles', category: 'Principles' },
+        { title: 'Shared Responsibility', description: 'Using collaborative language - we instead of you, shared solution', url: '/core-principles', category: 'Principles' },
+        { title: 'Win-Win Solutions', description: 'Seeking solutions that benefit both parties, not just one side', url: '/core-principles', category: 'Principles' },
+        { title: 'Structured Responses', description: 'Organized, clear writing with logical structure for updates and solutions', url: '/core-principles', category: 'Principles' },
+        
+        // Phrases
+        { title: 'Ready-to-Use Phrases', description: 'Professional phrases for daily client communication', url: '/examples', category: 'Phrases' },
+        { title: 'Opening Phrases', description: 'How to start a conversation, greet clients and introduce yourself professionally', url: '/examples', category: 'Phrases' },
+        { title: 'Closing Phrases', description: 'How to end a conversation positively, professionally and pleasantly', url: '/examples', category: 'Phrases' },
+        { title: 'Apology', description: 'How to apologize, take responsibility and show empathy to the client', url: '/examples', category: 'Phrases' },
+        { title: 'Status Updates', description: 'How to update on progress, status and next steps clearly', url: '/examples', category: 'Phrases' },
+        
+        // Escalations
+        { title: 'Handling Escalations', description: 'How to deal with angry, frustrated clients and pressure situations', url: '/escalation-response', category: 'Escalations' },
+        { title: 'Early Detection', description: 'How to identify warning signs and prevent situation escalation', url: '/escalation-response', category: 'Escalations' },
+        { title: 'De-escalation', description: 'Techniques for calming angry clients and reducing tension', url: '/escalation-response', category: 'Escalations' },
+        { title: 'Communication Under Pressure', description: 'How to communicate effectively when pressure is high and situation is challenging', url: '/escalation-response', category: 'Escalations' },
+        { title: 'Angry Client', description: 'How to respond to frustrated, angry or dissatisfied clients', url: '/escalation-response', category: 'Escalations' },
+        
+        // Quick Guide
+        { title: 'Quick Guide', description: 'Fast guide for professional communication - practical tips and tools', url: '/communication-guide', category: 'Guides' },
+        { title: 'Quick Tips', description: 'Fast advice for improving daily communication with clients', url: '/communication-guide', category: 'Guides' },
+        
+        // Resources
+        { title: 'Resources', description: 'Tools, templates, checklists and additional resources for improving communication', url: '/resources', category: 'Resources' },
+        { title: 'Templates', description: 'Ready-made templates for emails, updates and client communication', url: '/resources', category: 'Resources' },
+        { title: 'Checklist', description: 'Checklists for effective communication in various situations', url: '/resources', category: 'Resources' },
+        
+        // Feedback
+        { title: 'Feedback', description: 'Send feedback, improvement suggestions or report site issues', url: '/feedback', category: 'Feedback' },
+      ];
+    }
+  };
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
@@ -51,6 +144,7 @@ export default function SearchBar() {
       return;
     }
 
+    const searchData = getSearchData();
     const filtered = searchData.filter(item =>
       item.title.toLowerCase().includes(query.toLowerCase()) ||
       item.description.toLowerCase().includes(query.toLowerCase())
