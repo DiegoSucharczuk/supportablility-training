@@ -15,6 +15,7 @@ const navItems = {
     { href: '/escalation-response', label: 'Escalations' },
     { href: '/communication-guide', label: 'Quick Guide' },
     { href: '/resources', label: 'Resources' },
+    { href: '/ai-assistant', label: 'AI Assistant' },
     { href: '/feedback', label: 'Feedback' },
   ],
   he: [
@@ -25,6 +26,7 @@ const navItems = {
     { href: '/escalation-response', label: 'טיפול באסקלציות' },
     { href: '/communication-guide', label: 'מדריך מקוצר' },
     { href: '/resources', label: 'משאבים' },
+    { href: '/ai-assistant', label: 'עוזר AI' },
     { href: '/feedback', label: 'משוב' },
   ],
 };
