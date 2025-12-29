@@ -85,6 +85,15 @@ export default function Navigation() {
           </ul>
           
           <div className="flex items-center gap-3">
+            <Link
+              href="/settings"
+              className="px-4 py-2 bg-white/20 backdrop-blur-sm rounded-lg hover:bg-white/30 transition-all duration-300 font-semibold hover:scale-110 shadow-lg border border-white/30 flex items-center gap-2"
+              aria-label={language === 'en' ? 'Settings' : 'הגדרות'}
+              title={language === 'en' ? 'Settings' : 'הגדרות'}
+            >
+              <span className="text-xl">⚙️</span>
+            </Link>
+            
             <button
               onClick={() => setLanguage(language === 'en' ? 'he' : 'en')}
               className="px-5 py-2 bg-white/20 backdrop-blur-sm rounded-lg hover:bg-white/30 transition-all duration-300 font-semibold hover:scale-110 shadow-lg border border-white/30"

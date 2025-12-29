@@ -1,9 +1,10 @@
 import { BedrockRuntimeClient, InvokeModelCommand } from '@aws-sdk/client-bedrock-runtime';
 import { NextRequest, NextResponse } from 'next/server';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(request: NextRequest) {
   try {
-    const { customerComment, yourAnswer, followUpQuestion, chatHistory, modelId: requestModelId } = await request.json();
+    const { customerComment, yourAnswer, followUpQuestion, chatHistory, modelId: requestModelId, findSolutions, credentials, googleApiKey, userName } = await request.json();
 
     if (!customerComment || !yourAnswer) {
       return NextResponse.json(
@@ -12,26 +13,81 @@ export async function POST(request: NextRequest) {
       );
     }
 
+    // Check for credentials from request or environment
+    if (!credentials && !process.env.AWS_ACCESS_KEY_ID) {
+      return NextResponse.json(
+        { error: 'AWS credentials not configured. Please configure them in Settings.' },
+        { status: 401 }
+      );
+    }
+
     // Use AWS Bedrock models
-    const modelId = requestModelId || process.env.BEDROCK_MODEL_ID || 'us.anthropic.claude-3-5-sonnet-20241022-v2:0';
+    const modelId = requestModelId || process.env.BEDROCK_MODEL_ID || 'global.anthropic.claude-sonnet-4-5-20250929-v1:0';
     const clientConfig: any = {
-      region: process.env.AWS_REGION || 'us-east-1',
+      region: credentials?.region || process.env.AWS_REGION || 'us-east-1',
     };
     
-    if (process.env.AWS_BEARER_TOKEN_BEDROCK) {
+    // Priority: request credentials > environment credentials
+    if (credentials?.accessKeyId) {
+      const creds: any = {
+        accessKeyId: credentials.accessKeyId,
+        secretAccessKey: credentials.secretAccessKey,
+      };
+      if (credentials.sessionToken) {
+        creds.sessionToken = credentials.sessionToken;
+      }
+      clientConfig.credentials = creds;
+    } else if (process.env.AWS_BEARER_TOKEN_BEDROCK) {
       clientConfig.token = { token: async () => process.env.AWS_BEARER_TOKEN_BEDROCK! };
     } else if (process.env.AWS_ACCESS_KEY_ID) {
-      const credentials: any = {
+      const envCreds: any = {
         accessKeyId: process.env.AWS_ACCESS_KEY_ID,
         secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY!,
       };
       if (process.env.AWS_SESSION_TOKEN) {
-        credentials.sessionToken = process.env.AWS_SESSION_TOKEN;
+        envCreds.sessionToken = process.env.AWS_SESSION_TOKEN;
       }
-      clientConfig.credentials = credentials;
+      clientConfig.credentials = envCreds;
     }
 
     const client = new BedrockRuntimeClient(clientConfig);
+
+    // If findSolutions is enabled, search for technical solutions
+    let technicalSolutions = '';
+    if (findSolutions) {
+      try {
+        const apiKey = googleApiKey || process.env.GOOGLE_AI_API_KEY;
+        if (apiKey) {
+          const genAI = new GoogleGenerativeAI(apiKey);
+          const model = genAI.getGenerativeModel({ 
+            model: 'gemini-1.5-flash',
+            generationConfig: {
+              temperature: 0.7,
+              maxOutputTokens: 2000,
+            }
+          });
+
+          const searchQuery = `Based on this technical issue, find solutions from CyberArk documentation (https://docs.cyberark.com) and technical forums:
+
+Customer Issue: ${customerComment}
+
+Please search for:
+1. CyberArk official documentation related to this issue
+2. Known solutions or workarounds
+3. Similar cases and their resolutions
+4. Configuration recommendations
+
+Provide sources and links where possible.`;
+
+          const searchResult = await model.generateContent(searchQuery);
+          const response = await searchResult.response;
+          technicalSolutions = response.text();
+        }
+      } catch (searchError) {
+        console.error('Search error:', searchError);
+        technicalSolutions = 'Technical solution search unavailable at this time.';
+      }
+    }
 
     // Enhanced system prompt with better formatting instructions
     const systemPrompt = `You are a communication coach analyzing technical support responses.
@@ -124,9 +180,28 @@ If the customer cannot proceed until we present a full solution, please ask them
 Thank you for your collaboration. Please let me know if you require any additional clarification.
 
 Best regards,
-[Your Name]
+${userName || '[Your Name]'}
 
-STOP HERE. Write nothing after the signature.`;
+STOP HERE. Write nothing after the signature.
+
+CRITICAL INSTRUCTION FOR DATA REQUESTS:
+When asking the customer for information, use this EXACT format for EACH question:
+
+**Question:**
+[The actual question]
+
+**Why this is needed:**
+[Explain why you need this specific information]
+
+Example:
+**Question:**
+How was the Application originally created? (Manually via PVWA / Via REST API / Via automation)
+
+**Why this is needed:**
+Applications created via REST/API or automation are more susceptible to malformed data if input validation is not enforced.
+
+Do NOT group questions by priority. Each question must have its "Why this is needed" explanation immediately after it.
+Use clear, professional, empathetic tone. Be concise but thorough in explanations.`;
 
     let userPrompt: string;
     
@@ -146,9 +221,25 @@ Please answer the follow-up question in the context of the original analysis and
 ${customerComment}
 
 **Support Response to Analyze:**
-${yourAnswer}
+${yourAnswer}`;
 
-Please analyze this response against the 12 principles and provide detailed feedback.
+      // Add technical solutions if found
+      if (technicalSolutions) {
+        userPrompt += `\n\n**📚 IMPORTANT - Technical Solutions Research Results:**
+The AI has searched CyberArk documentation and the web. Below are the findings:
+
+${technicalSolutions}
+
+CRITICAL INSTRUCTION: You MUST include a section called "## 📚 Technical Solutions Found" in your response that:
+1. Summarizes the key technical solutions discovered
+2. Lists relevant CyberArk documentation links
+3. Provides specific configuration recommendations
+4. Cites sources from the search results above
+
+This section should appear BEFORE the "Improved Response" section.`;
+      }
+
+      userPrompt += `\n\nPlease analyze this response against the 12 principles and provide detailed feedback.
 
 REMEMBER: Each principle in the checklist must be on its own line with proper spacing.`;
     }

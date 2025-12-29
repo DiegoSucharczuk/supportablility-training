@@ -1,7 +1,8 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useLanguage } from '@/context/LanguageContext';
+import { useSettings } from '@/context/SettingsContext';
 import Breadcrumbs from '@/components/Breadcrumbs';
 import ScrollToTop from '@/components/ScrollToTop';
 import ReactMarkdown from 'react-markdown';
@@ -16,6 +17,130 @@ function LoadingSpinner() {
       <div className="absolute inset-2 rounded-full border-4 border-t-purple-500 border-r-blue-500 animate-spin" style={{ animationDirection: 'reverse', animationDuration: '1s' }}></div>
     </div>
   );
+}
+
+// Sanitization function
+function sanitizeText(text: string): { sanitized: string; stats: { domains: number; ips: number; emails: number; servers: number }; replacements: Map<string, string> } {
+  let sanitized = text;
+  const stats = { domains: 0, ips: 0, emails: 0, servers: 0 };
+  const replacements = new Map<string, string>();
+
+  // Replace email addresses
+  const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
+  const emails = text.match(emailRegex) || [];
+  stats.emails = emails.length;
+  let emailCounter = 0;
+  sanitized = sanitized.replace(emailRegex, (match) => {
+    const replacement = emailCounter === 0 ? 'user@company.com' : `user${emailCounter}@company.com`;
+    replacements.set(replacement, match);
+    emailCounter++;
+    return replacement;
+  });
+
+  // Replace IP addresses
+  const ipRegex = /\b(?:\d{1,3}\.){3}\d{1,3}\b/g;
+  const ips = text.match(ipRegex) || [];
+  stats.ips = ips.length;
+  let ipCounter = 0;
+  sanitized = sanitized.replace(ipRegex, (match) => {
+    const replacement = `10.0.0.${ipCounter + 1}`;
+    replacements.set(replacement, match);
+    ipCounter++;
+    return replacement;
+  });
+
+  // Replace domain names (after @ and standalone FQDNs)
+  const domainRegex = /\b(?:[a-zA-Z0-9-]+\.)+(?:com|net|org|int|local|corp|io|co|uk|us|de|fr|il)\b/gi;
+  const domains = [...new Set((text.match(domainRegex) || []).map(d => d.toLowerCase()))];
+  stats.domains = domains.length;
+  
+  // Create consistent replacements for each unique domain
+  const domainReplacements: { [key: string]: string } = {};
+  domains.forEach((domain, index) => {
+    const parts = domain.split('.');
+    const replacement = `server${index > 0 ? index : ''}.company.${parts[parts.length - 1]}`;
+    domainReplacements[domain.toLowerCase()] = replacement;
+  });
+  
+  sanitized = sanitized.replace(domainRegex, (match) => {
+    const replacement = domainReplacements[match.toLowerCase()];
+    if (replacement) {
+      replacements.set(replacement, match);
+      return replacement;
+    }
+    return match;
+  });
+
+  // Replace server/hostname patterns (uppercase alphanumeric combinations)
+  const serverRegex = /\b[A-Z]{2,}[A-Z0-9]{3,}\b/g;
+  const servers = [...new Set(text.match(serverRegex) || [])];
+  stats.servers = servers.length;
+  servers.forEach((server, index) => {
+    const replacement = `SERVER${String(index + 1).padStart(2, '0')}`;
+    const regex = new RegExp(`\\b${server}\\b`, 'g');
+    sanitized = sanitized.replace(regex, replacement);
+    replacements.set(replacement, server);
+  });
+
+  // Replace common customer/people names (case-insensitive but preserve in map)
+  const namePatterns = [
+    { pattern: /\bbarclays\b/gi, replacement: 'CompanyABC' },
+    { pattern: /\bdaniel\b/gi, replacement: 'ContactPerson' },
+    { pattern: /\bmanuel\b/gi, replacement: 'EngineerName' },
+  ];
+  
+  namePatterns.forEach(({ pattern, replacement }) => {
+    const matches = text.match(pattern) || [];
+    if (matches.length > 0 && matches[0]) {
+      // Store original with exact case from first match
+      console.log(`Sanitizing: "${matches[0]}" -> "${replacement}"`);
+      replacements.set(replacement, matches[0]);
+      sanitized = sanitized.replace(pattern, replacement);
+    }
+  });
+
+  console.log('Sanitization complete. Replacements:', Array.from(replacements.entries()));
+  return { sanitized, stats, replacements };
+}
+
+// De-sanitization function - restore original data
+function restoreOriginalData(text: string, replacementMap: Map<string, string>): string {
+  let restored = text;
+  
+  console.log('De-sanitizing with map:', Array.from(replacementMap.entries()));
+  
+  // Sort by length descending to replace longer strings first (avoid partial replacements)
+  const sortedEntries = Array.from(replacementMap.entries()).sort((a, b) => b[0].length - a[0].length);
+  
+  sortedEntries.forEach(([sanitized, original]) => {
+    // Replace all occurrences regardless of case
+    // Use a function to preserve context but replace with original
+    const escapedSanitized = sanitized.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const regex = new RegExp(escapedSanitized, 'gi');
+    const matches = restored.match(regex);
+    if (matches) {
+      console.log(`Replacing "${sanitized}" with "${original}" (found ${matches.length} occurrences)`);
+      restored = restored.replace(regex, original);
+    } else {
+      console.log(`No matches found for "${sanitized}"`);
+    }
+  });
+  
+  console.log('De-sanitization complete');
+  return restored;
+}
+
+// Highlight differences component
+function HighlightedText({ text, highlights }: { text: string; highlights: string[] }) {
+  if (highlights.length === 0) return <span>{text}</span>;
+  
+  let result = text;
+  highlights.forEach(highlight => {
+    const regex = new RegExp(`(${highlight.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+    result = result.replace(regex, '<mark class="bg-yellow-200 px-1 rounded">$1</mark>');
+  });
+  
+  return <span dangerouslySetInnerHTML={{ __html: result }} />;
 }
 
 // Copy Button Component
@@ -53,6 +178,7 @@ function CopyButton({ text, language }: { text: string; language: 'en' | 'he' })
 
 export default function AIAssistant() {
   const { language } = useLanguage();
+  const { settings, isConfigured } = useSettings();
   const [customerQuestion, setCustomerQuestion] = useState('');
   const [engineerAnswer, setEngineerAnswer] = useState('');
   const [analysis, setAnalysis] = useState('');
@@ -65,6 +191,14 @@ export default function AIAssistant() {
   const [selectedModel, setSelectedModel] = useState('global.anthropic.claude-sonnet-4-5-20250929-v1:0');
   const [loadingStage, setLoadingStage] = useState(0);
   const [demoTimeout, setDemoTimeout] = useState<NodeJS.Timeout | null>(null);
+  const [findSolutions, setFindSolutions] = useState(false);
+  const [showSanitizationModal, setShowSanitizationModal] = useState(false);
+  const [sanitizedQuestion, setSanitizedQuestion] = useState('');
+  const [sanitizedAnswer, setSanitizedAnswer] = useState('');
+  const [sanitizationStats, setSanitizationStats] = useState({ domains: 0, ips: 0, emails: 0, servers: 0 });
+  const [replacementMap, setReplacementMap] = useState<Map<string, string>>(new Map());
+  const [collapsedSections, setCollapsedSections] = useState<Set<number>>(new Set([100])); // 100 = Principle Checklist index
+  const [isEditingMaskedData, setIsEditingMaskedData] = useState(false);
 
   // Available models (only those with IAM permissions)
   const models = [
@@ -74,27 +208,6 @@ export default function AIAssistant() {
       description: 'Latest Sonnet model with enhanced capabilities',
       badge: '🏆 Recommended',
       color: 'purple'
-    },
-    {
-      id: 'global.anthropic.claude-haiku-4-5-20251001-v1:0',
-      name: 'Claude Haiku 4.5',
-      description: 'Fast and efficient, great for quick analysis',
-      badge: '⚡ Fast',
-      color: 'teal'
-    },
-    {
-      id: 'amazon.nova-pro-v1:0',
-      name: 'Amazon Nova Pro',
-      description: 'Good quality, lower cost',
-      badge: '💰 Budget',
-      color: 'blue'
-    },
-    {
-      id: 'amazon.titan-text-express-v1',
-      name: 'Amazon Titan Express',
-      description: 'Fast but less reliable formatting',
-      badge: '⚠️ Experimental',
-      color: 'orange'
     }
   ];
 
@@ -139,19 +252,38 @@ export default function AIAssistant() {
       setElapsedTime(0);
       setLoadingStage(0);
       interval = setInterval(() => {
-        setElapsedTime(prev => {
-          const newTime = prev + 1;
-          // Progress through stages
-          if (newTime === 2) setLoadingStage(1);
-          else if (newTime === 5) setLoadingStage(2);
-          else if (newTime === 10) setLoadingStage(3);
-          else if (newTime === 15) setLoadingStage(4);
-          return newTime;
-        });
+        setElapsedTime(prev => prev + 1);
       }, 1000);
     }
     return () => clearInterval(interval);
   }, [isLoading]);
+
+  // Separate effect for updating loading stages based on elapsed time
+  useEffect(() => {
+    if (!isLoading) return;
+    
+    const maxStage = findSolutions ? 5 : 4;
+    
+    if (elapsedTime === 2 && loadingStage < 1) setLoadingStage(1);
+    else if (elapsedTime === 5 && loadingStage < 2) setLoadingStage(2);
+    else if (elapsedTime === 10 && loadingStage < 3) setLoadingStage(3);
+    else if (elapsedTime === 15 && loadingStage < 4) setLoadingStage(4);
+    else if (elapsedTime === 20 && loadingStage < maxStage) setLoadingStage(maxStage);
+  }, [isLoading, elapsedTime, findSolutions, loadingStage]);
+
+  // Auto-collapse Principle Checklist section when analysis is received
+  useEffect(() => {
+    if (analysis) {
+      const sections = parseAnalysis(analysis);
+      const principleIdx = sections.findIndex(s => 
+        s.title.toLowerCase().includes('principle checklist') || 
+        s.title.toLowerCase().includes('עקרונות')
+      );
+      if (principleIdx >= 0) {
+        setCollapsedSections(new Set([principleIdx]));
+      }
+    }
+  }, [analysis]);
 
   const handleAnalyze = async () => {
     if (!customerQuestion.trim() || !engineerAnswer.trim()) {
@@ -159,6 +291,31 @@ export default function AIAssistant() {
       return;
     }
 
+    // Sanitize the inputs
+    const questionResult = sanitizeText(customerQuestion);
+    const answerResult = sanitizeText(engineerAnswer);
+    
+    setSanitizedQuestion(questionResult.sanitized);
+    setSanitizedAnswer(answerResult.sanitized);
+    setSanitizationStats({
+      domains: questionResult.stats.domains + answerResult.stats.domains,
+      ips: questionResult.stats.ips + answerResult.stats.ips,
+      emails: questionResult.stats.emails + answerResult.stats.emails,
+      servers: questionResult.stats.servers + answerResult.stats.servers,
+    });
+    
+    // Merge replacement maps from both question and answer
+    const mergedReplacements = new Map<string, string>();
+    questionResult.replacements.forEach((value, key) => mergedReplacements.set(key, value));
+    answerResult.replacements.forEach((value, key) => mergedReplacements.set(key, value));
+    setReplacementMap(mergedReplacements);
+    
+    // Show sanitization modal
+    setShowSanitizationModal(true);
+  };
+
+  const handleApproveAndAnalyze = async () => {
+    setShowSanitizationModal(false);
     setIsLoading(true);
     setError('');
     setAnalysis('');
@@ -172,9 +329,13 @@ export default function AIAssistant() {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
-          customerComment: customerQuestion, 
-          yourAnswer: engineerAnswer,
-          modelId: selectedModel
+          customerComment: sanitizedQuestion, 
+          yourAnswer: sanitizedAnswer,
+          modelId: selectedModel,
+          findSolutions: findSolutions,
+          credentials: settings.awsCredentials,
+          googleApiKey: settings.googleApiKey,
+          userName: settings.userName || 'Support Engineer'
         }),
         signal: controller.signal,
       });
@@ -186,7 +347,15 @@ export default function AIAssistant() {
         throw new Error(data.error || 'Failed to analyze');
       }
 
-      setAnalysis(data.analysis);
+      // Restore original customer data in the AI response
+      console.log('About to restore data. Replacement map has', replacementMap.size, 'entries');
+      console.log('Replacement map entries:', Array.from(replacementMap.entries()));
+      console.log('AI response before restoration (first 200 chars):', data.analysis.substring(0, 200));
+      
+      const restoredAnalysis = restoreOriginalData(data.analysis, replacementMap);
+      
+      console.log('AI response after restoration (first 200 chars):', restoredAnalysis.substring(0, 200));
+      setAnalysis(restoredAnalysis);
     } catch (err: any) {
       if (err.name === 'AbortError') {
         setError(language === 'he' ? 'הניתוח בוטל' : 'Analysis cancelled');
@@ -506,6 +675,14 @@ CyberArk Technical Support
       demoButton: '🎬 Show Full Demo',
       loadingStages: [
         '🔍 Reading your message...',
+        '🔍 Searching CyberArk docs & web...',
+        '🤔 Analyzing communication style...',
+        '📋 Checking against 24 principles...',
+        '✨ Generating improvements...',
+        '📝 Finalizing analysis...'
+      ],
+      loadingStagesNoSearch: [
+        '🔍 Reading your message...',
         '🤔 Analyzing communication style...',
         '📋 Checking against 24 principles...',
         '✨ Generating improvements...',
@@ -530,6 +707,14 @@ CyberArk Technical Support
       demoButton: '🎬 הצג דוגמה מלאה',
       cancelButton: '⏹ ביטול',
       loadingStages: [
+        '🔍 קורא את ההודעה שלך...',
+        '🔍 מחפש בתיעוד CyberArk ובאינטרנט...',
+        '🤔 מנתח סגנון תקשורת...',
+        '📋 בודק מול 24 עקרונות...',
+        '✨ יוצר שיפורים...',
+        '📝 מסיים ניתוח...'
+      ],
+      loadingStagesNoSearch: [
         '🔍 קורא את ההודעה שלך...',
         '🤔 מנתח סגנון תקשורת...',
         '📋 בודק מול 24 עקרונות...',
@@ -575,6 +760,31 @@ CyberArk Technical Support
           {t.subtitle}
         </p>
       </div>
+
+      {/* Credentials Warning Banner */}
+      {!isConfigured && (
+        <div className="mb-8 bg-yellow-50 border-2 border-yellow-300 rounded-xl p-6 animate-bounce-in">
+          <div className="flex items-start gap-4">
+            <span className="text-3xl">⚠️</span>
+            <div className="flex-1">
+              <h3 className="text-lg font-bold text-yellow-900 mb-2">
+                {language === 'en' ? 'AWS Credentials Not Configured' : 'פרטי חיבור AWS לא מוגדרים'}
+              </h3>
+              <p className="text-yellow-800 mb-4">
+                {language === 'en' 
+                  ? 'To use the AI Assistant, you need to configure your AWS Bedrock credentials in Settings.' 
+                  : 'כדי להשתמש בעוזר ה-AI, עליך להגדיר את פרטי החיבור ל-AWS Bedrock בהגדרות.'}
+              </p>
+              <a
+                href="/settings"
+                className="inline-block px-6 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-all font-semibold"
+              >
+                {language === 'en' ? '⚙️ Go to Settings' : '⚙️ עבור להגדרות'}
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Model Selector */}
       <div className="mb-8">
@@ -627,6 +837,31 @@ CyberArk Technical Support
           </div>
         </div>
 
+        {/* Options Checkboxes */}
+        <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-xl shadow-lg p-6 animate-fade-in">
+          <div className="flex items-start gap-3">
+            <input
+              type="checkbox"
+              id="findSolutions"
+              checked={findSolutions}
+              onChange={(e) => setFindSolutions(e.target.checked)}
+              className="mt-1 w-5 h-5 text-blue-600 rounded focus:ring-2 focus:ring-blue-500"
+              disabled={isLoading}
+            />
+            <label htmlFor="findSolutions" className="flex-1 cursor-pointer">
+              <div className="text-lg font-semibold text-gray-800 mb-1">
+                🔍 {language === 'he' ? 'חפש פתרונות טכניים' : 'Find Technical Solutions'}
+              </div>
+              <p className="text-sm text-gray-600">
+                {language === 'he'
+                  ? 'AI יחפש באינטרנט ובתיעוד CyberArk למצוא פתרונות טכניים לבעיה. התוצאות יוצגו יחד עם ניתוח התקשורת.'
+                  : 'AI will search the internet and CyberArk documentation to find technical solutions. Results will be shown along with communication analysis.'
+                }
+              </p>
+            </label>
+          </div>
+        </div>
+
         {/* Action Buttons */}
         <div className="flex gap-4 animate-fade-in">
           {!isLoading ? (
@@ -658,7 +893,7 @@ CyberArk Technical Support
                   <LoadingSpinner />
                   <div className="flex flex-col gap-2">
                     <div className="text-lg font-semibold animate-pulse">
-                      {t.loadingStages[loadingStage]}
+                      {(findSolutions ? t.loadingStages : t.loadingStagesNoSearch)[loadingStage]}
                     </div>
                     <div className="flex items-center gap-3">
                       <div className="text-sm opacity-90">
@@ -710,14 +945,41 @@ CyberArk Technical Support
             </div>
           </div>
           
-          {parseAnalysis(analysis).map((section, idx) => (
+          {parseAnalysis(analysis).map((section, idx) => {
+            const isPrincipleChecklist = section.title.toLowerCase().includes('principle checklist') || section.title.toLowerCase().includes('עקרונות');
+            const isCollapsed = collapsedSections.has(idx);
+            const shouldShowCopy = !section.title.toLowerCase().includes('what was done well') && 
+                                   !section.title.toLowerCase().includes('areas needing improvement') &&
+                                   !section.title.toLowerCase().includes('מה נעשה טוב') &&
+                                   !section.title.toLowerCase().includes('תחומים');
+            
+            const toggleCollapse = () => {
+              setCollapsedSections(prev => {
+                const newSet = new Set(prev);
+                if (newSet.has(idx)) {
+                  newSet.delete(idx);
+                } else {
+                  newSet.add(idx);
+                }
+                return newSet;
+              });
+            };
+            
+            return (
             <div key={idx} className="bg-white rounded-xl shadow-lg p-6 animate-slide-in-left border-l-4 border-blue-500">
               <div className="flex items-start justify-between mb-4">
-                <h3 className="text-2xl font-bold text-blue-600 flex items-center gap-2">
+                <h3 
+                  className={`text-2xl font-bold text-blue-600 flex items-center gap-2 ${isPrincipleChecklist ? 'cursor-pointer hover:text-blue-700' : ''}`}
+                  onClick={() => isPrincipleChecklist && toggleCollapse()}
+                >
+                  {isPrincipleChecklist && (
+                    <span className="text-lg">{isCollapsed ? '▶' : '▼'}</span>
+                  )}
                   {section.title}
                 </h3>
-                <CopyButton text={section.content.trim()} language={language} />
+                {shouldShowCopy && <CopyButton text={section.content.trim()} language={language} />}
               </div>
+              {(!isPrincipleChecklist || !isCollapsed) && (
               <div className="prose prose-lg max-w-none text-gray-800" dir="auto" style={{ textAlign: 'start', wordBreak: 'break-word', overflowWrap: 'anywhere' }}>
                 <ReactMarkdown
                   remarkPlugins={[remarkBreaks]}
@@ -733,8 +995,10 @@ CyberArk Technical Support
                   {section.content.replace(/([^\n])\n(###)/g, '$1\n\n$2')}
                 </ReactMarkdown>
               </div>
+              )}
             </div>
-          ))}
+            );
+          })}
 
           {/* Chat Section */}
           <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl shadow-lg p-6 animate-fade-in border-2 border-indigo-200">
@@ -801,6 +1065,167 @@ CyberArk Technical Support
           }
         </p>
       </div>
+
+      {/* Sanitization Preview Modal */}
+      {showSanitizationModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-6xl w-full max-h-[90vh] overflow-y-auto animate-scale-in">
+            {/* Modal Header */}
+            <div className="bg-gradient-to-r from-blue-600 to-purple-600 text-white p-6 rounded-t-2xl sticky top-0 z-10">
+              <h2 className="text-2xl font-bold mb-2">
+                🔒 {language === 'he' ? 'תצוגה מקדימה של נתונים לשליחה' : 'Data Sanitization Preview'}
+              </h2>
+              <p className="text-blue-100">
+                {language === 'he' 
+                  ? 'סקור את הנתונים שיישלחו ל-AI. מידע רגיש הוסר/הוחלף כדי להגן על פרטיות הלקוח.'
+                  : 'Review the data that will be sent to AI. Sensitive information has been removed/replaced to protect customer privacy.'
+                }
+              </p>
+            </div>
+
+            {/* Stats Summary */}
+            <div className="p-6 bg-gray-50 border-b">
+              <div className="flex flex-wrap gap-4 justify-center">
+                <div className="bg-white px-4 py-2 rounded-lg shadow">
+                  <span className="text-2xl">🌐</span>
+                  <span className="ml-2 font-semibold">{sanitizationStats.domains}</span>
+                  <span className="ml-1 text-sm text-gray-600">
+                    {language === 'he' ? 'דומיינים' : 'Domains'}
+                  </span>
+                </div>
+                <div className="bg-white px-4 py-2 rounded-lg shadow">
+                  <span className="text-2xl">📧</span>
+                  <span className="ml-2 font-semibold">{sanitizationStats.emails}</span>
+                  <span className="ml-1 text-sm text-gray-600">
+                    {language === 'he' ? 'אימיילים' : 'Emails'}
+                  </span>
+                </div>
+                <div className="bg-white px-4 py-2 rounded-lg shadow">
+                  <span className="text-2xl">🖥️</span>
+                  <span className="ml-2 font-semibold">{sanitizationStats.servers}</span>
+                  <span className="ml-1 text-sm text-gray-600">
+                    {language === 'he' ? 'שרתים' : 'Servers'}
+                  </span>
+                </div>
+                <div className="bg-white px-4 py-2 rounded-lg shadow">
+                  <span className="text-2xl">📍</span>
+                  <span className="ml-2 font-semibold">{sanitizationStats.ips}</span>
+                  <span className="ml-1 text-sm text-gray-600">
+                    {language === 'he' ? 'כתובות IP' : 'IP Addresses'}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Comparison View */}
+            <div className="p-6">
+              {/* Customer Question Comparison */}
+              <div className="mb-8">
+                <h3 className="text-lg font-bold text-gray-800 mb-4">
+                  📋 {language === 'he' ? 'שאלת הלקוח' : 'Customer Question'}
+                </h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <div className="text-sm font-semibold text-gray-600 mb-2 flex items-center gap-2">
+                      <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">
+                        {language === 'he' ? 'מקורי' : 'Original'}
+                      </span>
+                      {language === 'he' ? 'טקסט מקורי' : 'Original Text'}
+                    </div>
+                    <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-4 h-64 overflow-y-auto whitespace-pre-wrap text-sm">
+                      {customerQuestion}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-gray-600 mb-2 flex items-center gap-2">
+                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">
+                        {language === 'he' ? 'מנוקה' : 'Sanitized'}
+                      </span>
+                      {language === 'he' ? 'נשלח ל-AI' : 'Sent to AI'}
+                    </div>
+                    {isEditingMaskedData ? (
+                      <textarea
+                        value={sanitizedQuestion}
+                        onChange={(e) => setSanitizedQuestion(e.target.value)}
+                        className="w-full bg-green-50 border-2 border-green-400 rounded-lg p-4 h-64 overflow-y-auto text-sm focus:ring-2 focus:ring-green-500 outline-none"
+                      />
+                    ) : (
+                      <div className="bg-green-50 border-2 border-green-200 rounded-lg p-4 h-64 overflow-y-auto whitespace-pre-wrap text-sm">
+                        {sanitizedQuestion}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Engineer Answer Comparison */}
+              <div>
+                <h3 className="text-lg font-bold text-gray-800 mb-4">
+                  ✍️ {language === 'he' ? 'תשובת המהנדס' : 'Engineer Answer'}
+                </h3>
+                <div className="grid md:grid-cols-2 gap-4">
+                  <div>
+                    <div className="text-sm font-semibold text-gray-600 mb-2 flex items-center gap-2">
+                      <span className="bg-yellow-100 text-yellow-800 px-2 py-1 rounded text-xs">
+                        {language === 'he' ? 'מקורי' : 'Original'}
+                      </span>
+                      {language === 'he' ? 'טקסט מקורי' : 'Original Text'}
+                    </div>
+                    <div className="bg-gray-50 border-2 border-gray-200 rounded-lg p-4 h-64 overflow-y-auto whitespace-pre-wrap text-sm">
+                      {engineerAnswer}
+                    </div>
+                  </div>
+                  <div>
+                    <div className="text-sm font-semibold text-gray-600 mb-2 flex items-center gap-2">
+                      <span className="bg-green-100 text-green-800 px-2 py-1 rounded text-xs">
+                        {language === 'he' ? 'מנוקה' : 'Sanitized'}
+                      </span>
+                      {language === 'he' ? 'נשלח ל-AI' : 'Sent to AI'}
+                    </div>
+                    {isEditingMaskedData ? (
+                      <textarea
+                        value={sanitizedAnswer}
+                        onChange={(e) => setSanitizedAnswer(e.target.value)}
+                        className="w-full bg-green-50 border-2 border-green-400 rounded-lg p-4 h-64 overflow-y-auto text-sm focus:ring-2 focus:ring-green-500 outline-none"
+                      />
+                    ) : (
+                      <div className="bg-green-50 border-2 border-green-200 rounded-lg p-4 h-64 overflow-y-auto whitespace-pre-wrap text-sm">
+                        {sanitizedAnswer}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex gap-4 mt-8 justify-end">
+                <button
+                  onClick={() => setShowSanitizationModal(false)}
+                  className="px-6 py-3 bg-gray-200 text-gray-700 rounded-xl font-semibold hover:bg-gray-300 transition-all"
+                >
+                  ❌ {language === 'he' ? 'ביטול' : 'Cancel'}
+                </button>
+                <button
+                  onClick={() => setIsEditingMaskedData(!isEditingMaskedData)}
+                  className={`px-6 py-3 rounded-xl font-semibold transition-all ${
+                    isEditingMaskedData 
+                      ? 'bg-green-100 text-green-700 hover:bg-green-200' 
+                      : 'bg-blue-100 text-blue-700 hover:bg-blue-200'
+                  }`}
+                >
+                  {isEditingMaskedData ? '✓' : '✏️'} {language === 'he' ? (isEditingMaskedData ? 'סיימתי עריכה' : 'ערוך נתונים מנוקים') : (isEditingMaskedData ? 'Done Editing' : 'Edit Sanitized')}
+                </button>
+                <button
+                  onClick={handleApproveAndAnalyze}
+                  className="px-8 py-3 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all"
+                >
+                  ✅ {language === 'he' ? 'אשר ונתח' : 'Approve & Analyze'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </main>
   );
 }

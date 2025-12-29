@@ -4,6 +4,7 @@ import Footer from "@/components/Footer";
 import { LanguageProvider } from "@/context/LanguageContext";
 import { AuthProvider } from "@/context/AuthContext";
 import { BookmarksProvider } from "@/context/BookmarksContext";
+import { SettingsProvider } from "@/context/SettingsContext";
 import ProtectedLayout from "@/components/ProtectedLayout";
 import ScrollToTop from "@/components/ScrollToTop";
 import TextHighlighter from "@/components/TextHighlighter";
@@ -40,16 +41,18 @@ export default function RootLayout({
       <body className="flex flex-col min-h-screen bg-gradient-to-br from-gray-50 via-blue-50 to-purple-50" suppressHydrationWarning>
         <AuthProvider>
           <LanguageProvider>
-            <BookmarksProvider>
-              <ProtectedLayout>
-                <Suspense fallback={null}>
-                  <TextHighlighter />
-                </Suspense>
-                <div className="flex-grow animate-fade-in">{children}</div>
-                <Footer />
-                <ScrollToTop />
-              </ProtectedLayout>
-            </BookmarksProvider>
+            <SettingsProvider>
+              <BookmarksProvider>
+                <ProtectedLayout>
+                  <Suspense fallback={null}>
+                    <TextHighlighter />
+                  </Suspense>
+                  <div className="flex-grow animate-fade-in">{children}</div>
+                  <Footer />
+                  <ScrollToTop />
+                </ProtectedLayout>
+              </BookmarksProvider>
+            </SettingsProvider>
           </LanguageProvider>
         </AuthProvider>
       </body>
