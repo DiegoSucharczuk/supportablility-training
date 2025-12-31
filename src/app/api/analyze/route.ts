@@ -219,78 +219,75 @@ The 13 principles to evaluate:
 
 OUTPUT FORMAT (follow this EXACTLY):
 
+CRITICAL: BE CONCISE - Use short bullets, not paragraphs
+
 ## What Was Done Well
 
-- Point 1
-- Point 2
-- Point 3
+- [Brief point - max 10 words]
+- [Brief point - max 10 words]
+- [Brief point - max 10 words]
 
 ## Areas Needing Improvement
 
-- Point 1
-- Point 2
-- Point 3
+- [Brief point - max 10 words]
+- [Brief point - max 10 words]  
+- [Brief point - max 10 words]
 
 ## Principle Checklist
 
-**1. Building Trust:** ✓ or ⚠️ Brief comment
+**1. Building Trust:** ✓ or ⚠️ [5 words max]
 
-**2. Active Listening:** ✓ or ⚠️ Brief comment
+**2. Active Listening:** ✓ or ⚠️ [5 words max]
 
-**3. Clear Communication:** ✓ or ⚠️ Brief comment
+**3. Clear Communication:** ✓ or ⚠️ [5 words max]
 
-**4. Taking Ownership:** ✓ or ⚠️ Brief comment
+**4. Taking Ownership:** ✓ or ⚠️ [5 words max]
 
-**5. Smart Empathy:** ✓ or ⚠️ Brief comment
+**5. Smart Empathy:** ✓ or ⚠️ [5 words max]
 
-**6. Proactive Updates:** ✓ or ⚠️ Brief comment
+**6. Proactive Updates:** ✓ or ⚠️ [5 words max]
 
-**7. Ice Breaking:** ✓ or ⚠️ Brief comment
+**7. Ice Breaking:** ✓ or ⚠️ [5 words max]
 
-**8. Early Questions:** ✓ or ⚠️ Brief comment
+**8. Early Questions:** ✓ or ⚠️ [5 words max]
 
-**9. Sense of Urgency:** ✓ or ⚠️ Brief comment
+**9. Sense of Urgency:** ✓ or ⚠️ [5 words max]
 
-**10. Shared Responsibility:** ✓ or ⚠️ Brief comment
+**10. Shared Responsibility:** ✓ or ⚠️ [5 words max]
 
-**11. Win-Win Solutions:** ✓ or ⚠️ Brief comment
+**11. Win-Win Solutions:** ✓ or ⚠️ [5 words max]
 
-**12. Structured Responses:** ✓ or ⚠️ Brief comment
+**12. Structured Responses:** ✓ or ⚠️ [5 words max]
 
-**13. Terminology Mirroring:** ✓ or ⚠️ Did the response use the same terminology (question/issue/problem/behavior) as the customer? Brief comment
+**13. Terminology Mirroring:** ✓ or ⚠️ [5 words max]
 
 ## Improved Response
 
+CRITICAL REQUIREMENTS:
+- Maximum 2000 characters (Salesforce comment limit)
+- BE CONCISE - every word counts
+- DON'T repeat the customer's full problem description
+- ONE brief sentence acknowledging the issue
+- SHORT explanations (2-3 sentences max)
+- MINIMAL pleasantries - get to the point
+
 Hi [Name],
 
-I understand that [restate the problem showing you listened].
+I understand the [brief issue type - 5 words max].
 
-[Explain what happened - 2-3 sentences about root cause]
-
-[Explain what this means - why it's causing the problem]
+[Root cause in 1-2 sentences - NO MORE]
 
 ### Next Steps:
-• [Action 1 - what we're doing]
-• [Action 2 - what we're doing]
-• [Action 3 - what we're doing]
+• [Action 1]
+• [Action 2]
+• [Action 3]
 
-I'll update you within [timeframe] with findings.
-
-### In the meantime:
-If the customer cannot proceed until we present a full solution, please ask them to:
-• [Customer action 1]
-• [Customer action 2]
-• [Customer action 3]
-
-### Internal note to support:
-[Guidance for support team]
-
-Thank you for your collaboration. Please let me know if you require any additional clarification.
+I'll update you within [timeframe].
 
 Best regards,
 ${userName || '[Your Name]'}
 
-STOP HERE. Write nothing after the signature.
+STOP HERE. No additional text after signature.
 
 CRITICAL INSTRUCTION FOR DATA REQUESTS:
 When asking the customer for information, use this EXACT format for EACH question:
