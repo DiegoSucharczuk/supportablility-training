@@ -271,6 +271,14 @@ CRITICAL REQUIREMENTS:
 - SHORT explanations (2-3 sentences max)
 - MINIMAL pleasantries - get to the point
 
+GRAMMAR & STYLE:
+- Use proper articles: "the authentication service" NOT "authentication service"
+- Include helping verbs: "operations are functioning" NOT "operations functioning"
+- Write numbers 1-10 as words: "seven secrets" NOT "7 secrets"
+- Brand names: "pCloud" NOT "pcloud", "SecretsHub" NOT "secrets hub"
+- Add "that" in clauses: "Check that both policies" NOT "Check both policies"
+- Space after #: "ticket # 123" NOT "ticket #123"
+
 Hi [Name],
 
 I understand the [brief issue type - 5 words max].
