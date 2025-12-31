@@ -1,12 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { useSettings } from '@/context/SettingsContext';
 import { useLanguage } from '@/context/LanguageContext';
 
 export default function SettingsPage() {
   const { settings, updateSettings, clearSettings, connectionStatus, testConnection } = useSettings();
   const { language } = useLanguage();
+  const router = useRouter();
 
   const [formData, setFormData] = useState({
     userName: '',
@@ -306,6 +308,13 @@ export default function SettingsPage() {
           className="px-6 py-3 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl"
         >
           🗑️ {t.clearButton}
+        </button>
+
+        <button
+          onClick={() => router.back()}
+          className="px-6 py-3 bg-gray-600 text-white rounded-lg hover:bg-gray-700 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl"
+        >
+          ← {language === 'en' ? 'Back' : 'חזרה'}
         </button>
       </div>
 
