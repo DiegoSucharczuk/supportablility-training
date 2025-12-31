@@ -26,7 +26,56 @@ function sanitizeText(text: string): { sanitized: string; stats: { domains: numb
   const stats = { domains: 0, ips: 0, emails: 0, servers: 0 };
   const replacements = new Map<string, string>();
 
-  // Replace email addresses
+  // 1. Replace UUIDs (must be before other patterns)
+  const uuidRegex = /\b[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}\b/gi;
+  const uuids = [...new Set(text.match(uuidRegex) || [])];
+  uuids.forEach((uuid, index) => {
+    const replacement = `[TENANT-ID-${index + 1}]`;
+    const regex = new RegExp(uuid.replace(/[-]/g, '\\-'), 'gi');
+    sanitized = sanitized.replace(regex, replacement);
+    replacements.set(replacement, uuid);
+  });
+
+  // 2. Replace person names in signatures (Regards/Thanks/Best, Name)
+  const signatureRegex = /((?:Regards|Thanks|Best regards|Sincerely|Cheers),?\s*\n\s*)([A-Z][a-z]+(?:\s+[A-Z][a-z]+)+)/g;
+  sanitized = sanitized.replace(signatureRegex, (match, greeting, name) => {
+    const replacement = '[Support-Engineer]';
+    replacements.set(replacement, name.trim());
+    return greeting + replacement;
+  });
+
+  // 3. Replace person names in conversation context ("conversation with X", "spoke to X")
+  const conversationRegex = /(?:conversation with|spoke to|talked to|discussed with|contact|from)\s+([A-Z][a-z]+\s+[A-Z][a-z]+)/g;
+  sanitized = sanitized.replace(conversationRegex, (match, name) => {
+    const replacement = '[Contact-Person]';
+    replacements.set(replacement, name.trim());
+    return match.replace(name, replacement);
+  });
+
+  // 4. Replace customer-specific resource names (e.g., ivz-nata-uat, APP-1226-DEV)
+  const resourceRegex = /\b[a-z]{2,5}-[a-z0-9]+-[a-z]+-[a-z]+-\d+|[A-Z]+-\d{3,5}-[A-Z]+-[A-Z]+-[A-Z_]+(?:_to_[a-z0-9-]+)?/gi;
+  const resources = [...new Set(text.match(resourceRegex) || [])];
+  resources.forEach((resource, index) => {
+    const replacement = resource.toLowerCase().includes('secret') ? `[Secret-Store-${index + 1}]` :
+                       resource.toUpperCase().includes('APP-') ? `[Sync-Policy-${index + 1}]` :
+                       `[Resource-${index + 1}]`;
+    const regex = new RegExp(resource.replace(/[-]/g, '\\-').replace(/[_]/g, '\\_'), 'gi');
+    sanitized = sanitized.replace(regex, replacement);
+    replacements.set(replacement, resource);
+  });
+
+  // 5. Replace customer subdomains (e.g., invesco.cyberark.cloud, customer.privilegecloud.cyberark.cloud)
+  const customerDomainRegex = /\b([a-z0-9-]+)\.(cyberark\.cloud|privilegecloud\.cyberark\.[a-z]+)\b/gi;
+  const customerDomains = [...new Set((text.match(customerDomainRegex) || []).map(d => d.toLowerCase()))];
+  customerDomains.forEach((domain, index) => {
+    const replacement = `customer${index > 0 ? index + 1 : ''}.cyberark.cloud`;
+    const regex = new RegExp(domain.replace(/\./g, '\\.'), 'gi');
+    sanitized = sanitized.replace(regex, replacement);
+    replacements.set(replacement, domain);
+    stats.domains++;
+  });
+
+  // 6. Replace email addresses
   const emailRegex = /\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b/g;
   const emails = text.match(emailRegex) || [];
   stats.emails = emails.length;
@@ -38,7 +87,7 @@ function sanitizeText(text: string): { sanitized: string; stats: { domains: numb
     return replacement;
   });
 
-  // Replace IP addresses
+  // 7. Replace IP addresses
   const ipRegex = /\b(?:\d{1,3}\.){3}\d{1,3}\b/g;
   const ips = text.match(ipRegex) || [];
   stats.ips = ips.length;
@@ -50,29 +99,27 @@ function sanitizeText(text: string): { sanitized: string; stats: { domains: numb
     return replacement;
   });
 
-  // Replace domain names (after @ and standalone FQDNs)
+  // 8. Replace other domain names
   const domainRegex = /\b(?:[a-zA-Z0-9-]+\.)+(?:com|net|org|int|local|corp|io|co|uk|us|de|fr|il)\b/gi;
-  const domains = [...new Set((text.match(domainRegex) || []).map(d => d.toLowerCase()))];
-  stats.domains = domains.length;
-  
-  // Create consistent replacements for each unique domain
-  const domainReplacements: { [key: string]: string } = {};
+  const domains = [...new Set((text.match(domainRegex) || []).filter(d => !d.includes('cyberark')).map(d => d.toLowerCase()))];
   domains.forEach((domain, index) => {
     const parts = domain.split('.');
-    const replacement = `server${index > 0 ? index : ''}.company.${parts[parts.length - 1]}`;
-    domainReplacements[domain.toLowerCase()] = replacement;
-  });
-  
-  sanitized = sanitized.replace(domainRegex, (match) => {
-    const replacement = domainReplacements[match.toLowerCase()];
-    if (replacement) {
-      replacements.set(replacement, match);
-      return replacement;
-    }
-    return match;
+    const replacement = `server${index > 0 ? index + 1 : ''}.company.${parts[parts.length - 1]}`;
+    const regex = new RegExp(domain.replace(/\./g, '\\.'), 'gi');
+    sanitized = sanitized.replace(regex, replacement);
+    replacements.set(replacement, domain);
+    stats.domains++;
   });
 
-  // Replace server/hostname patterns (uppercase alphanumeric combinations)
+  // 9. Replace Teams/Slack URLs
+  const teamsRegex = /https?:\/\/[^\s]+(?:teams\.microsoft\.com|slack\.com|thread\.v2)[^\s]*/gi;
+  sanitized = sanitized.replace(teamsRegex, (match) => {
+    const replacement = '[Internal-Teams-Link]';
+    replacements.set(replacement, match);
+    return replacement;
+  });
+
+  // 10. Replace server/hostname patterns (uppercase alphanumeric combinations)
   const serverRegex = /\b[A-Z]{2,}[A-Z0-9]{3,}\b/g;
   const servers = [...new Set(text.match(serverRegex) || [])];
   stats.servers = servers.length;
@@ -81,23 +128,6 @@ function sanitizeText(text: string): { sanitized: string; stats: { domains: numb
     const regex = new RegExp(`\\b${server}\\b`, 'g');
     sanitized = sanitized.replace(regex, replacement);
     replacements.set(replacement, server);
-  });
-
-  // Replace common customer/people names (case-insensitive but preserve in map)
-  const namePatterns = [
-    { pattern: /\bbarclays\b/gi, replacement: 'CompanyABC' },
-    { pattern: /\bdaniel\b/gi, replacement: 'ContactPerson' },
-    { pattern: /\bmanuel\b/gi, replacement: 'EngineerName' },
-  ];
-  
-  namePatterns.forEach(({ pattern, replacement }) => {
-    const matches = text.match(pattern) || [];
-    if (matches.length > 0 && matches[0]) {
-      // Store original with exact case from first match
-      console.log(`Sanitizing: "${matches[0]}" -> "${replacement}"`);
-      replacements.set(replacement, matches[0]);
-      sanitized = sanitized.replace(pattern, replacement);
-    }
   });
 
   console.log('Sanitization complete. Replacements:', Array.from(replacements.entries()));
