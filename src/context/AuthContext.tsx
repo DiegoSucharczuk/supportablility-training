@@ -23,9 +23,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     // בדוק אם המשתמש כבר מחובר (שמור ב-localStorage)
-    const authStatus = localStorage.getItem('isAuthenticated');
-    if (authStatus === 'true') {
-      setIsAuthenticated(true);
+    if (typeof window !== 'undefined') {
+      const authStatus = localStorage.getItem('isAuthenticated');
+      if (authStatus === 'true') {
+        setIsAuthenticated(true);
+      }
     }
     setIsLoading(false);
   }, []);
@@ -33,7 +35,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const login = (username: string, password: string): boolean => {
     if (username === VALID_CREDENTIALS.username && password === VALID_CREDENTIALS.password) {
       setIsAuthenticated(true);
-      localStorage.setItem('isAuthenticated', 'true');
+      if (typeof window !== 'undefined') {
+        localStorage.setItem('isAuthenticated', 'true');
+      }
       return true;
     }
     return false;
@@ -41,7 +45,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const logout = () => {
     setIsAuthenticated(false);
-    localStorage.removeItem('isAuthenticated');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('isAuthenticated');
+    }
   };
 
   if (isLoading) {

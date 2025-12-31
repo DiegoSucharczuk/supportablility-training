@@ -38,16 +38,18 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 
   // Load settings from localStorage on mount
   useEffect(() => {
-    const stored = localStorage.getItem('supportability-settings');
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        setSettings(parsed);
-        if (parsed.awsCredentials?.accessKeyId) {
-          setConnectionStatus('connected');
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('supportability-settings');
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          setSettings(parsed);
+          if (parsed.awsCredentials?.accessKeyId) {
+            setConnectionStatus('connected');
+          }
+        } catch (e) {
+          console.error('Failed to load settings:', e);
         }
-      } catch (e) {
-        console.error('Failed to load settings:', e);
       }
     }
   }, []);
@@ -55,7 +57,9 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const updateSettings = (newSettings: Partial<UserSettings>) => {
     const updated = { ...settings, ...newSettings };
     setSettings(updated);
-    localStorage.setItem('supportability-settings', JSON.stringify(updated));
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('supportability-settings', JSON.stringify(updated));
+    }
     
     // Update connection status if AWS credentials changed
     if (newSettings.awsCredentials && updated.awsCredentials?.accessKeyId) {
@@ -65,7 +69,9 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
 
   const clearSettings = () => {
     setSettings(defaultSettings);
-    localStorage.removeItem('supportability-settings');
+    if (typeof window !== 'undefined') {
+      localStorage.removeItem('supportability-settings');
+    }
     setConnectionStatus('disconnected');
   };
 

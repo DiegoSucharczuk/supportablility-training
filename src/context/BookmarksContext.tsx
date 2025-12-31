@@ -15,15 +15,17 @@ export function BookmarksProvider({ children }: { children: ReactNode }) {
   const [isLoaded, setIsLoaded] = useState(false);
 
   useEffect(() => {
-    const stored = localStorage.getItem('bookmarks');
-    if (stored) {
-      setBookmarks(JSON.parse(stored));
+    if (typeof window !== 'undefined') {
+      const stored = localStorage.getItem('bookmarks');
+      if (stored) {
+        setBookmarks(JSON.parse(stored));
+      }
+      setIsLoaded(true);
     }
-    setIsLoaded(true);
   }, []);
 
   useEffect(() => {
-    if (isLoaded) {
+    if (isLoaded && typeof window !== 'undefined') {
       localStorage.setItem('bookmarks', JSON.stringify(bookmarks));
     }
   }, [bookmarks, isLoaded]);
