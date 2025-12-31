@@ -816,6 +816,38 @@ CyberArk Technical Support
         </div>
       </div>
 
+      {/* Security Warning Banner */}
+      <div className="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-lg shadow-md mb-6 animate-fade-in">
+        <div className="flex items-start gap-4">
+          <div className="flex-shrink-0">
+            <svg className="w-8 h-8 text-yellow-600" fill="currentColor" viewBox="0 0 20 20">
+              <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+            </svg>
+          </div>
+          <div className="flex-1">
+            <h3 className="text-lg font-bold text-yellow-900 mb-2">
+              {language === 'he' ? '⚠️ אזהרת אבטחה' : '⚠️ Security Warning'}
+            </h3>
+            <p className="text-sm text-yellow-800 mb-3">
+              {language === 'he'
+                ? 'המערכת מזהה אוטומטית ומסווה מידע רגיש, אך אנא וודא שהסרת:'
+                : 'The system automatically detects and masks sensitive data, but please ensure you remove:'}
+            </p>
+            <ul className="text-sm text-yellow-800 space-y-1 list-disc list-inside mb-3">
+              <li>{language === 'he' ? 'מזהי לקוחות (Tenant IDs, UUIDs)' : 'Customer identifiers (Tenant IDs, UUIDs)'}</li>
+              <li>{language === 'he' ? 'שמות עובדים ולקוחות' : 'Employee and customer names'}</li>
+              <li>{language === 'he' ? 'קישורי Teams/Slack פנימיים' : 'Internal Teams/Slack links'}</li>
+              <li>{language === 'he' ? 'שמות מערכות וסיסמאות ספציפיות' : 'Specific system names and passwords'}</li>
+            </ul>
+            <p className="text-xs font-semibold text-yellow-900">
+              {language === 'he'
+                ? '💡 השתמש במזהים גנריים: [Customer], [Tenant-A], [System-1]'
+                : '💡 Use generic identifiers: [Customer], [Tenant-A], [System-1]'}
+            </p>
+          </div>
+        </div>
+      </div>
+
       {/* Input Section */}
       <div className="space-y-6 mb-8">
         <div className="grid md:grid-cols-2 gap-6">
@@ -1171,6 +1203,30 @@ CyberArk Technical Support
                   </span>
                 </div>
               </div>
+
+              {/* Detected Sensitive Data List */}
+              {replacementMap.size > 0 && (
+                <div className="mt-6 bg-white rounded-lg border-2 border-yellow-200 p-4">
+                  <h4 className="font-bold text-gray-800 mb-3 flex items-center gap-2">
+                    <span className="text-xl">🔍</span>
+                    {language === 'he' ? 'מידע רגיש שזוהה והוסר:' : 'Sensitive Data Detected & Removed:'}
+                  </h4>
+                  <div className="grid md:grid-cols-2 gap-2 max-h-40 overflow-y-auto">
+                    {Array.from(replacementMap.entries()).map(([sanitized, original], idx) => (
+                      <div key={idx} className="bg-gray-50 p-2 rounded border border-gray-200 text-xs">
+                        <span className="text-red-600 font-mono line-through">{original}</span>
+                        <span className="mx-2">→</span>
+                        <span className="text-green-600 font-mono font-semibold">{sanitized}</span>
+                      </div>
+                    ))}
+                  </div>
+                  <p className="text-xs text-gray-600 mt-3 italic">
+                    {language === 'he'
+                      ? '💡 אם זיהינו משהו שגוי, ערוך את הטקסט המנוקה בעמודה הימנית.'
+                      : '💡 If something was incorrectly detected, edit the sanitized text in the right column.'}
+                  </p>
+                </div>
+              )}
             </div>
 
             {/* Comparison View */}
