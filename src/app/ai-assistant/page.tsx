@@ -853,28 +853,44 @@ CyberArk Technical Support
             <label className="block text-lg font-semibold text-gray-800 mb-3">
               {t.analysisTypeLabel}
             </label>
-            <div className="flex gap-4">
-              <label className="flex items-center gap-2 cursor-pointer">
+            <div className="space-y-4">
+              <label className="flex items-start gap-3 cursor-pointer p-3 rounded-lg hover:bg-white/50 transition-all">
                 <input
                   type="radio"
                   value="customer"
                   checked={analysisType === 'customer'}
                   onChange={(e) => setAnalysisType(e.target.value as 'customer' | 'rnd')}
-                  className="w-5 h-5 text-blue-600"
+                  className="mt-1 w-5 h-5 text-blue-600"
                   disabled={isLoading}
                 />
-                <span className="text-gray-800 font-medium">{t.analysisTypeCustomer}</span>
+                <div className="flex-1">
+                  <span className="text-gray-800 font-medium block mb-1">{t.analysisTypeCustomer}</span>
+                  <p className="text-sm text-gray-600">
+                    {language === 'he'
+                      ? 'בדוק את איכות התקשורת עם הלקוח: אמפתיה, בהירות, טון מקצועי. מקבל משוב על 12 עקרונות תקשורת ותשובה משופרת.'
+                      : 'Check communication quality with customer: empathy, clarity, professional tone. Get feedback on 12 communication principles and improved response.'
+                    }
+                  </p>
+                </div>
               </label>
-              <label className="flex items-center gap-2 cursor-pointer">
+              <label className="flex items-start gap-3 cursor-pointer p-3 rounded-lg hover:bg-white/50 transition-all">
                 <input
                   type="radio"
                   value="rnd"
                   checked={analysisType === 'rnd'}
                   onChange={(e) => setAnalysisType(e.target.value as 'customer' | 'rnd')}
-                  className="w-5 h-5 text-purple-600"
+                  className="mt-1 w-5 h-5 text-purple-600"
                   disabled={isLoading}
                 />
-                <span className="text-gray-800 font-medium">{t.analysisTypeRnD}</span>
+                <div className="flex-1">
+                  <span className="text-gray-800 font-medium block mb-1">{t.analysisTypeRnD}</span>
+                  <p className="text-sm text-gray-600">
+                    {language === 'he'
+                      ? 'בדוק אם יש מספיק מידע טכני לפיתוח: logs, versions, troubleshooting. מקבל פידבק על עבודת התמיכה ומה חסר.'
+                      : 'Check if there\'s enough technical info for R&D: logs, versions, troubleshooting. Get feedback on support work and what\'s missing.'
+                    }
+                  </p>
+                </div>
               </label>
             </div>
           </div>
