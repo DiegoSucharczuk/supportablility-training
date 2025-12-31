@@ -192,6 +192,7 @@ export default function AIAssistant() {
   const [loadingStage, setLoadingStage] = useState(0);
   const [demoTimeout, setDemoTimeout] = useState<NodeJS.Timeout | null>(null);
   const [findSolutions, setFindSolutions] = useState(false);
+  const [analysisType, setAnalysisType] = useState<'customer' | 'rnd'>('customer');
   const [showSanitizationModal, setShowSanitizationModal] = useState(false);
   const [sanitizedQuestion, setSanitizedQuestion] = useState('');
   const [sanitizedAnswer, setSanitizedAnswer] = useState('');
@@ -333,6 +334,7 @@ export default function AIAssistant() {
           yourAnswer: sanitizedAnswer,
           modelId: selectedModel,
           findSolutions: findSolutions,
+          analysisType: analysisType,
           credentials: settings.awsCredentials,
           googleApiKey: settings.googleApiKey,
           userName: settings.userName || 'Support Engineer'
@@ -663,6 +665,9 @@ CyberArk Technical Support
       customerPlaceholder: 'Paste the customer\'s question or issue from Salesforce...',
       answerLabel: 'Engineer\'s Proposed Answer',
       answerPlaceholder: 'Paste the engineer\'s response to analyze...',
+      analysisTypeLabel: '📋 Analysis Type',
+      analysisTypeCustomer: 'Customer Response (Communication Quality)',
+      analysisTypeRnD: 'R&D Escalation (Technical Readiness)',
       analyzeButton: '🔍 Analyze Response',
       analyzing: 'Analyzing',
       analysisTitle: '📊 AI Analysis',
@@ -696,6 +701,9 @@ CyberArk Technical Support
       customerPlaceholder: 'הדבק את שאלת/בעיית הלקוח מ-Salesforce...',
       answerLabel: 'תשובת המהנדס המוצעת',
       answerPlaceholder: 'הדבק את תשובת המהנדס לניתוח...',
+      analysisTypeLabel: '📋 סוג ניתוח',
+      analysisTypeCustomer: 'תגובה ללקוח (איכות תקשורת)',
+      analysisTypeRnD: 'העלאה לפיתוח (מוכנות טכנית)',
       modelLabel: 'מודל AI',
       analyzeButton: '🔍 נתח תשובה',
       analyzing: 'מנתח',
@@ -839,6 +847,37 @@ CyberArk Technical Support
 
         {/* Options Checkboxes */}
         <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-xl shadow-lg p-6 animate-fade-in">
+          {/* Analysis Type Selection */}
+          <div className="mb-6">
+            <label className="block text-lg font-semibold text-gray-800 mb-3">
+              {t.analysisTypeLabel}
+            </label>
+            <div className="flex gap-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  value="customer"
+                  checked={analysisType === 'customer'}
+                  onChange={(e) => setAnalysisType(e.target.value as 'customer' | 'rnd')}
+                  className="w-5 h-5 text-blue-600"
+                  disabled={isLoading}
+                />
+                <span className="text-gray-800 font-medium">{t.analysisTypeCustomer}</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  value="rnd"
+                  checked={analysisType === 'rnd'}
+                  onChange={(e) => setAnalysisType(e.target.value as 'customer' | 'rnd')}
+                  className="w-5 h-5 text-purple-600"
+                  disabled={isLoading}
+                />
+                <span className="text-gray-800 font-medium">{t.analysisTypeRnD}</span>
+              </label>
+            </div>
+          </div>
+
           <div className="flex items-start gap-3">
             <input
               type="checkbox"

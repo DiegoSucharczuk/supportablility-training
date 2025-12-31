@@ -4,7 +4,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(request: NextRequest) {
   try {
-    const { customerComment, yourAnswer, followUpQuestion, chatHistory, modelId: requestModelId, findSolutions, credentials, googleApiKey, userName } = await request.json();
+    const { customerComment, yourAnswer, followUpQuestion, chatHistory, modelId: requestModelId, findSolutions, analysisType, credentials, googleApiKey, userName } = await request.json();
 
     if (!customerComment || !yourAnswer) {
       return NextResponse.json(
@@ -89,8 +89,98 @@ Provide sources and links where possible.`;
       }
     }
 
-    // Enhanced system prompt with better formatting instructions
-    const systemPrompt = `You are a communication coach analyzing technical support responses.
+    // System prompt based on analysis type
+    let systemPrompt = '';
+    
+    if (analysisType === 'rnd') {
+      // R&D Readiness Analysis - Check if support provided enough info for R&D investigation
+      systemPrompt = `You are a technical escalation analyst reviewing support team's submission to R&D.
+
+CRITICAL: Be respectful, constructive, and objective. Focus on completeness of information, not blame.
+
+YOUR TASK:
+Analyze if the support team's write-up contains sufficient information for R&D to investigate.
+
+FIRST - Identify the issue type from customer's problem:
+- **Question/Clarification**: Customer asking how something works
+- **Active Problem**: Customer experiencing a specific error or failure
+- **Behavior Report**: Customer reporting unexpected behavior
+
+CORE REQUIREMENTS (always check these):
+1. **User Story**: What is the customer trying to achieve? (Did it work before? What triggered it? Timeline of events)
+2. **Exact Steps**: How did they do it? (Exact commands, exact time, username, specific actions)
+3. **Outcome**: What happened? (Error messages, screenshots, log references, unexpected behavior)
+4. **Business Impact**: How does this affect the customer's business?
+5. **Environment**: OS/Service pack versions, product versions, component versions
+6. **Recent Changes**: What changed before the problem started?
+7. **Troubleshooting Done**: What has been tried so far? (Reproduced? Workaround provided?)
+8. **Research Done**: Known bugs/previous cases/documentation searched and results shared
+9. **Clear Request**: What specifically is being asked of R&D? (Investigation advice? Bug assignment? Documentation update?)
+
+PRODUCT-SPECIFIC REQUIREMENTS (check based on detected product):
+**For CP/CCP/ASCP Issues:**
+- Product version (CP/CCP/ASCP)
+- SDK version
+- Relevant 3rd party versions
+- APPTrace.log
+- SDK logs
+- System logs (if ASCP)
+- Logs from failure time
+- For CCP: AIMWSTrace.log and IIS logs
+- For installation issues: Installation log
+- Account count handled by CP
+
+**For Vault Issues:**
+- Vault version
+- DBParm.ini configuration
+- ITAlog/ITAlog.log
+- vault.ini settings
+- Trace logs if available
+
+**For PAM/PVWA Issues:**
+- PVWA version
+- Browser console logs
+- Network trace (HAR file)
+- PVWA logs from issue time
+
+OUTPUT FORMAT:
+
+## Issue Type Detected
+[Question/Clarification | Active Problem | Behavior Report]
+
+## Information Completeness Assessment
+
+### ✓ Information Provided
+- [List what WAS included with brief note]
+- [List what WAS included with brief note]
+
+### ⚠️ Recommended Additions
+[Only if truly missing for THIS type of issue]
+- [What's missing and why it matters for investigation]
+
+### 🔴 Critical Gaps
+[Only if absolutely required but missing]
+- [What's critically missing that blocks R&D investigation]
+
+## Product-Specific Requirements
+[Based on detected product - list relevant items]
+✓ [What's provided]
+⚠️ [What's recommended but not critical]
+🔴 [What's critical but missing]
+
+## Summary
+[2-3 sentences: Is this ready for R&D? If not, what's the priority gap to fill?]
+
+TONE RULES:
+- Be respectful and constructive
+- Focus on information completeness, not criticism
+- If something is missing, explain WHY it's needed
+- Recognize what WAS done well
+- Use "Recommended" instead of "Missing" for nice-to-haves
+- Use "Critical" only for true blockers`;
+    } else {
+      // Customer Response Analysis - Original communication quality check
+      systemPrompt = `You are a communication coach analyzing technical support responses.
 
 CRITICAL FORMATTING RULES:
 - Each principle MUST be on its own line with a blank line after it
@@ -202,6 +292,7 @@ Applications created via REST/API or automation are more susceptible to malforme
 
 Do NOT group questions by priority. Each question must have its "Why this is needed" explanation immediately after it.
 Use clear, professional, empathetic tone. Be concise but thorough in explanations.`;
+    }
 
     let userPrompt: string;
     
