@@ -658,7 +658,10 @@ CyberArk Technical Support
           yourAnswer: engineerAnswer,
           followUpQuestion: chatInput,
           chatHistory: updatedMessages,
-          modelId: selectedModel
+          modelId: selectedModel,
+          credentials: settings.awsCredentials,
+          googleApiKey: settings.googleApiKey,
+          userName: settings.userName || 'Support Engineer'
         }),
         signal: controller.signal,
       });
