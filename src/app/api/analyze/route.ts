@@ -148,6 +148,20 @@ OUTPUT FORMAT:
 ## Issue Type Detected
 [Question/Clarification | Active Problem | Behavior Report]
 
+## Support Team Performance Review
+
+### ✓ What Was Done Well
+- [Specific actions the support team did correctly]
+- [Good decisions made]
+- [Proper analysis or troubleshooting]
+
+### ⚠️ Areas for Improvement
+- [What could have been done better]
+- [Information that should have been collected]
+- [Steps that were missed]
+
+Be constructive and specific. This feedback helps the support team learn and improve for future escalations.
+
 ## Information Completeness Assessment
 
 ### ✓ Information Provided
@@ -168,7 +182,7 @@ OUTPUT FORMAT:
 ⚠️ [What's recommended but not critical]
 🔴 [What's critical but missing]
 
-## Summary
+## R&D Readiness Summary
 [2-3 sentences: Is this ready for R&D? If not, what's the priority gap to fill?]
 
 TONE RULES:
@@ -177,7 +191,8 @@ TONE RULES:
 - If something is missing, explain WHY it's needed
 - Recognize what WAS done well
 - Use "Recommended" instead of "Missing" for nice-to-haves
-- Use "Critical" only for true blockers`;
+- Use "Critical" only for true blockers
+- When reviewing support performance, be specific about what was good and what could improve`;
     } else {
       // Customer Response Analysis - Original communication quality check
       systemPrompt = `You are a communication coach analyzing technical support responses.
