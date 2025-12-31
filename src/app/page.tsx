@@ -22,8 +22,15 @@ export default function Home() {
           icon: '📚',
         },
         {
+          title: '🤖 AI Assistant',
+          description: 'Analyze your responses with AI: Check communication quality OR verify R&D escalation readiness. Get instant feedback on 13 principles.',
+          link: 'Try Now →',
+          href: '/ai-assistant',
+          icon: '🤖',
+        },
+        {
           title: 'Core Principles',
-          description: 'Master the 12 foundational principles for effective client communication (8 communication + 4 general principles).',
+          description: 'Master the 13 foundational principles for effective client communication (9 communication + 4 general principles).',
           link: 'Explore →',
           href: '/core-principles',
           icon: '⚙️',
@@ -101,8 +108,15 @@ export default function Home() {
           icon: '📚',
         },
         {
+          title: '🤖 עוזר AI',
+          description: 'נתחו את התשובות שלכם עם AI: בדקו איכות תקשורת או מוכנות להסלמה ל-R&D. קבלו משוב מיידי על 13 עקרונות.',
+          link: 'נסו עכשיו ←',
+          href: '/ai-assistant',
+          icon: '🤖',
+        },
+        {
           title: 'עקרונות יסוד',
-          description: 'שלטו ב-12 העקרונות היסודיים לתקשורת יעילה מול לקוחות (8 עקרונות תקשורת + 4 עקרונות כלליים).',
+          description: 'שלטו ב-13 העקרונות היסודיים לתקשורת יעילה מול לקוחות (9 עקרונות תקשורת + 4 עקרונות כלליים).',
           link: 'גלה ←',
           href: '/core-principles',
           icon: '⚙️',

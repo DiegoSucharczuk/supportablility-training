@@ -35,6 +35,55 @@ export default function Introduction() {
           'Demonstrate professionalism that reflects on the entire organization',
         ],
       },
+      tools: {
+        title: 'What\'s Available on This Site',
+        intro: 'This training platform provides comprehensive tools and resources:',
+        items: [
+          {
+            icon: '🤖',
+            title: 'AI Assistant (Recommended!)',
+            desc: 'Analyze your responses in real-time with two powerful modes:',
+            subitems: [
+              '✓ Customer Response Analysis: Check communication quality against 13 professional principles',
+              '✓ R&D Escalation Readiness: Verify if you provided enough technical information for R&D',
+              '✓ Instant feedback with improved response suggestions',
+              '✓ Automatic data sanitization for privacy protection',
+            ]
+          },
+          {
+            icon: '⚙️',
+            title: 'Core Principles',
+            desc: '13 foundational communication principles with examples:',
+            subitems: [
+              'Building Trust, Active Listening, Clear Communication',
+              'Taking Ownership, Smart Empathy, Proactive Updates',
+              'Ice Breaking, Early Questions, Sense of Urgency',
+              'Shared Responsibility, Win-Win Solutions, Structured Responses',
+              'Terminology Mirroring (NEW!)',
+            ]
+          },
+          {
+            icon: '💬',
+            title: 'Phrases Library',
+            desc: 'Ready-to-use professional phrases for various situations',
+          },
+          {
+            icon: '🔥',
+            title: 'Escalation Strategies',
+            desc: 'Professional approaches for handling high-pressure situations',
+          },
+          {
+            icon: '⚡',
+            title: 'Quick Reference Guide',
+            desc: 'Fast access to key principles and techniques',
+          },
+          {
+            icon: '📖',
+            title: 'Resources',
+            desc: 'Templates, checklists, and additional materials',
+          },
+        ],
+      },
     },
     he: {
       title: 'אודות',
@@ -60,6 +109,55 @@ export default function Introduction() {
           'למנוע הסלמות ולהפחית מתח עבור כל המעורבים',
           'לבנות אמון לטווח ארוך שחורג מאירועים בודדים',
           'להפגין מקצועיות המשקפת את כל הארגון',
+        ],
+      },
+      tools: {
+        title: 'מה יש באתר הזה',
+        intro: 'פלטפורמת האימון מספקת כלים ומשאבים מקיפים:',
+        items: [
+          {
+            icon: '🤖',
+            title: 'עוזר AI (מומלץ!)',
+            desc: 'נתחו את התשובות שלכם בזמן אמת עם 2 מצבי ניתוח:',
+            subitems: [
+              '✓ ניתוח תגובה ללקוח: בדיקת איכות תקשורת מול 13 עקרונות מקצועיים',
+              '✓ מוכנות להסלמה ל-R&D: וידוא שסיפקתם מספיק מידע טכני ל-R&D',
+              '✓ משוב מיידי עם הצעות לשיפור התשובה',
+              '✓ סינון אוטומטי של מידע רגיש להגנת הפרטיות',
+            ]
+          },
+          {
+            icon: '⚙️',
+            title: 'עקרונות יסוד',
+            desc: '13 עקרונות תקשורת יסודיים עם דוגמאות:',
+            subitems: [
+              'בניית אמון, הקשבה פעילה, תקשורת ברורה',
+              'לקיחת אחריות, אמפתיה חכמה, עדכונים פרואקטיביים',
+              'שבירת קרח, שאילת שאלות מוקדמות, תחושת דחיפות',
+              'אחריות משותפת, פתרונות Win-Win, תגובות מבניות',
+              'שיקוף טרמינולוגיה (חדש!)',
+            ]
+          },
+          {
+            icon: '💬',
+            title: 'ספריית משפטים',
+            desc: 'משפטים מקצועיים מוכנים לשימוש למצבים שונים',
+          },
+          {
+            icon: '🔥',
+            title: 'אסטרטגיות הסלמה',
+            desc: 'גישות מקצועיות לטיפול במצבי לחץ',
+          },
+          {
+            icon: '⚡',
+            title: 'מדריך מהיר',
+            desc: 'גישה מהירה לעקרונות וטכניקות מרכזיות',
+          },
+          {
+            icon: '📖',
+            title: 'משאבים',
+            desc: 'תבניות, רשימות בדיקה וחומרים נוספים',
+          },
         ],
       },
     },
@@ -124,6 +222,48 @@ export default function Introduction() {
             </li>
           ))}
         </ul>
+      </section>
+
+      {/* Tools & Features Section */}
+      <section className="bg-white rounded-lg shadow-md p-8 mt-8 card-hover animate-fade-in">
+        <h2 className="text-3xl font-bold gradient-text mb-4">{t.tools.title}</h2>
+        
+        <p className="text-gray-700 mb-6 text-lg">
+          {t.tools.intro}
+        </p>
+
+        <div className="space-y-6">
+          {t.tools.items.map((tool, idx) => (
+            <div key={idx} className="border-l-4 border-blue-500 bg-gradient-to-r from-blue-50 to-white p-6 rounded-lg animate-slide-up" style={{ animationDelay: `${idx * 0.1}s` }}>
+              <h3 className="text-xl font-bold text-blue-600 mb-2">
+                <span className="floating inline-block">{tool.icon}</span> {tool.title}
+              </h3>
+              <p className="text-gray-700 mb-3">{tool.desc}</p>
+              {tool.subitems && (
+                <ul className="space-y-2 text-sm text-gray-600 ml-4">
+                  {tool.subitems.map((subitem, subidx) => (
+                    <li key={subidx} className="flex items-start">
+                      <span className="mr-2">•</span>
+                      <span>{subitem}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-8 bg-gradient-to-r from-green-50 to-emerald-50 border-l-4 border-green-500 p-6 rounded-lg">
+          <h3 className="text-xl font-bold text-gray-900 mb-3">
+            💡 {language === 'he' ? 'טיפ מקצועי' : 'Pro Tip'}
+          </h3>
+          <p className="text-gray-700">
+            {language === 'he'
+              ? 'התחילו עם עוזר ה-AI! הדביקו תשובה אמיתית שכתבתם ובדקו מה ניתן לשפר. זו הדרך המהירה ביותר ללמוד את העקרונות בפועל.'
+              : 'Start with the AI Assistant! Paste a real response you wrote and see what can be improved. It\'s the fastest way to learn the principles in practice.'
+            }
+          </p>
+        </div>
       </section>
     </main>
   );
