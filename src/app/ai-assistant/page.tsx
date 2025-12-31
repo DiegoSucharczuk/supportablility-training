@@ -658,7 +658,7 @@ CyberArk Technical Support
   const content = {
     en: {
       title: '🤖 AI Communication Assistant',
-      subtitle: 'Analyze your customer responses against 24 professional communication principles',
+      subtitle: 'Analyze your customer responses against 12 professional communication principles',
       customerLabel: 'Customer Question',
       customerPlaceholder: 'Paste the customer\'s question or issue from Salesforce...',
       answerLabel: 'Engineer\'s Proposed Answer',
@@ -677,21 +677,21 @@ CyberArk Technical Support
         '🔍 Reading your message...',
         '🔍 Searching CyberArk docs & web...',
         '🤔 Analyzing communication style...',
-        '📋 Checking against 24 principles...',
+        '📋 Checking against 12 principles...',
         '✨ Generating improvements...',
         '📝 Finalizing analysis...'
       ],
       loadingStagesNoSearch: [
         '🔍 Reading your message...',
         '🤔 Analyzing communication style...',
-        '📋 Checking against 24 principles...',
+        '📋 Checking against 12 principles...',
         '✨ Generating improvements...',
         '📝 Finalizing analysis...'
       ],
     },
     he: {
       title: '🤖 עוזר תקשורת AI',
-      subtitle: 'נתח את התשובה מול 24 עקרונות התקשורת המקצועית',
+      subtitle: 'נתח את התשובה מול 12 עקרונות התקשורת המקצועית',
       customerLabel: 'שאלת הלקוח',
       customerPlaceholder: 'הדבק את שאלת/בעיית הלקוח מ-Salesforce...',
       answerLabel: 'תשובת המהנדס המוצעת',
@@ -710,14 +710,14 @@ CyberArk Technical Support
         '🔍 קורא את ההודעה שלך...',
         '🔍 מחפש בתיעוד CyberArk ובאינטרנט...',
         '🤔 מנתח סגנון תקשורת...',
-        '📋 בודק מול 24 עקרונות...',
+        '📋 בודק מול 12 עקרונות...',
         '✨ יוצר שיפורים...',
         '📝 מסיים ניתוח...'
       ],
       loadingStagesNoSearch: [
         '🔍 קורא את ההודעה שלך...',
         '🤔 מנתח סגנון תקשורת...',
-        '📋 בודק מול 24 עקרונות...',
+        '📋 בודק מול 12 עקרונות...',
         '✨ יוצר שיפורים...',
         '📝 מסיים ניתוח...'
       ],
@@ -1053,8 +1053,8 @@ CyberArk Technical Support
         <p className="text-gray-700 mb-3">
           <strong>💡 {language === 'he' ? 'איך זה עובד:' : 'How it works:'}</strong>{' '}
           {language === 'he' 
-            ? 'הכלי מנתח את התשובה מול 24 עקרונות התקשורת המקצועית. מקבל משוב מפורט על מה טוב, מה צריך שיפור, וקבלת תשובה אידיאלית מעוצבת.'
-            : 'This tool analyzes responses against 24 professional communication principles. Get detailed feedback on what\'s good, what needs work, and receive an ideal formatted response.'
+            ? 'הכלי מנתח את התשובה מול 12 עקרונות התקשורת המקצועית. מקבל משוב מפורט על מה טוב, מה צריך שיפור, וקבלת תשובה אידיאלית מעוצבת.'
+            : 'This tool analyzes responses against 12 professional communication principles. Get detailed feedback on what\'s good, what needs work, and receive an ideal formatted response.'
           }
         </p>
         <p className="text-sm text-gray-600">
