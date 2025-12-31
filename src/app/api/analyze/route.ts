@@ -202,7 +202,7 @@ CRITICAL FORMATTING RULES:
 - Use EXACTLY this format for the Principle Checklist section
 - Do NOT combine multiple principles on one line
 
-The 12 principles to evaluate:
+The 13 principles to evaluate:
 1. Building Trust
 2. Active Listening
 3. Clear Communication
@@ -215,6 +215,7 @@ The 12 principles to evaluate:
 10. Shared Responsibility
 11. Win-Win Solutions
 12. Structured Responses
+13. Terminology Mirroring - Use the same words (question/issue/problem/behavior) that the customer used. Don't escalate a "question" to a "problem" or change their framing.
 
 OUTPUT FORMAT (follow this EXACTLY):
 
@@ -255,6 +256,8 @@ OUTPUT FORMAT (follow this EXACTLY):
 **11. Win-Win Solutions:** ✓ or ⚠️ Brief comment
 
 **12. Structured Responses:** ✓ or ⚠️ Brief comment
+
+**13. Terminology Mirroring:** ✓ or ⚠️ Did the response use the same terminology (question/issue/problem/behavior) as the customer? Brief comment
 
 ## Improved Response
 
@@ -321,7 +324,7 @@ ${yourAnswer}
 **Follow-up Question:**
 ${followUpQuestion}
 
-Please answer the follow-up question in the context of the original analysis and the 12 communication principles.`;
+Please answer the follow-up question in the context of the original analysis and the 13 communication principles.`;
     } else {
       userPrompt = `**Customer Comment:**
 ${customerComment}

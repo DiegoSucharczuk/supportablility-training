@@ -182,6 +182,67 @@ export default function CorePrinciples() {
           </div>
         </section>
 
+        {/* Principle 9 - Terminology Mirroring */}
+        <section className="bg-white rounded-lg shadow-md p-8 mb-8 card-hover animate-slide-in-right">
+          <h2 className="text-2xl font-bold text-blue-600 mb-4">
+            שיקוף טרמינולוגיה (Terminology Mirroring)
+          </h2>
+          
+          <p className="text-gray-700 mb-6 font-semibold">
+            השתמש באותן מילים שהלקוח השתמש בהן – אל תשנה את רמת החומרה או המסגרת.
+          </p>
+
+          <div className="bg-yellow-50 border-r-4 border-yellow-500 p-6 rounded mb-4">
+            <h3 className="font-semibold text-gray-900 mb-3">❌ הבעיה</h3>
+            <ul className="space-y-2 text-gray-700">
+              <li className="pr-4">הלקוח: "יש לי <strong>שאלה</strong> לגבי..."</li>
+              <li className="pr-4">אתה: "זיהיתי את ה<strong>בעיה</strong>..."</li>
+              <li className="pr-4">💥 הסלמת שאלה רגילה לבעיה!</li>
+            </ul>
+          </div>
+
+          <div className="bg-green-50 border-r-4 border-green-500 p-6 rounded">
+            <h3 className="font-semibold text-gray-900 mb-3">✓ טבלת שיקוף</h3>
+            <div className="space-y-3 text-gray-700">
+              <div className="grid grid-cols-3 gap-2 font-semibold border-b pb-2">
+                <div>הלקוח אמר</div>
+                <div>✓ שקף</div>
+                <div>❌ אל תגיד</div>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <div>"יש לי <strong>שאלה</strong>..."</div>
+                <div>"לגבי השאלה שלך..."</div>
+                <div>"פתרתי את הבעיה"</div>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <div>"התנהגות <strong>לא צפויה</strong>..."</div>
+                <div>"לגבי ההתנהגות הזו..."</div>
+                <div>"תיקנתי את הבאג"</div>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <div>"יש <strong>issue</strong> עם..."</div>
+                <div>"לגבי ה-issue הזה..."</div>
+                <div>"מצאנו את הבעיה"</div>
+              </div>
+              <div className="grid grid-cols-3 gap-2">
+                <div>"משהו <strong>מוזר</strong> קורה..."</div>
+                <div>"לגבי המצב הזה..."</div>
+                <div>"ניפיתי את השגיאה"</div>
+              </div>
+            </div>
+          </div>
+
+          <div className="mt-4 bg-blue-50 border-r-4 border-blue-500 p-6 rounded">
+            <h3 className="font-semibold text-gray-900 mb-3">💡 למה זה חשוב?</h3>
+            <ul className="space-y-2 text-gray-700">
+              <li className="pr-4">✓ מכבד את הפריימינג של הלקוח – הוא בחר את המילים שלו בקפידה</li>
+              <li className="pr-4">✓ מונע הסלמה – אל תגרום לזה להישמע יותר רציני ממה שהוא</li>
+              <li className="pr-4">✓ מראה הקשבה אקטיבית – שימוש בשפה שלו מוכיח שהבנת</li>
+              <li className="pr-4">✓ פוליטי נכון – מילים מסוימות מרמזות על האשמה/חומרה</li>
+            </ul>
+          </div>
+        </section>
+
         {/* General Principles */}
         <section className="bg-white rounded-lg shadow-md p-8 card-hover animate-bounce-in">
           <h2 className="text-2xl font-bold text-blue-600 mb-6">
@@ -387,6 +448,67 @@ export default function CorePrinciples() {
             <li className="pl-4">"I understand this is affecting you – it's prioritized."</li>
             <li className="pl-4">"I'm checking this right now."</li>
             <li className="pl-4">"The moment there's news – you'll know."</li>
+          </ul>
+        </div>
+      </section>
+
+      {/* Principle 9 - Terminology Mirroring */}
+      <section className="bg-white rounded-lg shadow-md p-8 mb-8 card-hover animate-slide-in-right">
+        <h2 className="text-2xl font-bold text-blue-600 mb-4">
+          Terminology Mirroring
+        </h2>
+        
+        <p className="text-gray-700 mb-6 font-semibold">
+          Use the same words the customer used – don't change the severity level or framing.
+        </p>
+
+        <div className="bg-yellow-50 border-l-4 border-yellow-500 p-6 rounded mb-4">
+          <h3 className="font-semibold text-gray-900 mb-3">❌ The Problem</h3>
+          <ul className="space-y-2 text-gray-700">
+            <li className="pl-4">Customer: "I have a <strong>question</strong> about..."</li>
+            <li className="pl-4">You: "I've identified the <strong>problem</strong>..."</li>
+            <li className="pl-4">💥 You just escalated a simple question into a problem!</li>
+          </ul>
+        </div>
+
+        <div className="bg-green-50 border-l-4 border-green-500 p-6 rounded">
+          <h3 className="font-semibold text-gray-900 mb-3">✓ Mirroring Table</h3>
+          <div className="space-y-3 text-gray-700">
+            <div className="grid grid-cols-3 gap-2 font-semibold border-b pb-2">
+              <div>Customer Said</div>
+              <div>✓ Mirror Back</div>
+              <div>❌ Don't Say</div>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <div>"I have a <strong>question</strong>..."</div>
+              <div>"Regarding your question..."</div>
+              <div>"I've solved your problem"</div>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <div>"Unexpected <strong>behavior</strong>..."</div>
+              <div>"About the behavior..."</div>
+              <div>"I've fixed the bug"</div>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <div>"There's an <strong>issue</strong> with..."</div>
+              <div>"Regarding this issue..."</div>
+              <div>"We found the problem"</div>
+            </div>
+            <div className="grid grid-cols-3 gap-2">
+              <div>"Something <strong>strange</strong> happens..."</div>
+              <div>"About this situation..."</div>
+              <div>"I've debugged the error"</div>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-4 bg-blue-50 border-l-4 border-blue-500 p-6 rounded">
+          <h3 className="font-semibold text-gray-900 mb-3">💡 Why This Matters</h3>
+          <ul className="space-y-2 text-gray-700">
+            <li className="pl-4">✓ Respects customer's framing – they chose their words carefully</li>
+            <li className="pl-4">✓ Avoids escalation – don't make it sound worse than they said</li>
+            <li className="pl-4">✓ Shows active listening – using their language proves you understood</li>
+            <li className="pl-4">✓ Political correctness – some words imply blame/severity</li>
           </ul>
         </div>
       </section>

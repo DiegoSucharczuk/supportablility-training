@@ -727,7 +727,7 @@ CyberArk Technical Support
     },
     he: {
       title: '🤖 עוזר תקשורת AI',
-      subtitle: 'נתח את התשובה מול 12 עקרונות התקשורת המקצועית',
+      subtitle: 'נתח את התשובה מול 13 עקרונות התקשורת המקצועית',
       customerLabel: 'שאלת הלקוח',
       customerPlaceholder: 'הדבק את שאלת/בעיית הלקוח מ-Salesforce...',
       answerLabel: 'תשובת המהנדס המוצעת',
@@ -749,14 +749,14 @@ CyberArk Technical Support
         '🔍 קורא את ההודעה שלך...',
         '🔍 מחפש בתיעוד CyberArk ובאינטרנט...',
         '🤔 מנתח סגנון תקשורת...',
-        '📋 בודק מול 12 עקרונות...',
+        '📋 בודק מול 13 עקרונות...',
         '✨ יוצר שיפורים...',
         '📝 מסיים ניתוח...'
       ],
       loadingStagesNoSearch: [
         '🔍 קורא את ההודעה שלך...',
         '🤔 מנתח סגנון תקשורת...',
-        '📋 בודק מול 12 עקרונות...',
+        '📋 בודק מול 13 עקרונות...',
         '✨ יוצר שיפורים...',
         '📝 מסיים ניתוח...'
       ],
@@ -929,8 +929,8 @@ CyberArk Technical Support
                   <span className="text-gray-800 font-medium block mb-1">{t.analysisTypeCustomer}</span>
                   <p className="text-sm text-gray-600">
                     {language === 'he'
-                      ? 'בדוק את איכות התקשורת עם הלקוח: אמפתיה, בהירות, טון מקצועי. מקבל משוב על 12 עקרונות תקשורת ותשובה משופרת.'
-                      : 'Check communication quality with customer: empathy, clarity, professional tone. Get feedback on 12 communication principles and improved response.'
+                      ? 'בדוק את איכות התקשורת עם הלקוח: אמפתיה, בהירות, טון מקצועי. מקבל משוב על 13 עקרונות תקשורת ותשובה משופרת.'
+                      : 'Check communication quality with customer: empathy, clarity, professional tone. Get feedback on 13 communication principles and improved response.'
                     }
                   </p>
                 </div>
@@ -1171,8 +1171,8 @@ CyberArk Technical Support
         <p className="text-gray-700 mb-3">
           <strong>💡 {language === 'he' ? 'איך זה עובד:' : 'How it works:'}</strong>{' '}
           {language === 'he' 
-            ? 'הכלי מנתח את התשובה מול 12 עקרונות התקשורת המקצועית. מקבל משוב מפורט על מה טוב, מה צריך שיפור, וקבלת תשובה אידיאלית מעוצבת.'
-            : 'This tool analyzes responses against 12 professional communication principles. Get detailed feedback on what\'s good, what needs work, and receive an ideal formatted response.'
+            ? 'הכלי מנתח את התשובה מול 13 עקרונות התקשורת המקצועית. מקבל משוב מפורט על מה טוב, מה צריך שיפור, וקבלת תשובה אידיאלית מעוצבת.'
+            : 'This tool analyzes responses against 13 professional communication principles. Get detailed feedback on what\'s good, what needs work, and receive an ideal formatted response.'
           }
         </p>
         <p className="text-sm text-gray-600">
