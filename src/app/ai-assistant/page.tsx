@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import Link from 'next/link';
 import { useLanguage } from '@/context/LanguageContext';
 import { useSettings } from '@/context/SettingsContext';
 import Breadcrumbs from '@/components/Breadcrumbs';
@@ -783,12 +784,12 @@ CyberArk Technical Support
                   ? 'To use the AI Assistant, you need to configure your AWS Bedrock credentials in Settings.' 
                   : 'כדי להשתמש בעוזר ה-AI, עליך להגדיר את פרטי החיבור ל-AWS Bedrock בהגדרות.'}
               </p>
-              <a
+              <Link
                 href="/settings"
                 className="inline-block px-6 py-2 bg-yellow-600 text-white rounded-lg hover:bg-yellow-700 transition-all font-semibold"
               >
                 {language === 'en' ? '⚙️ Go to Settings' : '⚙️ עבור להגדרות'}
-              </a>
+              </Link>
             </div>
           </div>
         </div>
