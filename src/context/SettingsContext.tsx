@@ -44,9 +44,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         try {
           const parsed = JSON.parse(stored);
           setSettings(parsed);
-          if (parsed.awsCredentials?.accessKeyId) {
-            setConnectionStatus('connected');
-          }
+          // Don't auto-set connected - user must validate credentials
         } catch (e) {
           console.error('Failed to load settings:', e);
         }
@@ -61,10 +59,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
       localStorage.setItem('supportability-settings', JSON.stringify(updated));
     }
     
-    // Update connection status if AWS credentials changed
-    if (newSettings.awsCredentials && updated.awsCredentials?.accessKeyId) {
-      setConnectionStatus('connected');
-    }
+    // Don't auto-set connected status - require explicit validation
   };
 
   const clearSettings = () => {

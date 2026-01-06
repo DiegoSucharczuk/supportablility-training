@@ -35,7 +35,7 @@ export default function SettingsPage() {
     }
   }, [settings]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     updateSettings({
       userName: formData.userName,
       awsCredentials: {
@@ -46,8 +46,32 @@ export default function SettingsPage() {
       },
       googleApiKey: formData.googleApiKey,
     });
-    setTestResult({ success: true, message: language === 'en' ? 'Settings saved successfully!' : 'ההגדרות נשמרו בהצלחה!' });
-    setTimeout(() => setTestResult(null), 3000);
+    
+    // Auto-test connection after saving
+    if (formData.accessKeyId && formData.secretAccessKey) {
+      setTestResult({ 
+        success: true, 
+        message: language === 'en' ? 'Settings saved. Testing connection...' : 'ההגדרות נשמרו. בודק חיבור...'
+      });
+      
+      // Wait a bit for settings to be updated
+      setTimeout(async () => {
+        const success = await testConnection();
+        setTestResult({
+          success,
+          message: success
+            ? language === 'en' 
+              ? '✅ Settings saved and connection verified!' 
+              : '✅ ההגדרות נשמרו והחיבור אומת!'
+            : language === 'en'
+              ? '❌ Settings saved but connection failed. Please check your credentials.'
+              : '❌ ההגדרות נשמרו אך החיבור נכשל. אנא בדוק את פרטי החיבור.',
+        });
+      }, 500);
+    } else {
+      setTestResult({ success: true, message: language === 'en' ? 'Settings saved' : 'ההגדרות נשמרו' });
+      setTimeout(() => setTestResult(null), 3000);
+    }
   };
 
   const handleTest = async () => {
