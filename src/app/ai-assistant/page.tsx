@@ -710,7 +710,7 @@ CyberArk Technical Support
   const content = {
     en: {
       title: '🤖 AI Communication Assistant',
-      subtitle: 'Analyze your customer responses against 12 professional communication principles',
+      subtitle: 'Analyze your customer responses against 13 professional communication principles',
       analysisTypeIssueValidation: 'Issue Validation (Technical Accuracy)',
       customerOptional: '(Optional)',
       answerOptional: '(Optional)',
@@ -725,6 +725,7 @@ CyberArk Technical Support
       analyzeButton: '🔍 Analyze Response',
       analyzing: 'Analyzing',
       analysisTitle: '📊 AI Analysis',
+      aiDisclaimer: '⚠️ AI can make mistakes. Please verify important information and use your professional judgment.',
       chatTitle: '💬 Ask Follow-up Questions',
       chatPlaceholder: 'Ask about specific principles or improvements...',
       sendButton: 'Send',
@@ -756,16 +757,17 @@ CyberArk Technical Support
       answerLabel: 'תשובת המהנדס המוצעת',
       answerPlaceholder: 'הדבק את תשובת המהנדס לניתוח...',
       analysisTypeLabel: '📋 סוג ניתוח',
+      analysisTypeCustomer: 'תגובה ללקוח (איכות תקשורת)',
+      analysisTypeRnD: 'העלאה לפיתוח (מוכנות טכנית)',
       analysisTypeIssueValidation: 'אימות בעיה (דיוק טכני)',
       customerOptional: '(אופציונלי)',
-      answerOptional: '(אופציונליתקשורת)',
-      analysisTypeRnD: 'העלאה לפיתוח (מוכנות טכנית)',
-      customerOptional: '(אופציונלי לניתוח פיתוח)',
+      answerOptional: '(אופציונלי)',
       answerRequired: '*',
       modelLabel: 'מודל AI',
       analyzeButton: '🔍 נתח תשובה',
       analyzing: 'מנתח',
       analysisTitle: '📊 ניתוח AI',
+      aiDisclaimer: '⚠️ AI יכול לטעות. אנא אמת מידע חשוב והשתמש בשיקול דעתך המקצועי.',
       chatTitle: '💬 שאל שאלות המשך',
       chatPlaceholder: 'שאל על עקרונות ספציפיים או שיפורים...',
       sendButton: 'שלח',
@@ -950,7 +952,11 @@ CyberArk Technical Support
             </label>
             <div className="space-y-4">
               <label className="flex items-start gap-3 cursor-pointer p-3 rounded-lg hover:bg-white/50 transition-all">
-                <input | 'issue-validation')}
+                <input
+                  type="radio"
+                  value="customer"
+                  checked={analysisType === 'customer'}
+                  onChange={(e) => setAnalysisType(e.target.value as 'customer' | 'rnd' | 'issue-validation')}
                   className="mt-1 w-5 h-5 text-blue-600"
                   disabled={isLoading}
                 />
@@ -997,11 +1003,7 @@ CyberArk Technical Support
                   <p className="text-sm text-gray-600">
                     {language === 'he'
                       ? 'בדוק את תיאור הבעיה של הלקוח: האם גרסאות נתמכות? תצורה נכונה? שגיאות לוגיות? מקבל המלצות טכניות.'
-                      : 'Validate customer\'s issue description: supported versions? correct configuration? logical errors? Get technical recommendations
-                  <p className="text-sm text-gray-600">
-                    {language === 'he'
-                      ? 'בדוק אם יש מספיק מידע טכני לפיתוח: logs, versions, troubleshooting. מקבל פידבק על עבודת התמיכה ומה חסר.'
-                      : 'Check if there\'s enough technical info for R&D: logs, versions, troubleshooting. Get feedback on support work and what\'s missing.'
+                      : 'Validate customer\'s issue description: supported versions? correct configuration? logical errors? Get technical recommendations.'
                     }
                   </p>
                 </div>
