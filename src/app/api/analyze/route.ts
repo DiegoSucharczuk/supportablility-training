@@ -6,11 +6,31 @@ export async function POST(request: NextRequest) {
   try {
     const { customerComment, yourAnswer, followUpQuestion, chatHistory, modelId: requestModelId, findSolutions, analysisType, issueValidation, credentials, googleApiKey, userName } = await request.json();
 
-    if (!customerComment || !yourAnswer) {
-      return NextResponse.json(
-        { error: 'Customer comment and your answer are required' },
-        { status: 400 }
-      );
+    // Validation based on analysis type
+    if (analysisType === 'customer') {
+      // Customer response needs both fields
+      if (!customerComment || !yourAnswer) {
+        return NextResponse.json(
+          { error: 'Customer comment and your answer are required' },
+          { status: 400 }
+        );
+      }
+    } else if (analysisType === 'rnd') {
+      // R&D escalation only needs the left field (escalation text to review)
+      if (!customerComment) {
+        return NextResponse.json(
+          { error: 'Please provide the escalation text to analyze' },
+          { status: 400 }
+        );
+      }
+    } else {
+      // Fallback - require at least customer comment
+      if (!customerComment) {
+        return NextResponse.json(
+          { error: 'Customer comment is required' },
+          { status: 400 }
+        );
+      }
     }
 
     // Check for credentials from request or environment
