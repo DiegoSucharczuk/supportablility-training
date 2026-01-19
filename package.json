@@ -10,6 +10,8 @@
   },
   "dependencies": {
     "@aws-sdk/client-bedrock-runtime": "^3.948.0",
+    "@aws-sdk/client-sso": "^3.971.0",
+    "@aws-sdk/client-sso-oidc": "^3.971.0",
     "@google/generative-ai": "^0.24.1",
     "next": "^16.1.0",
     "react": "19.2.0",

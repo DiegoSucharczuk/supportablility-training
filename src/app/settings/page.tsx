@@ -21,6 +21,24 @@ export default function SettingsPage() {
 
   const [showSecrets, setShowSecrets] = useState(false);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
+  const [authMethod, setAuthMethod] = useState<'manual' | 'sso'>('manual');
+  const [ssoConfig, setSsoConfig] = useState({
+    startUrl: '',
+    region: 'us-east-1',
+  });
+  const [ssoFlow, setSsoFlow] = useState<{
+    step: 'idle' | 'authorizing' | 'selecting' | 'complete';
+    userCode?: string;
+    verificationUri?: string;
+    clientId?: string;
+    clientSecret?: string;
+    deviceCode?: string;
+    accessToken?: string;
+    accounts?: any[];
+    roles?: any[];
+    selectedAccount?: string;
+    selectedRole?: string;
+  }>({ step: 'idle' });
 
   useEffect(() => {
     if (settings) {
@@ -99,7 +117,236 @@ export default function SettingsPage() {
         region: 'us-east-1',
         googleApiKey: '',
       });
+      setSsoFlow({ step: 'idle' });
       setTestResult({ success: true, message: language === 'en' ? 'Settings cleared' : 'ההגדרות נמחקו' });
+    }
+  };
+
+  const handleSSOStart = async () => {
+    if (!ssoConfig.startUrl) {
+      setTestResult({ 
+        success: false, 
+        message: language === 'en' ? 'Please enter your AWS SSO start URL' : 'אנא הזן את כתובת ההתחלה של AWS SSO' 
+      });
+      return;
+    }
+
+    try {
+      setSsoFlow({ step: 'authorizing' });
+      
+      const response = await fetch('/api/auth/sso', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'start',
+          startUrl: ssoConfig.startUrl,
+          region: ssoConfig.region,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        throw new Error(data.error);
+      }
+
+      setSsoFlow({
+        step: 'authorizing',
+        userCode: data.userCode,
+        verificationUri: data.verificationUriComplete || data.verificationUri,
+        clientId: data.clientId,
+        clientSecret: data.clientSecret,
+        deviceCode: data.deviceCode,
+      });
+
+      // Open authorization URL in new tab
+      window.open(data.verificationUriComplete || data.verificationUri, '_blank');
+
+      // Start polling for token
+      pollForToken(data.clientId, data.clientSecret, data.deviceCode, ssoConfig.region);
+
+    } catch (error: any) {
+      setSsoFlow({ step: 'idle' });
+      setTestResult({ 
+        success: false, 
+        message: language === 'en' ? `SSO failed: ${error.message}` : `SSO נכשל: ${error.message}` 
+      });
+    }
+  };
+
+  const pollForToken = async (clientId: string, clientSecret: string, deviceCode: string, region: string) => {
+    const maxAttempts = 60; // 5 minutes (every 5 seconds)
+    let attempts = 0;
+
+    const poll = async () => {
+      if (attempts >= maxAttempts) {
+        setSsoFlow({ step: 'idle' });
+        setTestResult({ 
+          success: false, 
+          message: language === 'en' ? 'Authorization timeout. Please try again.' : 'פג זמן האישור. נסה שוב.' 
+        });
+        return;
+      }
+
+      try {
+        const response = await fetch('/api/auth/sso', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            action: 'token',
+            clientId,
+            clientSecret,
+            deviceCode,
+            region,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (data.success && data.accessToken) {
+          // Get accounts
+          await fetchAccounts(data.accessToken, region);
+        } else {
+          // Continue polling
+          attempts++;
+          setTimeout(poll, 5000);
+        }
+      } catch (error) {
+        // Continue polling on error (user might not have authorized yet)
+        attempts++;
+        setTimeout(poll, 5000);
+      }
+    };
+
+    poll();
+  };
+
+  const fetchAccounts = async (accessToken: string, region: string) => {
+    try {
+      const response = await fetch('/api/auth/sso', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'accounts',
+          accessToken,
+          region,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.accounts) {
+        setSsoFlow(prev => ({
+          ...prev,
+          step: 'selecting',
+          accessToken,
+          accounts: data.accounts,
+        }));
+      }
+    } catch (error: any) {
+      setSsoFlow({ step: 'idle' });
+      setTestResult({ 
+        success: false, 
+        message: language === 'en' ? `Failed to fetch accounts: ${error.message}` : `נכשל לטעון חשבונות: ${error.message}` 
+      });
+    }
+  };
+
+  const handleAccountSelect = async (accountId: string) => {
+    if (!ssoFlow.accessToken) return;
+
+    try {
+      const response = await fetch('/api/auth/sso', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'roles',
+          accessToken: ssoFlow.accessToken,
+          accountId,
+          region: ssoConfig.region,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.roles) {
+        setSsoFlow(prev => ({
+          ...prev,
+          roles: data.roles,
+          selectedAccount: accountId,
+        }));
+      }
+    } catch (error: any) {
+      setTestResult({ 
+        success: false, 
+        message: language === 'en' ? `Failed to fetch roles: ${error.message}` : `נכשל לטעון תפקידים: ${error.message}` 
+      });
+    }
+  };
+
+  const handleRoleSelect = async (roleName: string) => {
+    if (!ssoFlow.accessToken || !ssoFlow.selectedAccount) return;
+
+    try {
+      const response = await fetch('/api/auth/sso', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          action: 'credentials',
+          accessToken: ssoFlow.accessToken,
+          accountId: ssoFlow.selectedAccount,
+          roleName,
+          region: ssoConfig.region,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (data.success && data.credentials) {
+        // Update form with SSO credentials
+        setFormData(prev => ({
+          ...prev,
+          accessKeyId: data.credentials.accessKeyId,
+          secretAccessKey: data.credentials.secretAccessKey,
+          sessionToken: data.credentials.sessionToken,
+          region: ssoConfig.region,
+        }));
+
+        setSsoFlow({ step: 'complete', selectedRole: roleName });
+        
+        // Auto-save the credentials
+        updateSettings({
+          userName: formData.userName,
+          awsCredentials: {
+            accessKeyId: data.credentials.accessKeyId,
+            secretAccessKey: data.credentials.secretAccessKey,
+            sessionToken: data.credentials.sessionToken,
+            region: ssoConfig.region,
+          },
+          googleApiKey: formData.googleApiKey,
+        });
+
+        setTestResult({ 
+          success: true, 
+          message: language === 'en' ? '✅ SSO authentication successful! Credentials saved.' : '✅ אימות SSO הצליח! האישורים נשמרו.' 
+        });
+
+        // Test connection
+        setTimeout(async () => {
+          const success = await testConnection();
+          if (success) {
+            setTestResult({ 
+              success: true, 
+              message: language === 'en' ? '✅ SSO complete and connection verified!' : '✅ SSO הושלם והחיבור אומת!' 
+            });
+          }
+        }, 500);
+      }
+    } catch (error: any) {
+      setTestResult({ 
+        success: false, 
+        message: language === 'en' ? `Failed to get credentials: ${error.message}` : `נכשל לקבל אישורים: ${error.message}` 
+      });
     }
   };
 
@@ -110,7 +357,18 @@ export default function SettingsPage() {
       userSection: 'User Information',
       userName: 'Your Name',
       userNamePlaceholder: 'Enter your name (optional)',
+      authMethodTitle: 'Authentication Method',
+      manualAuth: 'Manual Credentials',
+      ssoAuth: 'AWS SSO Login',
       awsSection: 'AWS Bedrock Configuration',
+      ssoStartUrl: 'AWS SSO Start URL',
+      ssoStartUrlPlaceholder: 'https://your-org.awsapps.com/start',
+      ssoRegion: 'SSO Region',
+      startSSOButton: 'Sign in with AWS SSO',
+      ssoAuthorizing: 'Authorizing... Please complete the login in the opened browser tab',
+      ssoUserCode: 'User Code',
+      ssoSelectAccount: 'Select AWS Account',
+      ssoSelectRole: 'Select IAM Role',
       awsAccessKey: 'AWS Access Key ID',
       awsSecret: 'AWS Secret Access Key',
       awsSession: 'AWS Session Token (Optional)',
@@ -135,7 +393,18 @@ export default function SettingsPage() {
       userSection: 'מידע משתמש',
       userName: 'שמך',
       userNamePlaceholder: 'הכנס את שמך (אופציונלי)',
+      authMethodTitle: 'שיטת אימות',
+      manualAuth: 'אישורים ידניים',
+      ssoAuth: 'כניסה עם AWS SSO',
       awsSection: 'הגדרות AWS Bedrock',
+      ssoStartUrl: 'כתובת התחלה של AWS SSO',
+      ssoStartUrlPlaceholder: 'https://your-org.awsapps.com/start',
+      ssoRegion: 'אזור SSO',
+      startSSOButton: 'היכנס עם AWS SSO',
+      ssoAuthorizing: 'מאמת... אנא השלם את הכניסה בכרטיסיית הדפדפן שנפתחה',
+      ssoUserCode: 'קוד משתמש',
+      ssoSelectAccount: 'בחר חשבון AWS',
+      ssoSelectRole: 'בחר תפקיד IAM',
       awsAccessKey: 'AWS Access Key ID',
       awsSecret: 'AWS Secret Access Key',
       awsSession: 'AWS Session Token (אופציונלי)',
@@ -214,7 +483,162 @@ export default function SettingsPage() {
       {/* AWS Configuration */}
       <div className="bg-white rounded-lg shadow-md p-6 mb-6">
         <h2 className="text-2xl font-bold mb-4 text-blue-600">{t.awsSection}</h2>
-        <div className="space-y-4">
+        
+        {/* Authentication Method Selector */}
+        <div className="mb-6 border-b pb-4">
+          <label className="block text-sm font-medium text-gray-700 mb-3">
+            {t.authMethodTitle}
+          </label>
+          <div className="flex gap-4">
+            <button
+              onClick={() => setAuthMethod('manual')}
+              className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+                authMethod === 'manual'
+                  ? 'bg-blue-600 text-white shadow-lg'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              🔑 {t.manualAuth}
+            </button>
+            <button
+              onClick={() => setAuthMethod('sso')}
+              className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+                authMethod === 'sso'
+                  ? 'bg-blue-600 text-white shadow-lg'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              🔐 {t.ssoAuth}
+            </button>
+          </div>
+        </div>
+
+        {/* SSO Authentication */}
+        {authMethod === 'sso' && (
+          <div className="space-y-4">
+            {ssoFlow.step === 'idle' && (
+              <>
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t.ssoStartUrl} *
+                  </label>
+                  <input
+                    type="text"
+                    value={ssoConfig.startUrl}
+                    onChange={(e) => setSsoConfig({ ...ssoConfig, startUrl: e.target.value })}
+                    placeholder={t.ssoStartUrlPlaceholder}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t.ssoRegion} *
+                  </label>
+                  <select
+                    value={ssoConfig.region}
+                    onChange={(e) => setSsoConfig({ ...ssoConfig, region: e.target.value })}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="us-east-1">US East (N. Virginia) - us-east-1</option>
+                    <option value="us-west-2">US West (Oregon) - us-west-2</option>
+                    <option value="eu-west-1">Europe (Ireland) - eu-west-1</option>
+                    <option value="eu-central-1">Europe (Frankfurt) - eu-central-1</option>
+                    <option value="ap-southeast-1">Asia Pacific (Singapore) - ap-southeast-1</option>
+                    <option value="ap-northeast-1">Asia Pacific (Tokyo) - ap-northeast-1</option>
+                  </select>
+                </div>
+
+                <button
+                  onClick={handleSSOStart}
+                  disabled={!ssoConfig.startUrl}
+                  className="w-full px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg hover:from-blue-700 hover:to-blue-800 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed"
+                >
+                  🚀 {t.startSSOButton}
+                </button>
+              </>
+            )}
+
+            {ssoFlow.step === 'authorizing' && (
+              <div className="bg-yellow-50 border border-yellow-300 rounded-lg p-6 text-center">
+                <div className="animate-pulse text-4xl mb-4">🔐</div>
+                <p className="text-lg font-semibold text-yellow-800 mb-2">{t.ssoAuthorizing}</p>
+                {ssoFlow.userCode && (
+                  <div className="mt-4">
+                    <p className="text-sm text-gray-600 mb-2">{t.ssoUserCode}:</p>
+                    <p className="text-3xl font-mono font-bold text-blue-600">{ssoFlow.userCode}</p>
+                  </div>
+                )}
+                {ssoFlow.verificationUri && (
+                  <a
+                    href={ssoFlow.verificationUri}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-4 inline-block text-blue-600 hover:text-blue-800 underline"
+                  >
+                    Open authorization page again
+                  </a>
+                )}
+              </div>
+            )}
+
+            {ssoFlow.step === 'selecting' && (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t.ssoSelectAccount}
+                  </label>
+                  <select
+                    onChange={(e) => handleAccountSelect(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  >
+                    <option value="">-- Select Account --</option>
+                    {ssoFlow.accounts?.map((account: any) => (
+                      <option key={account.accountId} value={account.accountId}>
+                        {account.accountName} ({account.accountId})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                {ssoFlow.roles && ssoFlow.roles.length > 0 && (
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                      {t.ssoSelectRole}
+                    </label>
+                    <select
+                      onChange={(e) => handleRoleSelect(e.target.value)}
+                      className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    >
+                      <option value="">-- Select Role --</option>
+                      {ssoFlow.roles.map((role: any) => (
+                        <option key={role.roleName} value={role.roleName}>
+                          {role.roleName}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {ssoFlow.step === 'complete' && (
+              <div className="bg-green-50 border border-green-300 rounded-lg p-6 text-center">
+                <div className="text-4xl mb-4">✅</div>
+                <p className="text-lg font-semibold text-green-800">
+                  {language === 'en' ? 'SSO Authentication Complete!' : 'אימות SSO הושלם!'}
+                </p>
+                <p className="text-sm text-gray-600 mt-2">
+                  {language === 'en' ? 'Credentials have been saved and are ready to use.' : 'האישורים נשמרו ומוכנים לשימוש.'}
+                </p>
+              </div>
+            )}
+          </div>
+        )}
+
+        {/* Manual Credentials */}
+        {authMethod === 'manual' && (
+          <div className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               {t.awsAccessKey} *
@@ -279,6 +703,7 @@ export default function SettingsPage() {
             {showSecrets ? '🙈 ' : '👁️ '} {t.showHide}
           </button>
         </div>
+        )}
       </div>
 
       {/* Google AI Configuration */}
