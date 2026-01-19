@@ -41,6 +41,12 @@ export default function SettingsPage() {
   }>({ step: 'idle' });
   const [localSsoProfiles, setLocalSsoProfiles] = useState<any[]>([]);
   const [selectedProfile, setSelectedProfile] = useState<string>('');
+  const [isLocalEnvironment, setIsLocalEnvironment] = useState(false);
+
+  // Check if running locally (not on Vercel)
+  useEffect(() => {
+    setIsLocalEnvironment(window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1');
+  }, []);
 
   useEffect(() => {
     if (settings) {
@@ -190,7 +196,11 @@ export default function SettingsPage() {
         return;
       }
 
+      attempts++;
+
       try {
+        console.log(`[SSO] Polling attempt ${attempts}/${maxAttempts}...`);
+        
         const response = await fetch('/api/auth/sso', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -204,18 +214,28 @@ export default function SettingsPage() {
         });
 
         const data = await response.json();
+        console.log('[SSO] Token response:', data);
 
         if (data.success && data.accessToken) {
+          console.log('[SSO] Token received! Fetching accounts...');
           // Get accounts
           await fetchAccounts(data.accessToken, region);
+        } else if (data.code === 'AuthorizationPendingException' || data.error?.includes('pending')) {
+          // User hasn't authorized yet - continue polling
+          console.log('[SSO] Still waiting for authorization...');
+          setTimeout(poll, 5000);
+        } else if (data.code === 'SlowDownException') {
+          // Polling too fast
+          console.log('[SSO] Slowing down polling...');
+          setTimeout(poll, 10000);
         } else {
-          // Continue polling
-          attempts++;
+          // Some other error - show it but keep polling
+          console.warn('[SSO] Error while polling:', data.error);
           setTimeout(poll, 5000);
         }
-      } catch (error) {
+      } catch (error: any) {
+        console.error('[SSO] Polling error:', error);
         // Continue polling on error (user might not have authorized yet)
-        attempts++;
         setTimeout(poll, 5000);
       }
     };
@@ -637,16 +657,18 @@ export default function SettingsPage() {
             >
               🔑 {t.manualAuth}
             </button>
-            <button
-              onClick={() => setAuthMethod('local-sso')}
-              className={`px-4 py-2 rounded-lg font-semibold transition-all text-sm ${
-                authMethod === 'local-sso'
-                  ? 'bg-blue-600 text-white shadow-lg'
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              }`}
-            >
-              💻 {t.localSsoAuth}
-            </button>
+            {isLocalEnvironment && (
+              <button
+                onClick={() => setAuthMethod('local-sso')}
+                className={`px-4 py-2 rounded-lg font-semibold transition-all text-sm ${
+                  authMethod === 'local-sso'
+                    ? 'bg-blue-600 text-white shadow-lg'
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                }`}
+              >
+                💻 {t.localSsoAuth}
+              </button>
+            )}
             <button
               onClick={() => setAuthMethod('sso')}
               className={`px-4 py-2 rounded-lg font-semibold transition-all text-sm ${

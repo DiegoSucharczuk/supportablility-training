@@ -62,20 +62,32 @@ export async function POST(request: NextRequest) {
 
       const ssoOidcClient = new SSOOIDCClient({ region });
 
-      const tokenCommand = new CreateTokenCommand({
-        clientId,
-        clientSecret,
-        deviceCode,
-        grantType: 'urn:ietf:params:oauth:grant-type:device_code',
-      });
+      try {
+        const tokenCommand = new CreateTokenCommand({
+          clientId,
+          clientSecret,
+          deviceCode,
+          grantType: 'urn:ietf:params:oauth:grant-type:device_code',
+        });
 
-      const tokenResponse = await ssoOidcClient.send(tokenCommand);
+        const tokenResponse = await ssoOidcClient.send(tokenCommand);
 
-      return NextResponse.json({
-        success: true,
-        accessToken: tokenResponse.accessToken,
-        expiresIn: tokenResponse.expiresIn,
-      });
+        return NextResponse.json({
+          success: true,
+          accessToken: tokenResponse.accessToken,
+          expiresIn: tokenResponse.expiresIn,
+        });
+      } catch (error: any) {
+        // Return the error code so frontend can handle it appropriately
+        return NextResponse.json(
+          {
+            success: false,
+            error: error.message,
+            code: error.name,
+          },
+          { status: error.name === 'AuthorizationPendingException' ? 202 : 500 }
+        );
+      }
     }
 
     // Get AWS credentials using SSO access token
