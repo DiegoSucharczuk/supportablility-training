@@ -223,7 +223,7 @@ export default function AIAssistant() {
   const [loadingStage, setLoadingStage] = useState(0);
   const [demoTimeout, setDemoTimeout] = useState<NodeJS.Timeout | null>(null);
   const [findSolutions, setFindSolutions] = useState(false);
-  const [analysisType, setAnalysisType] = useState<'customer' | 'rnd'>('customer');
+  const [analysisType, setAnalysisType] = useState<'customer' | 'rnd' | 'issue-validation'>('customer');
   const [showSanitizationModal, setShowSanitizationModal] = useState(false);
   const [sanitizedQuestion, setSanitizedQuestion] = useState('');
   const [sanitizedAnswer, setSanitizedAnswer] = useState('');
@@ -318,9 +318,25 @@ export default function AIAssistant() {
   }, [analysis]);
 
   const handleAnalyze = async () => {
-    if (!customerQuestion.trim() || !engineerAnswer.trim()) {
-      setError(language === 'he' ? 'נא למלא את שני השדות' : 'Please fill in both fields');
-      return;
+    // Validation based on analysis type
+    if (analysisType === 'customer') {
+      // Customer response: needs both fields
+      if (!customerQuestion.trim() || !engineerAnswer.trim()) {
+        setError(language === 'he' ? 'נא למלא את שני השדות' : 'Please fill in both fields');
+        return;
+      }
+    } else if (analysisType === 'rnd') {
+      // R&D escalation: only needs LEFT field (the escalation to review)
+      if (!customerQuestion.trim()) {
+        setError(language === 'he' ? 'נא למלא את שדה הצד השמאלי' : 'Please fill in the left field');
+        return;
+      }
+    } else if (analysisType === 'issue-validation') {
+      // Issue validation: only needs customer comment (LEFT field)
+      if (!customerQuestion.trim()) {
+        setError(language === 'he' ? 'נא למלא את שדה הלקוח' : 'Please fill in customer comment field');
+        return;
+      }
     }
 
     // Sanitize the inputs
@@ -695,13 +711,17 @@ CyberArk Technical Support
     en: {
       title: '🤖 AI Communication Assistant',
       subtitle: 'Analyze your customer responses against 12 professional communication principles',
-      customerLabel: 'Customer Question',
+      analysisTypeIssueValidation: 'Issue Validation (Technical Accuracy)',
+      customerOptional: '(Optional)',
+      answerOptional: '(Optional
       customerPlaceholder: 'Paste the customer\'s question or issue from Salesforce...',
       answerLabel: 'Engineer\'s Proposed Answer',
       answerPlaceholder: 'Paste the engineer\'s response to analyze...',
       analysisTypeLabel: '📋 Analysis Type',
       analysisTypeCustomer: 'Customer Response (Communication Quality)',
       analysisTypeRnD: 'R&D Escalation (Technical Readiness)',
+      customerOptional: '(Optional for R&D analysis)',
+      answerRequired: '*',
       analyzeButton: '🔍 Analyze Response',
       analyzing: 'Analyzing',
       analysisTitle: '📊 AI Analysis',
@@ -736,8 +756,12 @@ CyberArk Technical Support
       answerLabel: 'תשובת המהנדס המוצעת',
       answerPlaceholder: 'הדבק את תשובת המהנדס לניתוח...',
       analysisTypeLabel: '📋 סוג ניתוח',
-      analysisTypeCustomer: 'תגובה ללקוח (איכות תקשורת)',
+      analysisTypeIssueValidation: 'אימות בעיה (דיוק טכני)',
+      customerOptional: '(אופציונלי)',
+      answerOptional: '(אופציונליתקשורת)',
       analysisTypeRnD: 'העלאה לפיתוח (מוכנות טכנית)',
+      customerOptional: '(אופציונלי לניתוח פיתוח)',
+      answerRequired: '*',
       modelLabel: 'מודל AI',
       analyzeButton: '🔍 נתח תשובה',
       analyzing: 'מנתח',
@@ -886,7 +910,10 @@ CyberArk Technical Support
         <div className="grid md:grid-cols-2 gap-6">
           <div className="bg-white rounded-xl shadow-lg p-6 animate-slide-in-left">
             <label className="block text-lg font-semibold text-gray-800 mb-3">
-              📋 {t.customerLabel}
+              📋 {t.customerLabel} {' '}
+              {analysisType === 'customer' && <span className="text-red-500">{t.answerRequired}</span>}
+              {analysisType === 'rnd' && <span className="text-red-500">{t.answerRequired}</span>}
+              {analysisType === 'issue-validation' && <span className="text-red-500">{t.answerRequired}</span>}
             </label>
             <textarea
               value={customerQuestion}
@@ -899,7 +926,10 @@ CyberArk Technical Support
 
           <div className="bg-white rounded-xl shadow-lg p-6 animate-slide-in-right">
             <label className="block text-lg font-semibold text-gray-800 mb-3">
-              ✍️ {t.answerLabel}
+              ✍️ {t.answerLabel} {' '}
+              {analysisType === 'customer' && <span className="text-red-500">{t.answerRequired}</span>}
+              {analysisType === 'rnd' && <span className="text-sm text-gray-500 font-normal">{t.answerOptional}</span>}
+              {analysisType === 'issue-validation' && <span className="text-sm text-gray-500 font-normal">{t.answerOptional}</span>}
             </label>
             <textarea
               value={engineerAnswer}
@@ -920,11 +950,7 @@ CyberArk Technical Support
             </label>
             <div className="space-y-4">
               <label className="flex items-start gap-3 cursor-pointer p-3 rounded-lg hover:bg-white/50 transition-all">
-                <input
-                  type="radio"
-                  value="customer"
-                  checked={analysisType === 'customer'}
-                  onChange={(e) => setAnalysisType(e.target.value as 'customer' | 'rnd')}
+                <input | 'issue-validation')}
                   className="mt-1 w-5 h-5 text-blue-600"
                   disabled={isLoading}
                 />
@@ -943,12 +969,35 @@ CyberArk Technical Support
                   type="radio"
                   value="rnd"
                   checked={analysisType === 'rnd'}
-                  onChange={(e) => setAnalysisType(e.target.value as 'customer' | 'rnd')}
+                  onChange={(e) => setAnalysisType(e.target.value as 'customer' | 'rnd' | 'issue-validation')}
                   className="mt-1 w-5 h-5 text-purple-600"
                   disabled={isLoading}
                 />
                 <div className="flex-1">
                   <span className="text-gray-800 font-medium block mb-1">{t.analysisTypeRnD}</span>
+                  <p className="text-sm text-gray-600">
+                    {language === 'he'
+                      ? 'בדוק אם יש מספיק מידע טכני לפיתוח: logs, versions, troubleshooting. מקבל פידבק על עבודת התמיכה ומה חסר.'
+                      : 'Check if there\'s enough technical info for R&D: logs, versions, troubleshooting. Get feedback on support work and what\'s missing.'
+                    }
+                  </p>
+                </div>
+              </label>
+              <label className="flex items-start gap-3 cursor-pointer p-3 rounded-lg hover:bg-white/50 transition-all">
+                <input
+                  type="radio"
+                  value="issue-validation"
+                  checked={analysisType === 'issue-validation'}
+                  onChange={(e) => setAnalysisType(e.target.value as 'customer' | 'rnd' | 'issue-validation')}
+                  className="mt-1 w-5 h-5 text-green-600"
+                  disabled={isLoading}
+                />
+                <div className="flex-1">
+                  <span className="text-gray-800 font-medium block mb-1">{t.analysisTypeIssueValidation}</span>
+                  <p className="text-sm text-gray-600">
+                    {language === 'he'
+                      ? 'בדוק את תיאור הבעיה של הלקוח: האם גרסאות נתמכות? תצורה נכונה? שגיאות לוגיות? מקבל המלצות טכניות.'
+                      : 'Validate customer\'s issue description: supported versions? correct configuration? logical errors? Get technical recommendations
                   <p className="text-sm text-gray-600">
                     {language === 'he'
                       ? 'בדוק אם יש מספיק מידע טכני לפיתוח: logs, versions, troubleshooting. מקבל פידבק על עבודת התמיכה ומה חסר.'
