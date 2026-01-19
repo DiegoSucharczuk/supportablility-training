@@ -1105,12 +1105,20 @@ CyberArk Technical Support
       {/* AI Analysis Section */}
       {analysis && (
         <div className="space-y-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-3xl font-bold text-gray-800 animate-scale-in">
-              {t.analysisTitle}
-            </h2>
-            <div className="text-sm text-gray-600 bg-gray-100 px-4 py-2 rounded-full">
-              {language === 'he' ? 'מודל:' : 'Model:'} <strong>{selectedModelInfo?.name}</strong>
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-3">
+              <h2 className="text-3xl font-bold text-gray-800 animate-scale-in">
+                {t.analysisTitle}
+              </h2>
+              <div className="text-sm text-gray-600 bg-gray-100 px-4 py-2 rounded-full">
+                {language === 'he' ? 'מודל:' : 'Model:'} <strong>{selectedModelInfo?.name}</strong>
+              </div>
+            </div>
+            {/* AI Disclaimer */}
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
+              <p className="text-sm text-gray-700 font-medium" dir="auto">
+                {t.aiDisclaimer}
+              </p>
             </div>
           </div>
           

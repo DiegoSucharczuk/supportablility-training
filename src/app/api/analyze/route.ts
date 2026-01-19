@@ -346,33 +346,33 @@ ADDITIONAL ANALYSIS REQUIRED: Technical Issue Validation
 
 In addition to the ${analysisType === 'rnd' ? 'R&D readiness' : 'communication quality'} analysis above, you MUST also perform technical validation of the customer's issue description.
 
+CRITICAL: This section is ONLY for validation - checking if we have the right information. DO NOT provide solutions, recommendations, or troubleshooting steps. Those belong in the "Find Technical Solutions" feature only.
+
 Check the customer's problem description for:
 
-1. **Supported Versions**: Are they using supported product versions? Any EOL/deprecated components?
-2. **Configuration Issues**: Does their configuration make sense? Any obvious misconfigurations?
-3. **Logical Errors**: Are there inconsistencies or logical problems in their description?
-4. **Missing Context**: What critical technical details are missing?
-5. **Known Issues**: Does this match any known bugs or common problems?
+1. **Supported Versions**: Are the mentioned product versions supported, or are they EOL/deprecated?
+2. **Configuration Correctness**: Based on the description, does the configuration make sense or are there obvious errors?
+3. **Logical Consistency**: Are there contradictions or inconsistencies in the technical description?
+4. **Information Completeness**: Is there enough technical detail to understand the problem?
 
 OUTPUT FORMAT FOR ISSUE VALIDATION:
 Add a new section at the END of your analysis called:
 
 ## 🔍 Technical Issue Validation
 
-### Configuration Review
-- [Quick assessment of configuration correctness]
+### Version Check
+- [Are mentioned versions supported/compatible? Or EOL?]
 
-### Version Compatibility  
-- [Check if versions are supported/compatible]
+### Configuration Assessment
+- [Does the described configuration make sense? Any obvious errors?]
 
 ### Logical Consistency
-- [Any contradictions or logical issues in the description]
+- [Any contradictions or inconsistencies in the technical description?]
 
-### Technical Recommendations
-- [Specific technical guidance or warnings]
-- [Things to verify or investigate]
+### Information Completeness
+- [Is there enough technical detail to understand the issue? What's missing?]
 
-Keep this section concise and actionable.`;
+REMEMBER: NO solutions, NO recommendations, NO troubleshooting steps. Only validate what's been provided.`;
 
       systemPrompt += issueValidationPrompt;
     }
