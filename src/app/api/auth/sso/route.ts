@@ -4,8 +4,10 @@ import { SSOOIDCClient, CreateTokenCommand, RegisterClientCommand, StartDeviceAu
 
 // This endpoint helps initiate AWS SSO device authorization flow
 export async function POST(request: NextRequest) {
+  let body;
   try {
-    const { action, startUrl, region, deviceCode, userCode } = await request.json();
+    body = await request.json();
+    const { action, startUrl, region, deviceCode, userCode } = body;
 
     // Device Authorization Flow
     if (action === 'start') {
@@ -51,7 +53,7 @@ export async function POST(request: NextRequest) {
 
     // Get token after user authorizes
     if (action === 'token') {
-      const { clientId, clientSecret, deviceCode } = await request.json();
+      const { clientId, clientSecret, deviceCode } = body;
       
       if (!clientId || !clientSecret || !deviceCode) {
         return NextResponse.json(
@@ -92,7 +94,7 @@ export async function POST(request: NextRequest) {
 
     // Get AWS credentials using SSO access token
     if (action === 'credentials') {
-      const { accessToken, accountId, roleName } = await request.json();
+      const { accessToken, accountId, roleName } = body;
 
       if (!accessToken || !accountId || !roleName) {
         return NextResponse.json(
@@ -124,7 +126,7 @@ export async function POST(request: NextRequest) {
 
     // List available accounts
     if (action === 'accounts') {
-      const { accessToken } = await request.json();
+      const { accessToken } = body;
 
       if (!accessToken) {
         return NextResponse.json(
@@ -149,7 +151,7 @@ export async function POST(request: NextRequest) {
 
     // List roles for an account
     if (action === 'roles') {
-      const { accessToken, accountId } = await request.json();
+      const { accessToken, accountId } = body;
 
       if (!accessToken || !accountId) {
         return NextResponse.json(
