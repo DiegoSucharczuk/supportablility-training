@@ -21,7 +21,7 @@ export default function SettingsPage() {
 
   const [showSecrets, setShowSecrets] = useState(false);
   const [testResult, setTestResult] = useState<{ success: boolean; message: string } | null>(null);
-  const [authMethod, setAuthMethod] = useState<'manual' | 'sso'>('manual');
+  const [authMethod, setAuthMethod] = useState<'manual' | 'sso' | 'local-sso'>('manual');
   const [ssoConfig, setSsoConfig] = useState({
     startUrl: '',
     region: 'us-east-1',
@@ -39,6 +39,8 @@ export default function SettingsPage() {
     selectedAccount?: string;
     selectedRole?: string;
   }>({ step: 'idle' });
+  const [localSsoProfiles, setLocalSsoProfiles] = useState<any[]>([]);
+  const [selectedProfile, setSelectedProfile] = useState<string>('');
 
   useEffect(() => {
     if (settings) {
@@ -350,6 +352,131 @@ export default function SettingsPage() {
     }
   };
 
+  const handleLoadLocalSSO = async () => {
+    try {
+      setTestResult({ success: true, message: language === 'en' ? 'Loading AWS profiles...' : 'טוען פרופילי AWS...' });
+      
+      const response = await fetch('/api/auth/local-sso');
+      const data = await response.json();
+
+      if (!data.success) {
+        if (data.needsSetup) {
+          setTestResult({ 
+            success: false, 
+            message: language === 'en' 
+              ? 'AWS SSO not configured. Run "aws configure sso" in your terminal first.' 
+              : 'AWS SSO לא מוגדר. הרץ "aws configure sso" בטרמינל תחילה.'
+          });
+        } else if (data.needsLogin) {
+          setTestResult({ 
+            success: false, 
+            message: language === 'en' 
+              ? `SSO token expired. Run "aws sso login --profile <profile>" first.\n\nAvailable profiles: ${data.profiles?.join(', ')}` 
+              : `אסימון SSO פג. הרץ "aws sso login --profile <profile>" תחילה.\n\nפרופילים זמינים: ${data.profiles?.join(', ')}`
+          });
+        } else {
+          setTestResult({ success: false, message: data.error });
+        }
+        return;
+      }
+
+      setLocalSsoProfiles(data.profiles);
+      setTestResult({ 
+        success: true, 
+        message: language === 'en' 
+          ? `Found ${data.profiles.length} AWS SSO profile(s). Select one to continue.` 
+          : `נמצאו ${data.profiles.length} פרופילי AWS SSO. בחר אחד להמשך.`
+      });
+
+    } catch (error: any) {
+      setTestResult({ 
+        success: false, 
+        message: language === 'en' ? `Error loading profiles: ${error.message}` : `שגיאה בטעינת פרופילים: ${error.message}` 
+      });
+    }
+  };
+
+  const handleUseLocalProfile = async () => {
+    if (!selectedProfile) {
+      setTestResult({ 
+        success: false, 
+        message: language === 'en' ? 'Please select a profile first' : 'אנא בחר פרופיל תחילה'
+      });
+      return;
+    }
+
+    try {
+      setTestResult({ success: true, message: language === 'en' ? 'Getting credentials...' : 'מקבל אישורים...' });
+
+      const response = await fetch('/api/auth/local-sso', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ profileName: selectedProfile }),
+      });
+
+      const data = await response.json();
+
+      if (!data.success) {
+        if (data.needsLogin) {
+          setTestResult({ 
+            success: false, 
+            message: data.error 
+          });
+        } else {
+          setTestResult({ success: false, message: data.error });
+        }
+        return;
+      }
+
+      // Update form with credentials
+      setFormData(prev => ({
+        ...prev,
+        accessKeyId: data.credentials.accessKeyId,
+        secretAccessKey: data.credentials.secretAccessKey,
+        sessionToken: data.credentials.sessionToken,
+        region: data.credentials.region,
+      }));
+
+      // Auto-save
+      updateSettings({
+        userName: formData.userName,
+        awsCredentials: {
+          accessKeyId: data.credentials.accessKeyId,
+          secretAccessKey: data.credentials.secretAccessKey,
+          sessionToken: data.credentials.sessionToken,
+          region: data.credentials.region,
+        },
+        googleApiKey: formData.googleApiKey,
+      });
+
+      setTestResult({ 
+        success: true, 
+        message: language === 'en' 
+          ? `✅ Loaded credentials from profile "${data.profile.name}"` 
+          : `✅ אישורים נטענו מפרופיל "${data.profile.name}"`
+      });
+
+      // Test connection
+      setTimeout(async () => {
+        const success = await testConnection();
+        if (success) {
+          setTestResult({ 
+            success: true, 
+            message: language === 'en' 
+              ? `✅ Profile "${data.profile.name}" connected successfully!` 
+              : `✅ פרופיל "${data.profile.name}" התחבר בהצלחה!`
+          });
+        }
+      }, 500);
+
+    } catch (error: any) {
+      setTestResult({ 
+        success: false, 
+        message: language === 'en' ? `Error: ${error.message}` : `שגיאה: ${error.message}`
+      });
+    }
+  };
+
   const content = {
     en: {
       title: 'Settings',
@@ -360,7 +487,12 @@ export default function SettingsPage() {
       authMethodTitle: 'Authentication Method',
       manualAuth: 'Manual Credentials',
       ssoAuth: 'AWS SSO Login',
+      localSsoAuth: 'Use Local AWS SSO',
       awsSection: 'AWS Bedrock Configuration',
+      localSsoInfo: 'Use AWS SSO credentials already configured on your machine',
+      loadProfilesButton: 'Load AWS Profiles',
+      selectProfile: 'Select AWS Profile',
+      useProfileButton: 'Use This Profile',
       ssoStartUrl: 'AWS SSO Start URL',
       ssoStartUrlPlaceholder: 'https://your-org.awsapps.com/start',
       ssoRegion: 'SSO Region',
@@ -391,7 +523,12 @@ export default function SettingsPage() {
       title: 'הגדרות',
       subtitle: 'הגדר את פרטי החיבור ל-AWS ו-Google AI',
       userSection: 'מידע משתמש',
-      userName: 'שמך',
+      localSsoAuth: 'השתמש ב-AWS SSO מקומי',
+      awsSection: 'הגדרות AWS Bedrock',
+      localSsoInfo: 'השתמש באישורי AWS SSO שכבר מוגדרים במחשב שלך',
+      loadProfilesButton: 'טען פרופילי AWS',
+      selectProfile: 'בחר פרופיל AWS',
+      useProfileButton: 'השתמש בפרופיל זה
       userNamePlaceholder: 'הכנס את שמך (אופציונלי)',
       authMethodTitle: 'שיטת אימות',
       manualAuth: 'אישורים ידניים',
@@ -489,10 +626,10 @@ export default function SettingsPage() {
           <label className="block text-sm font-medium text-gray-700 mb-3">
             {t.authMethodTitle}
           </label>
-          <div className="flex gap-4">
+          <div className="flex gap-3 flex-wrap">
             <button
               onClick={() => setAuthMethod('manual')}
-              className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+              className={`px-4 py-2 rounded-lg font-semibold transition-all text-sm ${
                 authMethod === 'manual'
                   ? 'bg-blue-600 text-white shadow-lg'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -501,8 +638,18 @@ export default function SettingsPage() {
               🔑 {t.manualAuth}
             </button>
             <button
+              onClick={() => setAuthMethod('local-sso')}
+              className={`px-4 py-2 rounded-lg font-semibold transition-all text-sm ${
+                authMethod === 'local-sso'
+                  ? 'bg-blue-600 text-white shadow-lg'
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              }`}
+            >
+              💻 {t.localSsoAuth}
+            </button>
+            <button
               onClick={() => setAuthMethod('sso')}
-              className={`px-6 py-3 rounded-lg font-semibold transition-all ${
+              className={`px-4 py-2 rounded-lg font-semibold transition-all text-sm ${
                 authMethod === 'sso'
                   ? 'bg-blue-600 text-white shadow-lg'
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
@@ -512,6 +659,69 @@ export default function SettingsPage() {
             </button>
           </div>
         </div>
+
+        {/* Local SSO (Use existing AWS CLI SSO) */}
+        {authMethod === 'local-sso' && (
+          <div className="space-y-4">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
+              <p className="text-sm text-blue-800">
+                💡 {t.localSsoInfo}
+              </p>
+              <p className="text-xs text-blue-600 mt-2">
+                {language === 'en' 
+                  ? 'Requirements: AWS CLI installed and "aws sso login" completed' 
+                  : 'דרישות: AWS CLI מותקן ו-"aws sso login" הושלם'}
+              </p>
+            </div>
+
+            {localSsoProfiles.length === 0 ? (
+              <button
+                onClick={handleLoadLocalSSO}
+                className="w-full px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl"
+              >
+                🔍 {t.loadProfilesButton}
+              </button>
+            ) : (
+              <div className="space-y-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
+                    {t.selectProfile}
+                  </label>
+                  <select
+                    value={selectedProfile}
+                    onChange={(e) => setSelectedProfile(e.target.value)}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent"
+                  >
+                    <option value="">-- Select Profile --</option>
+                    {localSsoProfiles.map((profile) => (
+                      <option key={profile.name} value={profile.name}>
+                        {profile.name} ({profile.ssoAccountId || 'Account'} - {profile.ssoRoleName || 'Role'})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <button
+                  onClick={handleUseLocalProfile}
+                  disabled={!selectedProfile}
+                  className="w-full px-6 py-3 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-lg hover:from-green-700 hover:to-green-800 transition-all duration-300 font-semibold shadow-lg hover:shadow-xl disabled:from-gray-400 disabled:to-gray-500 disabled:cursor-not-allowed"
+                >
+                  ✅ {t.useProfileButton}
+                </button>
+
+                <button
+                  onClick={() => {
+                    setLocalSsoProfiles([]);
+                    setSelectedProfile('');
+                  }}
+                  className="w-full px-4 py-2 text-sm text-gray-600 hover:text-gray-800 underline"
+                >
+                  {language === 'en' ? 'Reload Profiles' : 'טען פרופילים מחדש'}
+                </button>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* SSO Authentication */}
         {authMethod === 'sso' && (
