@@ -4,7 +4,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(request: NextRequest) {
   try {
-    const { customerComment, yourAnswer, followUpQuestion, chatHistory, modelId: requestModelId, findSolutions, analysisType, credentials, googleApiKey, userName } = await request.json();
+    const { customerComment, yourAnswer, followUpQuestion, chatHistory, modelId: requestModelId, findSolutions, analysisType, issueValidation, credentials, googleApiKey, userName } = await request.json();
 
     if (!customerComment || !yourAnswer) {
       return NextResponse.json(
@@ -315,6 +315,46 @@ Applications created via REST/API or automation are more susceptible to malforme
 
 Do NOT group questions by priority. Each question must have its "Why this is needed" explanation immediately after it.
 Use clear, professional, empathetic tone. Be concise but thorough in explanations.`;
+    }
+
+    // Add Issue Validation prompt if enabled
+    if (issueValidation) {
+      const issueValidationPrompt = `
+
+---
+ADDITIONAL ANALYSIS REQUIRED: Technical Issue Validation
+
+In addition to the ${analysisType === 'rnd' ? 'R&D readiness' : 'communication quality'} analysis above, you MUST also perform technical validation of the customer's issue description.
+
+Check the customer's problem description for:
+
+1. **Supported Versions**: Are they using supported product versions? Any EOL/deprecated components?
+2. **Configuration Issues**: Does their configuration make sense? Any obvious misconfigurations?
+3. **Logical Errors**: Are there inconsistencies or logical problems in their description?
+4. **Missing Context**: What critical technical details are missing?
+5. **Known Issues**: Does this match any known bugs or common problems?
+
+OUTPUT FORMAT FOR ISSUE VALIDATION:
+Add a new section at the END of your analysis called:
+
+## 🔍 Technical Issue Validation
+
+### Configuration Review
+- [Quick assessment of configuration correctness]
+
+### Version Compatibility  
+- [Check if versions are supported/compatible]
+
+### Logical Consistency
+- [Any contradictions or logical issues in the description]
+
+### Technical Recommendations
+- [Specific technical guidance or warnings]
+- [Things to verify or investigate]
+
+Keep this section concise and actionable.`;
+
+      systemPrompt += issueValidationPrompt;
     }
 
     let userPrompt: string;

@@ -223,7 +223,8 @@ export default function AIAssistant() {
   const [loadingStage, setLoadingStage] = useState(0);
   const [demoTimeout, setDemoTimeout] = useState<NodeJS.Timeout | null>(null);
   const [findSolutions, setFindSolutions] = useState(false);
-  const [analysisType, setAnalysisType] = useState<'customer' | 'rnd' | 'issue-validation'>('customer');
+  const [analysisType, setAnalysisType] = useState<'customer' | 'rnd'>('customer');
+  const [issueValidation, setIssueValidation] = useState(true);
   const [showSanitizationModal, setShowSanitizationModal] = useState(false);
   const [sanitizedQuestion, setSanitizedQuestion] = useState('');
   const [sanitizedAnswer, setSanitizedAnswer] = useState('');
@@ -331,12 +332,6 @@ export default function AIAssistant() {
         setError(language === 'he' ? 'נא למלא את שדה הצד השמאלי' : 'Please fill in the left field');
         return;
       }
-    } else if (analysisType === 'issue-validation') {
-      // Issue validation: only needs customer comment (LEFT field)
-      if (!customerQuestion.trim()) {
-        setError(language === 'he' ? 'נא למלא את שדה הלקוח' : 'Please fill in customer comment field');
-        return;
-      }
     }
 
     // Sanitize the inputs
@@ -382,6 +377,7 @@ export default function AIAssistant() {
           modelId: selectedModel,
           findSolutions: findSolutions,
           analysisType: analysisType,
+          issueValidation: issueValidation,
           credentials: settings.awsCredentials,
           googleApiKey: settings.googleApiKey,
           userName: settings.userName || 'Support Engineer'
@@ -913,9 +909,7 @@ CyberArk Technical Support
           <div className="bg-white rounded-xl shadow-lg p-6 animate-slide-in-left">
             <label className="block text-lg font-semibold text-gray-800 mb-3">
               📋 {t.customerLabel} {' '}
-              {analysisType === 'customer' && <span className="text-red-500">{t.answerRequired}</span>}
-              {analysisType === 'rnd' && <span className="text-red-500">{t.answerRequired}</span>}
-              {analysisType === 'issue-validation' && <span className="text-red-500">{t.answerRequired}</span>}
+              <span className="text-red-500">{t.answerRequired}</span>
             </label>
             <textarea
               value={customerQuestion}
@@ -931,7 +925,6 @@ CyberArk Technical Support
               ✍️ {t.answerLabel} {' '}
               {analysisType === 'customer' && <span className="text-red-500">{t.answerRequired}</span>}
               {analysisType === 'rnd' && <span className="text-sm text-gray-500 font-normal">{t.answerOptional}</span>}
-              {analysisType === 'issue-validation' && <span className="text-sm text-gray-500 font-normal">{t.answerOptional}</span>}
             </label>
             <textarea
               value={engineerAnswer}
@@ -956,7 +949,7 @@ CyberArk Technical Support
                   type="radio"
                   value="customer"
                   checked={analysisType === 'customer'}
-                  onChange={(e) => setAnalysisType(e.target.value as 'customer' | 'rnd' | 'issue-validation')}
+                  onChange={(e) => setAnalysisType(e.target.value as 'customer' | 'rnd')}
                   className="mt-1 w-5 h-5 text-blue-600"
                   disabled={isLoading}
                 />
@@ -975,7 +968,7 @@ CyberArk Technical Support
                   type="radio"
                   value="rnd"
                   checked={analysisType === 'rnd'}
-                  onChange={(e) => setAnalysisType(e.target.value as 'customer' | 'rnd' | 'issue-validation')}
+                  onChange={(e) => setAnalysisType(e.target.value as 'customer' | 'rnd')}
                   className="mt-1 w-5 h-5 text-purple-600"
                   disabled={isLoading}
                 />
@@ -989,26 +982,30 @@ CyberArk Technical Support
                   </p>
                 </div>
               </label>
-              <label className="flex items-start gap-3 cursor-pointer p-3 rounded-lg hover:bg-white/50 transition-all">
-                <input
-                  type="radio"
-                  value="issue-validation"
-                  checked={analysisType === 'issue-validation'}
-                  onChange={(e) => setAnalysisType(e.target.value as 'customer' | 'rnd' | 'issue-validation')}
-                  className="mt-1 w-5 h-5 text-green-600"
-                  disabled={isLoading}
-                />
-                <div className="flex-1">
-                  <span className="text-gray-800 font-medium block mb-1">{t.analysisTypeIssueValidation}</span>
-                  <p className="text-sm text-gray-600">
-                    {language === 'he'
-                      ? 'בדוק את תיאור הבעיה של הלקוח: האם גרסאות נתמכות? תצורה נכונה? שגיאות לוגיות? מקבל המלצות טכניות.'
-                      : 'Validate customer\'s issue description: supported versions? correct configuration? logical errors? Get technical recommendations.'
-                    }
-                  </p>
-                </div>
-              </label>
             </div>
+          </div>
+
+          {/* Issue Validation - Always Available */}
+          <div className="flex items-start gap-3 mb-6">
+            <input
+              type="checkbox"
+              id="issueValidation"
+              checked={issueValidation}
+              onChange={(e) => setIssueValidation(e.target.checked)}
+              className="mt-1 w-5 h-5 text-green-600 rounded focus:ring-2 focus:ring-green-500"
+              disabled={isLoading}
+            />
+            <label htmlFor="issueValidation" className="flex-1 cursor-pointer">
+              <div className="text-lg font-semibold text-gray-800 mb-1">
+                ✅ {t.analysisTypeIssueValidation}
+              </div>
+              <p className="text-sm text-gray-600">
+                {language === 'he'
+                  ? 'בדוק את תיאור הבעיה של הלקוח: האם גרסאות נתמכות? תצורה נכונה? שגיאות לוגיות? מקבל המלצות טכניות. (מומלץ תמיד)'
+                  : 'Validate customer\'s issue description: supported versions? correct configuration? logical errors? Get technical recommendations. (Always recommended)'
+                }
+              </p>
+            </label>
           </div>
 
           <div className="flex items-start gap-3">
