@@ -706,14 +706,14 @@ CyberArk Technical Support
   const content = {
     en: {
       title: '🤖 AI Communication Assistant',
-      subtitle: 'Analyze your customer responses against 13 professional communication principles',
+      subtitle: 'Analyze your responses against professional communication principles',
       analysisTypeIssueValidation: 'Issue Validation (Technical Accuracy)',
       customerOptional: '(Optional)',
       answerOptional: '(Optional)',
-      customerLabel: 'Customer Question',
-      customerPlaceholder: 'Paste the customer\'s question or issue from Salesforce...',
-      answerLabel: 'Engineer\'s Proposed Answer',
-      answerPlaceholder: 'Paste the engineer\'s response to analyze...',
+      customerLabel: 'Comment Received',
+      customerPlaceholder: 'Paste the comment you received (from Support, R&D, or customer)...',
+      answerLabel: 'Your Response',
+      answerPlaceholder: 'Paste your proposed response to analyze...',
       analysisTypeLabel: '📋 Analysis Type',
       analysisTypeCustomer: 'Customer Response (Communication Quality)',
       analysisTypeRnD: 'R&D Escalation (Technical Readiness)',
@@ -721,9 +721,9 @@ CyberArk Technical Support
       analyzeButton: '🔍 Analyze Response',
       analyzing: 'Analyzing',
       analysisTitle: '📊 AI Analysis',
-      aiDisclaimer: '⚠️ AI can make mistakes. Please verify important information and use your professional judgment.',
+      aiDisclaimer: '⚠️ AI can make mistakes. Always validate information from AI responses against official documentation and use your professional judgment before sharing with customers.',
       chatTitle: '💬 Ask Follow-up Questions',
-      chatPlaceholder: 'Ask about specific principles or improvements...',
+      chatPlaceholder: 'Ask me anything or what do you want to know...',
       sendButton: 'Send',
       clearButton: '🗑️ Clear All',
       cancelButton: '⏹ Cancel',
@@ -747,11 +747,11 @@ CyberArk Technical Support
     },
     he: {
       title: '🤖 עוזר תקשורת AI',
-      subtitle: 'נתח את התשובה מול 13 עקרונות התקשורת המקצועית',
-      customerLabel: 'שאלת הלקוח',
-      customerPlaceholder: 'הדבק את שאלת/בעיית הלקוח מ-Salesforce...',
-      answerLabel: 'תשובת המהנדס המוצעת',
-      answerPlaceholder: 'הדבק את תשובת המהנדס לניתוח...',
+      subtitle: 'נתח את התשובה מול עקרונות תקשורת מקצועית',
+      customerLabel: 'הערה שהתקבלה',
+      customerPlaceholder: 'הדבק את ההערה שקיבלת (מתמיכה, פיתוח או לקוח)...',
+      answerLabel: 'התשובה שלך',
+      answerPlaceholder: 'הדבק את התשובה המוצעת שלך לניתוח...',
       analysisTypeLabel: '📋 סוג ניתוח',
       analysisTypeCustomer: 'תגובה ללקוח (איכות תקשורת)',
       analysisTypeRnD: 'העלאה לפיתוח (מוכנות טכנית)',
@@ -763,9 +763,9 @@ CyberArk Technical Support
       analyzeButton: '🔍 נתח תשובה',
       analyzing: 'מנתח',
       analysisTitle: '📊 ניתוח AI',
-      aiDisclaimer: '⚠️ AI יכול לטעות. אנא אמת מידע חשוב והשתמש בשיקול דעתך המקצועי.',
+      aiDisclaimer: '⚠️ AI יכול לטעות. תמיד אמת מידע מתגובות AI מול תיעוד רשמי והשתמש בשיקול דעתך המקצועי לפני שיתוף עם לקוחות.',
       chatTitle: '💬 שאל שאלות המשך',
-      chatPlaceholder: 'שאל על עקרונות ספציפיים או שיפורים...',
+      chatPlaceholder: 'שאל אותי כל דבר או מה אתה רוצה לדעת...',
       sendButton: 'שלח',
       clearButton: '🗑️ נקה הכל',
       demoButton: '🎬 הצג דוגמה מלאה',
@@ -816,13 +816,54 @@ CyberArk Technical Support
       <ScrollToTop />
       <Breadcrumbs />
 
-      <div className="text-center mb-12">
+      <div className="text-center mb-8">
         <h1 className="text-4xl md:text-5xl font-bold mb-4 gradient-text animate-scale-in">
           {t.title}
         </h1>
         <p className="text-xl text-gray-600 animate-fade-in">
           {t.subtitle}
         </p>
+      </div>
+
+      {/* Connection Status & Model Selector */}
+      <div className="mb-8 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl shadow-lg p-6 animate-fade-in">
+        <div className="flex items-center justify-between gap-6 flex-wrap">
+          {/* Connection Status */}
+          {isConfigured ? (
+            <div className="flex items-center gap-3">
+              <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+              <p className="text-sm font-medium text-green-800">
+                {language === 'en' ? '✓ Connected - AI Assistant Ready' : '✓ מחובר - עוזר AI מוכן'}
+              </p>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3">
+              <div className="w-3 h-3 bg-red-500 rounded-full"></div>
+              <p className="text-sm font-medium text-red-800">
+                {language === 'en' ? '✗ Not Connected' : '✗ לא מחובר'}
+              </p>
+            </div>
+          )}
+
+          {/* Model Selector */}
+          <div className="flex items-center gap-3 flex-1 min-w-[300px]">
+            <label className="text-sm font-semibold text-gray-800 whitespace-nowrap">
+              {t.modelLabel}
+            </label>
+            <select
+              value={selectedModel}
+              onChange={(e) => setSelectedModel(e.target.value)}
+              className="flex-1 px-4 py-2 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-gray-800 font-medium text-sm"
+              disabled={isLoading}
+            >
+              {models.map((model) => (
+                <option key={model.id} value={model.id}>
+                  {model.badge ? `${model.badge} ` : ''}{model.name} - {model.description}
+                </option>
+              ))}
+            </select>
+          </div>
+        </div>
       </div>
 
       {/* Credentials Warning Banner */}
@@ -850,27 +891,6 @@ CyberArk Technical Support
         </div>
       )}
 
-      {/* Model Selector */}
-      <div className="mb-8">
-        <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl shadow-lg p-6 animate-fade-in">
-          <label className="block text-lg font-semibold text-gray-800 mb-3">
-            {t.modelLabel}
-          </label>
-          <select
-            value={selectedModel}
-            onChange={(e) => setSelectedModel(e.target.value)}
-            className="w-full px-4 py-3 border-2 border-gray-200 rounded-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none text-gray-800 font-medium"
-            disabled={isLoading}
-          >
-            {models.map((model) => (
-              <option key={model.id} value={model.id}>
-                {model.badge ? `${model.badge} ` : ''}{model.name} - {model.description}
-              </option>
-            ))}
-          </select>
-        </div>
-      </div>
-
       {/* Security Warning Banner */}
       <div className="bg-yellow-50 border-l-4 border-yellow-400 p-6 rounded-lg shadow-md mb-6 animate-fade-in">
         <div className="flex items-start gap-4">
@@ -881,7 +901,7 @@ CyberArk Technical Support
           </div>
           <div className="flex-1">
             <h3 className="text-lg font-bold text-yellow-900 mb-2">
-              {language === 'he' ? '⚠️ אזהרת אבטחה' : '⚠️ Security Warning'}
+              {language === 'he' ? 'אזהרת אבטחה' : 'Security Warning'}
             </h3>
             <p className="text-sm text-yellow-800 mb-3">
               {language === 'he'
@@ -923,8 +943,7 @@ CyberArk Technical Support
           <div className="bg-white rounded-xl shadow-lg p-6 animate-slide-in-right">
             <label className="block text-lg font-semibold text-gray-800 mb-3">
               ✍️ {t.answerLabel} {' '}
-              {analysisType === 'customer' && <span className="text-red-500">{t.answerRequired}</span>}
-              {analysisType === 'rnd' && <span className="text-sm text-gray-500 font-normal">{t.answerOptional}</span>}
+              <span className="text-red-500">{t.answerRequired}</span>
             </label>
             <textarea
               value={engineerAnswer}
@@ -938,53 +957,6 @@ CyberArk Technical Support
 
         {/* Options Checkboxes */}
         <div className="bg-gradient-to-r from-cyan-50 to-blue-50 rounded-xl shadow-lg p-6 animate-fade-in">
-          {/* Analysis Type Selection */}
-          <div className="mb-6">
-            <label className="block text-lg font-semibold text-gray-800 mb-3">
-              {t.analysisTypeLabel}
-            </label>
-            <div className="space-y-4">
-              <label className="flex items-start gap-3 cursor-pointer p-3 rounded-lg hover:bg-white/50 transition-all">
-                <input
-                  type="radio"
-                  value="customer"
-                  checked={analysisType === 'customer'}
-                  onChange={(e) => setAnalysisType(e.target.value as 'customer' | 'rnd')}
-                  className="mt-1 w-5 h-5 text-blue-600"
-                  disabled={isLoading}
-                />
-                <div className="flex-1">
-                  <span className="text-gray-800 font-medium block mb-1">{t.analysisTypeCustomer}</span>
-                  <p className="text-sm text-gray-600">
-                    {language === 'he'
-                      ? 'בדוק את איכות התקשורת עם הלקוח: אמפתיה, בהירות, טון מקצועי. מקבל משוב על 13 עקרונות תקשורת ותשובה משופרת.'
-                      : 'Check communication quality with customer: empathy, clarity, professional tone. Get feedback on 13 communication principles and improved response.'
-                    }
-                  </p>
-                </div>
-              </label>
-              <label className="flex items-start gap-3 cursor-pointer p-3 rounded-lg hover:bg-white/50 transition-all">
-                <input
-                  type="radio"
-                  value="rnd"
-                  checked={analysisType === 'rnd'}
-                  onChange={(e) => setAnalysisType(e.target.value as 'customer' | 'rnd')}
-                  className="mt-1 w-5 h-5 text-purple-600"
-                  disabled={isLoading}
-                />
-                <div className="flex-1">
-                  <span className="text-gray-800 font-medium block mb-1">{t.analysisTypeRnD}</span>
-                  <p className="text-sm text-gray-600">
-                    {language === 'he'
-                      ? 'בדוק אם יש מספיק מידע טכני לפיתוח: logs, versions, troubleshooting. מקבל פידבק על עבודת התמיכה ומה חסר.'
-                      : 'Check if there\'s enough technical info for R&D: logs, versions, troubleshooting. Get feedback on support work and what\'s missing.'
-                    }
-                  </p>
-                </div>
-              </label>
-            </div>
-          </div>
-
           {/* Issue Validation - Always Available */}
           <div className="flex items-start gap-3 mb-6">
             <input
@@ -1115,10 +1087,18 @@ CyberArk Technical Support
               </div>
             </div>
             {/* AI Disclaimer */}
-            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg">
-              <p className="text-sm text-gray-700 font-medium" dir="auto">
-                {t.aiDisclaimer}
-              </p>
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded-lg shadow-md">
+              <div className="flex items-start gap-3">
+                <span className="text-2xl flex-shrink-0">⚠️</span>
+                <div>
+                  <p className="text-sm text-gray-800 font-semibold mb-1" dir="auto">
+                    {language === 'he' ? 'חשוב: אמת תמיד את המידע' : 'Important: Always Validate Information'}
+                  </p>
+                  <p className="text-sm text-gray-700" dir="auto">
+                    {t.aiDisclaimer}
+                  </p>
+                </div>
+              </div>
             </div>
           </div>
           
@@ -1177,6 +1157,38 @@ CyberArk Technical Support
             );
           })}
 
+          {/* Report Analysis Error Button */}
+          <div className="bg-red-50 border-l-4 border-red-400 rounded-lg p-4 animate-fade-in">
+            <div className="flex items-start gap-3">
+              <span className="text-xl flex-shrink-0">❌</span>
+              <div className="flex-1">
+                <p className="text-sm text-gray-700 mb-2">
+                  {language === 'he' 
+                    ? 'משהו לא נכון בניתוח הזה? עזור לנו לשפר!' 
+                    : 'Something wrong with this analysis? Help us improve!'}
+                </p>
+                <a
+                  href={`mailto:${settings.userEmail || 'diego.sucharczuk@cyberark.com'}?subject=AI Analysis Error Report&body=${encodeURIComponent(
+                    `📋 INSTRUCTIONS: Please review the information below, then scroll to the end to fill in what's wrong.\n\n` +
+                    `---\n\n` +
+                    `INCOMING COMMENT:\n${customerQuestion}\n\n` +
+                    `---\n\n` +
+                    `YOUR RESPONSE:\n${engineerAnswer}\n\n` +
+                    `---\n\n` +
+                    `AI ANALYSIS:\n${analysis}\n\n` +
+                    `---\n\n` +
+                    `👇 PLEASE FILL IN BELOW 👇\n\n` +
+                    `WHAT'S WRONG:\n[Describe the issue here]\n\n` +
+                    `WHAT SHOULD IT BE:\n[Optional: What would be correct?]`
+                  )}`}
+                  className="inline-block px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-semibold"
+                >
+                  {language === 'he' ? '📧 דווח על שגיאה' : '📧 Report Error'}
+                </a>
+              </div>
+            </div>
+          </div>
+
           {/* Chat Section */}
           <div className="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-xl shadow-lg p-6 animate-fade-in border-2 border-indigo-200">
             <h3 className="text-2xl font-bold text-gray-800 mb-4">
@@ -1199,6 +1211,18 @@ CyberArk Technical Support
                     </p>
                   </div>
                 ))}
+                {isLoading && (
+                  <div className="p-4 rounded-lg bg-white border-l-4 border-purple-500 flex items-center gap-3">
+                    <div className="flex gap-1">
+                      <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                      <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+                      <div className="w-2 h-2 bg-purple-500 rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+                    </div>
+                    <p className="text-sm text-gray-600 italic">
+                      {language === 'he' ? 'AI בודק...' : 'AI is checking...'}
+                    </p>
+                  </div>
+                )}
               </div>
             )}
 

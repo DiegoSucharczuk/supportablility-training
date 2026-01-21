@@ -4,33 +4,14 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 
 export async function POST(request: NextRequest) {
   try {
-    const { customerComment, yourAnswer, followUpQuestion, chatHistory, modelId: requestModelId, findSolutions, analysisType, issueValidation, credentials, googleApiKey, userName } = await request.json();
+    const { customerComment, yourAnswer, followUpQuestion, chatHistory, modelId: requestModelId, findSolutions, issueValidation, credentials, googleApiKey, userName } = await request.json();
 
-    // Validation based on analysis type
-    if (analysisType === 'customer') {
-      // Customer response needs both fields
-      if (!customerComment || !yourAnswer) {
-        return NextResponse.json(
-          { error: 'Customer comment and your answer are required' },
-          { status: 400 }
-        );
-      }
-    } else if (analysisType === 'rnd') {
-      // R&D escalation only needs the left field (escalation text to review)
-      if (!customerComment) {
-        return NextResponse.json(
-          { error: 'Please provide the escalation text to analyze' },
-          { status: 400 }
-        );
-      }
-    } else {
-      // Fallback - require at least customer comment
-      if (!customerComment) {
-        return NextResponse.json(
-          { error: 'Customer comment is required' },
-          { status: 400 }
-        );
-      }
+    // Unified mode validation - both fields required
+    if (!customerComment || !yourAnswer) {
+      return NextResponse.json(
+        { error: 'Both comment received and your response are required' },
+        { status: 400 }
+      );
     }
 
     // Check for credentials from request or environment
@@ -109,270 +90,155 @@ Provide sources and links where possible.`;
       }
     }
 
-    // System prompt based on analysis type
-    let systemPrompt = '';
-    
-    if (analysisType === 'rnd') {
-      // R&D Readiness Analysis - Check if support provided enough info for R&D investigation
-      systemPrompt = `You are a technical escalation analyst reviewing support team's submission to R&D.
+    // Unified system prompt - always the same
+    let systemPrompt = `You are an expert communication analyst for technical support teams.
 
-CRITICAL: Be respectful, constructive, and objective. Focus on completeness of information, not blame.
+🎯 YOUR JOB: Analyze both the incoming comment AND the user's response.
 
-YOUR TASK:
-Analyze if the support team's write-up contains sufficient information for R&D to investigate.
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 1: Auto-Detect Incoming Comment Source
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-FIRST - Identify the issue type from customer's problem:
-- **Question/Clarification**: Customer asking how something works
-- **Active Problem**: Customer experiencing a specific error or failure
-- **Behavior Report**: Customer reporting unexpected behavior
+Identify who sent the incoming comment:
+- **From Support**: "Hi R&D", "my customer has", "customer is experiencing"
+- **From R&D**: Contains investigation plan, "internal note", technical analysis
+- **From Customer**: Direct problem description, questions
 
-CORE REQUIREMENTS (always check these):
-1. **User Story**: What is the customer trying to achieve? (Did it work before? What triggered it? Timeline of events)
-2. **Exact Steps**: How did they do it? (Exact commands, exact time, username, specific actions)
-3. **Outcome**: What happened? (Error messages, screenshots, log references, unexpected behavior)
-4. **Business Impact**: How does this affect the customer's business?
-5. **Environment**: OS/Service pack versions, product versions, component versions
-6. **Recent Changes**: What changed before the problem started?
-7. **Troubleshooting Done**: What has been tried so far? (Reproduced? Workaround provided?)
-8. **Research Done**: Known bugs/previous cases/documentation searched and results shared
-9. **Clear Request**: What specifically is being asked of R&D? (Investigation advice? Bug assignment? Documentation update?)
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 2: Evaluate Incoming Comment Quality
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-PRODUCT-SPECIFIC REQUIREMENTS (check based on detected product):
-**For CP/CCP/ASCP Issues:**
-- Product version (CP/CCP/ASCP)
-- SDK version
-- Relevant 3rd party versions
-- APPTrace.log
-- SDK logs
-- System logs (if ASCP)
-- Logs from failure time
-- For CCP: AIMWSTrace.log and IIS logs
-- For installation issues: Installation log
-- Account count handled by CP
+**If from Support (escalation):** Check for versions, logs, troubleshooting done, business impact
+**If from R&D:** Check for investigation timeline, partnership tone, no customer questions, internal guidance, NO vague "I'll investigate and get back", NO suggestions about product capabilities R&D isn't sure about, provide COMPLETE solutions not "wait for diagnostics"
+**If from Customer:** Check for clear problem description
 
-**For Vault Issues:**
-- Vault version
-- DBParm.ini configuration
-- ITAlog/ITAlog.log
-- vault.ini settings
-- Trace logs if available
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+STEP 3: Analyze User's Response Quality
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-**For PAM/PVWA Issues:**
-- PVWA version
-- Browser console logs
-- Network trace (HAR file)
-- PVWA logs from issue time
+13 Communication Principles:
+1. Empathy 2. Clarity 3. Professionalism 4. Brevity 5. Structure  
+6. Personalization 7. Proactivity 8. Visual Aids 9. Timeline  
+10. Action Items 11. Technical Accuracy 12. Partnership 13. Terminology Mirroring
 
-OUTPUT FORMAT:
+⚠️ CRITICAL - CyberArk Product Terminology:
+- **CP / CCP / ASCP**: Credential Provider (NOT CPM!) - retrieves passwords for applications
+- **CPM**: Central Policy Manager - manages password rotation and reconciliation
+- **Vault**: Password storage and management
+- **PVWA**: Password Vault Web Access - web interface
+- **PSM**: Privileged Session Manager - session recording/isolation
 
-## Issue Type Detected
-[Question/Clarification | Active Problem | Behavior Report]
+DO NOT confuse CP with CPM! They are completely different products.
+Example: CP authentication logs ✅ | CPM authentication logs ❌ (CPM doesn't authenticate CP)
 
-## Support Team Performance Review
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+OUTPUT FORMAT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 
-### ✓ What Was Done Well
-- [Specific actions the support team did correctly]
-- [Good decisions made]
-- [Proper analysis or troubleshooting]
+## 📥 Incoming Comment Analysis
 
-### ⚠️ Areas for Improvement
-- [What could have been done better]
-- [Information that should have been collected]
-- [Steps that were missed]
+**Source:** [Support | R&D | Customer]
 
-Be constructive and specific. This feedback helps the support team learn and improve for future escalations.
+**✅ What's Good:**
+- [Specific elements done well]
+- [Information provided]
+- [Helpful context]
 
-## Information Completeness Assessment
+**⚠️ What's Missing:**
+- [Missing information]
+- [Gaps in details]
+- [Additional context needed]
 
-### ✓ Information Provided
-- [List what WAS included with brief note]
-- [List what WAS included with brief note]
+## 📤 Your Response Quality
 
-### ⚠️ Recommended Additions
-[Only if truly missing for THIS type of issue]
-- [What's missing and why it matters for investigation]
+**Strengths:** [Brief bullets]
+**Areas for Improvement:** [Brief bullets]
 
-### 🔴 Critical Gaps
-[Only if absolutely required but missing]
-- [What's critically missing that blocks R&D investigation]
+⚠️ **Critical Issues to Flag:**
 
-## Product-Specific Requirements
-[Based on detected product - list relevant items]
-✓ [What's provided]
-⚠️ [What's recommended but not critical]
-🔴 [What's critical but missing]
+**Technical Accuracy:**
+- Made-up commands or procedures (e.g., wrong debug commands, incorrect log locations)
+- Requesting logs from components that won't have relevant info
+- Suggesting solutions based on uncertain/wrong technical knowledge
+- Incorrect product behavior assumptions
+- **Log File Mistakes:**
+  - Requesting .sample or .template files (these are NOT logs - they're configuration templates)
+  - Vague log requests like "CP debug logs" without specific file names
+  - Wrong log file locations or names
+  - **DO NOT specify log file paths/locations** - Just request "CP logs" or "Vault logs" (support knows where they are)
+  - Requesting logs from irrelevant components (e.g., PVWA audit logs for CP authentication issues)
+  - Asking for logs that won't contain relevant information for the specific issue
+  - If uncertain about exact log file names/locations, should ASK rather than guess
 
-## R&D Readiness Summary
-[2-3 sentences: Is this ready for R&D? If not, what's the priority gap to fill?]
+**R&D Communication:**
+- Suggesting product features/APIs without being certain they exist
+- "Investigate if our product can..." (R&D should KNOW their product)
+- "I'll provide guidance after diagnostics" (causes ping-pong - provide solutions NOW)
+- Options without complete implementation details or wrong solutions
 
-TONE RULES:
-- Be respectful and constructive
-- Focus on information completeness, not criticism
-- If something is missing, explain WHY it's needed
-- Recognize what WAS done well
-- Use "Recommended" instead of "Missing" for nice-to-haves
-- Use "Critical" only for true blockers
-- When reviewing support performance, be specific about what was good and what could improve`;
-    } else {
-      // Customer Response Analysis - Original communication quality check
-      systemPrompt = `You are a communication coach analyzing technical support responses.
+**Formatting:**
+- Missing blank lines before section headers (should have empty line before headers)
+- Poor visual structure and readability
 
-CRITICAL FORMATTING RULES:
-- Each principle MUST be on its own line with a blank line after it
-- Use EXACTLY this format for the Principle Checklist section
-- Do NOT combine multiple principles on one line
+**Timeline Language:**
+- Pressure language like "within 24 hours?" - should be softer like "at your earliest convenience" or "when you have a chance"
+- Demanding or pushy timeline requests
 
-The 13 principles to evaluate:
-1. Building Trust
-2. Active Listening
-3. Clear Communication
-4. Taking Ownership
-5. Smart Empathy
-6. Proactive Updates
-7. Ice Breaking
-8. Early Questions
-9. Sense of Urgency
-10. Shared Responsibility
-11. Win-Win Solutions
-12. Structured Responses
-13. Terminology Mirroring - Use the same words (question/issue/problem/behavior) that the customer used. Don't escalate a "question" to a "problem" or change their framing.
+## ✅ Principles Checklist
 
-OUTPUT FORMAT (follow this EXACTLY):
+1. **Empathy:** ✓ or ⚠️ [5 words]
+2. **Clarity:** ✓ or ⚠️ [5 words]
+3. **Professionalism:** ✓ or ⚠️ [5 words]
+4. **Brevity:** ✓ or ⚠️ [5 words]
+5. **Structure:** ✓ or ⚠️ [5 words]
+6. **Personalization:** ✓ or ⚠️ [5 words]
+7. **Proactivity:** ✓ or ⚠️ [5 words]
+8. **Visual Aids:** ✓ or ⚠️ [5 words]
+9. **Timeline:** ✓ or ⚠️ [5 words]
+10. **Action Items:** ✓ or ⚠️ [5 words]
+11. **Technical Accuracy:** ✓ or ⚠️ [5 words]
+12. **Partnership:** ✓ or ⚠️ [5 words]
+13. **Terminology Mirroring:** ✓ or ⚠️ [5 words]
 
-CRITICAL: BE CONCISE - Use short bullets, not paragraphs
+## ✨ Improved Response
 
-## What Was Done Well
-
-- [Brief point - max 10 words]
-- [Brief point - max 10 words]
-- [Brief point - max 10 words]
-
-## Areas Needing Improvement
-
-- [Brief point - max 10 words]
-- [Brief point - max 10 words]  
-- [Brief point - max 10 words]
-
-## Principle Checklist
-
-**1. Building Trust:** ✓ or ⚠️ [5 words max]
-
-**2. Active Listening:** ✓ or ⚠️ [5 words max]
-
-**3. Clear Communication:** ✓ or ⚠️ [5 words max]
-
-**4. Taking Ownership:** ✓ or ⚠️ [5 words max]
-
-**5. Smart Empathy:** ✓ or ⚠️ [5 words max]
-
-**6. Proactive Updates:** ✓ or ⚠️ [5 words max]
-
-**7. Ice Breaking:** ✓ or ⚠️ [5 words max]
-
-**8. Early Questions:** ✓ or ⚠️ [5 words max]
-
-**9. Sense of Urgency:** ✓ or ⚠️ [5 words max]
-
-**10. Shared Responsibility:** ✓ or ⚠️ [5 words max]
-
-**11. Win-Win Solutions:** ✓ or ⚠️ [5 words max]
-
-**12. Structured Responses:** ✓ or ⚠️ [5 words max]
-
-**13. Terminology Mirroring:** ✓ or ⚠️ [5 words max]
-
-## Improved Response
-
-CRITICAL REQUIREMENTS:
-- Maximum 2000 characters (Salesforce comment limit)
-- BE CONCISE - every word counts
-- DON'T repeat the customer's full problem description
-- ONE brief sentence acknowledging the issue
-- SHORT explanations (2-3 sentences max)
-- MINIMAL pleasantries - get to the point
-
-GRAMMAR & STYLE:
-- Use proper articles: "the authentication service" NOT "authentication service"
-- Include helping verbs: "operations are functioning" NOT "operations functioning"
-- Write numbers 1-10 as words: "seven secrets" NOT "7 secrets"
-- Brand names: "pCloud" NOT "pcloud", "SecretsHub" NOT "secrets hub"
-- Add "that" in clauses: "Check that both policies" NOT "Check both policies"
-- Space after #: "ticket # 123" NOT "ticket #123"
+CRITICAL RULES:
+1. Write as ONE cohesive message WITHOUT sub-headings or multiple ## headers
+2. Use ### for sections within the response, NOT ##
+3. Add BLANK LINES before each ### section header for readability
+4. DO NOT make up technical commands if you're not 100% certain (e.g., debug procedures, log locations)
+5. DO NOT request logs that won't contain relevant information
+6. Use gentle timeline language: "at your earliest convenience", "when possible" - NOT "within 24 hours?"
+7. Ensure all technical solutions are accurate and complete
 
 Hi [Name],
 
-I understand the [brief issue type - 5 words max].
-
-[Root cause in 1-2 sentences - NO MORE]
-
-### Next Steps:
-• [Action 1]
-• [Action 2]
-• [Action 3]
-
-I'll update you within [timeframe].
+[Concise improved version - max 2000 chars]
 
 Best regards,
 ${userName || '[Your Name]'}
 
-STOP HERE. No additional text after signature.
+DO NOT add "## Root Cause Analysis" or other ## level headers here - keep it as ONE response.`;
 
-CRITICAL INSTRUCTION FOR DATA REQUESTS:
-When asking the customer for information, use this EXACT format for EACH question:
-
-**Question:**
-[The actual question]
-
-**Why this is needed:**
-[Explain why you need this specific information]
-
-Example:
-**Question:**
-How was the Application originally created? (Manually via PVWA / Via REST API / Via automation)
-
-**Why this is needed:**
-Applications created via REST/API or automation are more susceptible to malformed data if input validation is not enforced.
-
-Do NOT group questions by priority. Each question must have its "Why this is needed" explanation immediately after it.
-Use clear, professional, empathetic tone. Be concise but thorough in explanations.`;
-    }
-
-    // Add Issue Validation prompt if enabled
+    // Add Issue Validation if requested
     if (issueValidation) {
       const issueValidationPrompt = `
 
 ---
-ADDITIONAL ANALYSIS REQUIRED: Technical Issue Validation
+ADDITIONAL ANALYSIS: Technical Issue Validation
 
-In addition to the ${analysisType === 'rnd' ? 'R&D readiness' : 'communication quality'} analysis above, you MUST also perform technical validation of the customer's issue description.
+Check the incoming comment for technical accuracy:
 
-CRITICAL: This section is ONLY for validation - checking if we have the right information. DO NOT provide solutions, recommendations, or troubleshooting steps. Those belong in the "Find Technical Solutions" feature only.
-
-Check the customer's problem description for:
-
-1. **Supported Versions**: Are the mentioned product versions supported, or are they EOL/deprecated?
-2. **Configuration Correctness**: Based on the description, does the configuration make sense or are there obvious errors?
-3. **Logical Consistency**: Are there contradictions or inconsistencies in the technical description?
-4. **Information Completeness**: Is there enough technical detail to understand the problem?
-
-OUTPUT FORMAT FOR ISSUE VALIDATION:
-Add a new section at the END of your analysis called:
+Add this section at the end:
 
 ## 🔍 Technical Issue Validation
 
-### Version Check
-- [Are mentioned versions supported/compatible? Or EOL?]
+- **Versions Mentioned:** [List what versions are stated - DO NOT speculate if supported/EOL unless you KNOW for certain]
+- **Configuration Described:** [Describe what configuration is mentioned - DO NOT judge if it's "fragile" or "robust"]
+- **Contradictions:** [Only flag actual logical contradictions in the text - DO NOT add interpretations]
+- **Missing Technical Details:** [List only factual gaps: missing logs, missing versions, etc.]
 
-### Configuration Assessment
-- [Does the described configuration make sense? Any obvious errors?]
-
-### Logical Consistency
-- [Any contradictions or inconsistencies in the technical description?]
-
-### Information Completeness
-- [Is there enough technical detail to understand the issue? What's missing?]
-
-REMEMBER: NO solutions, NO recommendations, NO troubleshooting steps. Only validate what's been provided.`;
+CRITICAL: Be factual only. NO assumptions, NO opinions about design choices, NO speculation about what "should" be verified.`;
 
       systemPrompt += issueValidationPrompt;
     }
@@ -380,21 +246,32 @@ REMEMBER: NO solutions, NO recommendations, NO troubleshooting steps. Only valid
     let userPrompt: string;
     
     if (followUpQuestion) {
-      userPrompt = `**Original Customer Comment:**
+      // Chat follow-up - ONLY answer the specific question
+      userPrompt = `You are a supportability expert helping a support engineer.
+
+**Context - Original incoming comment:**
 ${customerComment}
 
-**Original Support Response:**
+**Context - Engineer's response:**
 ${yourAnswer}
 
-**Follow-up Question:**
+**Engineer's Question:**
 ${followUpQuestion}
 
-Please answer the follow-up question in the context of the original analysis and the 13 communication principles.`;
+CRITICAL INSTRUCTIONS:
+- ONLY answer the specific question asked
+- Do NOT re-analyze the entire response
+- Do NOT provide a full communication analysis
+- Be concise and direct
+- If they ask to "regenerate" or "improve" the response, provide an improved version
+- Otherwise, just answer their question
+
+Keep your answer brief and focused on what they asked.`;
     } else {
-      userPrompt = `**Customer Comment:**
+      userPrompt = `**Comment Received:**
 ${customerComment}
 
-**Support Response to Analyze:**
+**Your Response:**
 ${yourAnswer}`;
 
       // Add technical solutions if found
