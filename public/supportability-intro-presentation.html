@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -16,6 +16,10 @@
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             overflow: hidden;
             height: 100vh;
+        }
+
+        body[dir="rtl"] {
+            font-family: 'Segoe UI', Arial, sans-serif;
         }
 
         .presentation {
@@ -47,6 +51,32 @@
                 opacity: 1;
                 transform: translateX(0);
             }
+        }
+
+        .language-toggle {
+            position: fixed;
+            top: 2rem;
+            left: 2rem;
+            background: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            z-index: 1001;
+            transition: all 0.3s ease;
+        }
+
+        body[dir="rtl"] .language-toggle {
+            left: auto;
+            right: 2rem;
+        }
+
+        .language-toggle:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
         }
 
         .slide-content {
@@ -265,6 +295,11 @@
     <div class="progress">
         <div class="progress-bar" id="progressBar"></div>
     </div>
+    
+    <button class="language-toggle" onclick="window.location.href='https://supportablility-training.vercel.app/?lang=he'">
+        🌐 עברית
+    </button>
+    
     <div class="slide-number" id="slideNumber">1 / 14</div>
 
     <div class="presentation">
