@@ -1168,7 +1168,7 @@ CyberArk Technical Support
                     : 'Something wrong with this analysis? Help us improve!'}
                 </p>
                 <a
-                  href={`mailto:${settings.userEmail || 'diego.sucharczuk@cyberark.com'}?subject=AI Analysis Error Report&body=${encodeURIComponent(
+                  href={`mailto:diego.sucharczuk@cyberark.com?subject=AI Analysis Error Report&body=${encodeURIComponent(
                     `📋 INSTRUCTIONS: Please review the information below, then scroll to the end to fill in what's wrong.\n\n` +
                     `---\n\n` +
                     `INCOMING COMMENT:\n${customerQuestion}\n\n` +
