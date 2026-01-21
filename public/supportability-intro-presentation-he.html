@@ -604,21 +604,21 @@
                 <h2><span class="emoji">❓</span>בעיית הלקוח</h2>
                 <p style="font-size: 1.1rem; margin-bottom: 1.5rem;"><strong>מהנדס תמיכה כתב ל-R&D:</strong></p>
                 
-                <div style="background: #f8f9fa; border-left: 4px solid #667eea; padding: 1.5rem; border-radius: 8px; max-height: 60vh; overflow-y: auto;">
+                                <div style="background: #f8f9fa; border-left: 4px solid #667eea; padding: 1.5rem; border-radius: 8px; max-height: 60vh; overflow-y: auto; direction: ltr; text-align: left;">
                     <p style="font-size: 1rem; line-height: 1.6;">
-                        ללקוח שלי יש פניה לגבי שרתי Linux providers Unix שלהם (CP v14.00, CLIPasswordsdk).<br><br>
+                        My customer has opened a case regarding their Linux providers Unix servers (CP v14.00, CLIPasswordsdk).<br><br>
                         
-                        <strong>הבעיה:</strong><br>
-                        לאחר עדכון מערכת הפעלה אחרון, ספקי ה-Linux של הלקוח התחילו לכשל באימות מכוனות מורשית.<br><br>
+                        <strong>The Issue:</strong><br>
+                        After a recent OS Patch, the customers Linux Providers have started to fail Allowed Machine Authentication.<br><br>
                         
-                        הספקים היו ברשימת הלבנה של האפליקציה עם <strong>short hostname</strong> שלהם.<br><br>
+                        The Providers were whitelisted in the Application's authentication list with their <strong>short hostname</strong>.<br><br>
                         
-                        לאחר העדכון, הלקוח צריך להוסיף את ה-IP/FQDN תחת allowed machines. <strong>הבעיה: יש להם מאות אפליקציות.</strong><br><br>
+                        After the patch, the customer needs to add the IP/FQDN under allowed machines. <strong>The problem: they have 100's of applications.</strong><br><br>
                         
-                        הם גילו שהעדכון הסיר רשומה מקובץ ה-host.<br><br>
+                        They found that the patch removed an entry from the host file.<br><br>
                         
-                        <strong>שאלת הלקוח:</strong><br>
-                        האם aimagent תלוי ב-/etc/hostfile עבור shortname? אם לא, מה יכולה להיות הסיבה לשבירה פתאומית?<br><br>
+                        <strong>Customer's Question:</strong><br>
+                        Is aimagent depending on /etc/hostfile for shortname? If not, what could be the reason for sudden break?<br><br>
                         
                         <code>[sysabc @SGDPSR00002][PROD]: hostname -f</code><br>
                         <code>SGDP.int.bar.com</code><br><br>
@@ -626,9 +626,9 @@
                         <code>[sysabc @SGDPSR00002][PROD]: hostname -s</code><br>
                         <code>SGDPSR00002</code><br><br>
                         
-                        <strong>מהנדס תמיכה שואל:</strong> איך ה-CP קובע את שם המחשב? זה יעזור להם לתכנן איך לתקן זאת ללא עדכונים מסיביים.<br><br>
+                        <strong>Support Engineer asks:</strong> How does the CP determine the hostname? This would help the customer plan how to fix this without mass updates.<br><br>
                         
-                        בברכה,<br>
+                        Best regards,<br>
                         Manuel Ortega
                     </p>
                 </div>
@@ -640,7 +640,7 @@
             <div class="slide-content">
                 <h2><span class="emoji">❌</span>מה R&D כתבו בפועל</h2>
                 
-                <div style="background: #f8d7da; border-left: 4px solid #dc3545; padding: 2rem; border-radius: 8px; margin-bottom: 2rem;">
+                <div style="background: #f8d7da; border-left: 4px solid #dc3545; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; direction: ltr; text-align: left;">
                     <p style="font-size: 1.1rem; line-height: 1.8;">
                         Hi Daniel<br><br>
                         The FQDN apparently changed from the Linux upgrade<br><br>
@@ -672,7 +672,7 @@
             <div class="slide-content">
                 <h2><span class="emoji">✅</span>איך R&D צריכים לנסח את התגובה</h2>
                 
-                <div style="background: #d4edda; border-left: 4px solid #28a745; padding: 2rem; border-radius: 8px; margin-bottom: 2rem;">
+                <div style="background: #d4edda; border-left: 4px solid #28a745; padding: 2rem; border-radius: 8px; margin-bottom: 2rem; direction: ltr; text-align: left;">
                     <p style="font-size: 1.05rem; line-height: 1.8;">
                         <span style="background: #ffd60a;">Hi Daniel,</span><br>
                         <span style="background: #ffd60a;">I understand</span> that the customer reports the application stopped receiving passwords from the CP after the Linux upgrade. Based on the behavior and the logs they shared, the CP now treats the server as an unrecognized source. בעקבות העדכון השתנה ה-FQDN.<br><br>
