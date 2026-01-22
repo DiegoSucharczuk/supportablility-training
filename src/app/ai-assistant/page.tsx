@@ -232,6 +232,12 @@ export default function AIAssistant() {
   const [replacementMap, setReplacementMap] = useState<Map<string, string>>(new Map());
   const [collapsedSections, setCollapsedSections] = useState<Set<number>>(new Set([100])); // 100 = Principle Checklist index
   const [isEditingMaskedData, setIsEditingMaskedData] = useState(false);
+  
+  // Report Error Modal State
+  const [showReportModal, setShowReportModal] = useState(false);
+  const [selectedSections, setSelectedSections] = useState<Set<number>>(new Set());
+  const [whatIsWrong, setWhatIsWrong] = useState('');
+  const [whatToFix, setWhatToFix] = useState('');
 
   // Available models (only those with IAM permissions)
   const models = [
@@ -797,6 +803,62 @@ CyberArk Technical Support
     setError('');
     setChatMessages([]);
   };
+  
+  const handleOpenReportModal = () => {
+    setShowReportModal(true);
+    setSelectedSections(new Set());
+    setWhatIsWrong('');
+    setWhatToFix('');
+  };
+  
+  const handleCloseReportModal = () => {
+    setShowReportModal(false);
+  };
+  
+  const toggleSection = (idx: number) => {
+    setSelectedSections(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(idx)) {
+        newSet.delete(idx);
+      } else {
+        newSet.add(idx);
+      }
+      return newSet;
+    });
+  };
+  
+  const handleSendReport = () => {
+    const sections = parseAnalysis(analysis);
+    let emailBody = '📋 ERROR REPORT\n\n';
+    
+    // Add selected sections
+    if (selectedSections.size > 0) {
+      emailBody += '=== SELECTED SECTIONS ===\n\n';
+      sections.forEach((section, idx) => {
+        if (selectedSections.has(idx)) {
+          emailBody += `## ${section.title}\n${section.content}\n\n`;
+        }
+      });
+      emailBody += '---\n\n';
+    }
+    
+    // Add original data
+    emailBody += `=== ORIGINAL DATA ===\n\n`;
+    emailBody += `INCOMING COMMENT:\n${customerQuestion}\n\n`;
+    emailBody += `YOUR RESPONSE:\n${engineerAnswer}\n\n`;
+    emailBody += '---\n\n';
+    
+    // Add user feedback
+    emailBody += `=== YOUR FEEDBACK ===\n\n`;
+    emailBody += `WHAT'S WRONG:\n${whatIsWrong || '[Not provided]'}\n\n`;
+    emailBody += `WHAT SHOULD IT BE:\n${whatToFix || '[Not provided]'}\n`;
+    
+    // Open mailto
+    window.location.href = `mailto:diego.sucharczuk@cyberark.com?subject=AI Analysis Error Report&body=${encodeURIComponent(emailBody)}`;
+    
+    // Close modal
+    setShowReportModal(false);
+  };
 
   const getModelColor = (color: string) => {
     const colors: any = {
@@ -1167,24 +1229,12 @@ CyberArk Technical Support
                     ? 'משהו לא נכון בניתוח הזה? עזור לנו לשפר!' 
                     : 'Something wrong with this analysis? Help us improve!'}
                 </p>
-                <a
-                  href={`mailto:diego.sucharczuk@cyberark.com?subject=AI Analysis Error Report&body=${encodeURIComponent(
-                    `📋 INSTRUCTIONS: Please review the information below, then scroll to the end to fill in what's wrong.\n\n` +
-                    `---\n\n` +
-                    `INCOMING COMMENT:\n${customerQuestion}\n\n` +
-                    `---\n\n` +
-                    `YOUR RESPONSE:\n${engineerAnswer}\n\n` +
-                    `---\n\n` +
-                    `AI ANALYSIS:\n${analysis}\n\n` +
-                    `---\n\n` +
-                    `👇 PLEASE FILL IN BELOW 👇\n\n` +
-                    `WHAT'S WRONG:\n[Describe the issue here]\n\n` +
-                    `WHAT SHOULD IT BE:\n[Optional: What would be correct?]`
-                  )}`}
+                <button
+                  onClick={handleOpenReportModal}
                   className="inline-block px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors text-sm font-semibold"
                 >
                   {language === 'he' ? '📧 דווח על שגיאה' : '📧 Report Error'}
-                </a>
+                </button>
               </div>
             </div>
           </div>
@@ -1445,6 +1495,110 @@ CyberArk Technical Support
                   className="px-8 py-3 bg-gradient-to-r from-green-600 to-teal-600 text-white rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all"
                 >
                   ✅ {language === 'he' ? 'אשר ונתח' : 'Approve & Analyze'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
+      
+      {/* Report Error Modal */}
+      {showReportModal && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4" onClick={handleCloseReportModal}>
+          <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto" onClick={(e) => e.stopPropagation()}>
+            <div className="sticky top-0 bg-gradient-to-r from-red-500 to-red-600 text-white p-6 rounded-t-2xl">
+              <div className="flex items-center justify-between">
+                <h2 className="text-2xl font-bold">
+                  {language === 'he' ? '📧 דיווח על שגיאה' : '📧 Report Error'}
+                </h2>
+                <button
+                  onClick={handleCloseReportModal}
+                  className="text-white hover:bg-white hover:bg-opacity-20 rounded-full p-2 transition-all"
+                >
+                  ✕
+                </button>
+              </div>
+              <p className="text-red-100 mt-2">
+                {language === 'he' 
+                  ? 'בחר את החלקים הרלוונטיים ותאר את הבעיה' 
+                  : 'Select relevant sections and describe the issue'}
+              </p>
+            </div>
+            
+            <div className="p-6 space-y-6">
+              {/* Section Selection */}
+              <div>
+                <h3 className="text-lg font-bold text-gray-800 mb-3">
+                  {language === 'he' ? '📋 בחר חלקים לשליחה:' : '📋 Select sections to send:'}
+                </h3>
+                <div className="space-y-2 max-h-64 overflow-y-auto border border-gray-200 rounded-lg p-4">
+                  {parseAnalysis(analysis).map((section, idx) => (
+                    <label
+                      key={idx}
+                      className="flex items-start gap-3 p-3 hover:bg-gray-50 rounded-lg cursor-pointer transition-colors"
+                    >
+                      <input
+                        type="checkbox"
+                        checked={selectedSections.has(idx)}
+                        onChange={() => toggleSection(idx)}
+                        className="mt-1 w-5 h-5 text-red-600 rounded focus:ring-red-500"
+                      />
+                      <div className="flex-1">
+                        <div className="font-semibold text-gray-800">{section.title}</div>
+                        <div className="text-sm text-gray-500 line-clamp-2">{section.content.substring(0, 100)}...</div>
+                      </div>
+                    </label>
+                  ))}
+                </div>
+                <p className="text-sm text-gray-500 mt-2">
+                  {language === 'he' 
+                    ? `נבחרו ${selectedSections.size} חלקים` 
+                    : `${selectedSections.size} sections selected`}
+                </p>
+              </div>
+              
+              {/* What's Wrong */}
+              <div>
+                <label className="block text-lg font-bold text-gray-800 mb-2">
+                  {language === 'he' ? '❌ מה לא נכון:' : '❌ What\'s wrong:'}
+                </label>
+                <textarea
+                  value={whatIsWrong}
+                  onChange={(e) => setWhatIsWrong(e.target.value)}
+                  placeholder={language === 'he' ? 'תאר מה לא נכון בניתוח...' : 'Describe what\'s wrong with the analysis...'}
+                  className="w-full h-32 border-2 border-gray-300 rounded-lg p-4 focus:ring-2 focus:ring-red-500 focus:border-red-500 outline-none resize-none"
+                  dir="auto"
+                />
+              </div>
+              
+              {/* What to Fix */}
+              <div>
+                <label className="block text-lg font-bold text-gray-800 mb-2">
+                  {language === 'he' ? '✅ מה צריך לתקן:' : '✅ What should it be:'}
+                </label>
+                <textarea
+                  value={whatToFix}
+                  onChange={(e) => setWhatToFix(e.target.value)}
+                  placeholder={language === 'he' ? 'תאר איך צריך להיות נכון...' : 'Describe what the correct analysis should be...'}
+                  className="w-full h-32 border-2 border-gray-300 rounded-lg p-4 focus:ring-2 focus:ring-green-500 focus:border-green-500 outline-none resize-none"
+                  dir="auto"
+                />
+              </div>
+              
+              {/* Action Buttons */}
+              <div className="flex gap-4 justify-end pt-4 border-t">
+                <button
+                  onClick={handleCloseReportModal}
+                  className="px-6 py-3 bg-gray-200 text-gray-700 rounded-lg font-semibold hover:bg-gray-300 transition-all"
+                >
+                  {language === 'he' ? 'ביטול' : 'Cancel'}
+                </button>
+                <button
+                  onClick={handleSendReport}
+                  disabled={selectedSections.size === 0 && !whatIsWrong && !whatToFix}
+                  className="px-8 py-3 bg-gradient-to-r from-red-600 to-red-700 text-white rounded-lg font-semibold hover:shadow-lg transform hover:scale-105 transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none"
+                >
+                  {language === 'he' ? '📧 שלח דיווח' : '📧 Send Report'}
                 </button>
               </div>
             </div>
