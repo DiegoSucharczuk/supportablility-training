@@ -36,7 +36,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
   const [settings, setSettings] = useState<UserSettings>(defaultSettings);
   const [connectionStatus, setConnectionStatus] = useState<'connected' | 'disconnected' | 'testing'>('disconnected');
 
-  // Load settings from localStorage on mount
+  // Load settings from localStorage on mount and auto-validate
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const stored = localStorage.getItem('supportability-settings');
@@ -44,7 +44,30 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
         try {
           const parsed = JSON.parse(stored);
           setSettings(parsed);
-          // Don't auto-set connected - user must validate credentials
+          
+          // Auto-validate credentials after loading
+          if (parsed.awsCredentials?.accessKeyId && parsed.awsCredentials?.secretAccessKey) {
+            // Run validation in background
+            setTimeout(async () => {
+              try {
+                setConnectionStatus('testing');
+                const response = await fetch('/api/test-connection', {
+                  method: 'POST',
+                  headers: { 'Content-Type': 'application/json' },
+                  body: JSON.stringify({
+                    credentials: parsed.awsCredentials,
+                  }),
+                });
+
+                const result = await response.json();
+                const success = response.ok && result.success;
+                setConnectionStatus(success ? 'connected' : 'disconnected');
+              } catch (error) {
+                console.error('Auto-validation failed:', error);
+                setConnectionStatus('disconnected');
+              }
+            }, 100); // Small delay to avoid blocking initial render
+          }
         } catch (e) {
           console.error('Failed to load settings:', e);
         }

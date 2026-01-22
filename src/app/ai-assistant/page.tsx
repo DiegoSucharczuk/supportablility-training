@@ -209,7 +209,7 @@ function CopyButton({ text, language }: { text: string; language: 'en' | 'he' })
 
 export default function AIAssistant() {
   const { language } = useLanguage();
-  const { settings, isConfigured } = useSettings();
+  const { settings, isConfigured, connectionStatus } = useSettings();
   const [customerQuestion, setCustomerQuestion] = useState('');
   const [engineerAnswer, setEngineerAnswer] = useState('');
   const [analysis, setAnalysis] = useState('');
@@ -891,11 +891,25 @@ CyberArk Technical Support
       <div className="mb-8 bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl shadow-lg p-6 animate-fade-in">
         <div className="flex items-center justify-between gap-6 flex-wrap">
           {/* Connection Status */}
-          {isConfigured ? (
+          {connectionStatus === 'connected' ? (
             <div className="flex items-center gap-3">
               <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
               <p className="text-sm font-medium text-green-800">
                 {language === 'en' ? '✓ Connected - AI Assistant Ready' : '✓ מחובר - עוזר AI מוכן'}
+              </p>
+            </div>
+          ) : connectionStatus === 'testing' ? (
+            <div className="flex items-center gap-3">
+              <div className="w-3 h-3 bg-yellow-500 rounded-full animate-pulse"></div>
+              <p className="text-sm font-medium text-yellow-800">
+                {language === 'en' ? '⏳ Validating credentials...' : '⏳ מאמת פרטי חיבור...'}
+              </p>
+            </div>
+          ) : isConfigured ? (
+            <div className="flex items-center gap-3">
+              <div className="w-3 h-3 bg-orange-500 rounded-full"></div>
+              <p className="text-sm font-medium text-orange-800">
+                {language === 'en' ? '⚠️ Credentials expired - Please reconnect' : '⚠️ פרטי חיבור פגו תוקף - נא להתחבר מחדש'}
               </p>
             </div>
           ) : (
@@ -929,18 +943,24 @@ CyberArk Technical Support
       </div>
 
       {/* Credentials Warning Banner */}
-      {!isConfigured && (
+      {(!isConfigured || (isConfigured && connectionStatus === 'disconnected')) && (
         <div className="mb-8 bg-yellow-50 border-2 border-yellow-300 rounded-xl p-6 animate-bounce-in">
           <div className="flex items-start gap-4">
             <span className="text-3xl">⚠️</span>
             <div className="flex-1">
               <h3 className="text-lg font-bold text-yellow-900 mb-2">
-                {language === 'en' ? 'AWS Credentials Not Configured' : 'פרטי חיבור AWS לא מוגדרים'}
+                {!isConfigured 
+                  ? (language === 'en' ? 'AWS Credentials Not Configured' : 'פרטי חיבור AWS לא מוגדרים')
+                  : (language === 'en' ? 'Credentials Expired or Invalid' : 'פרטי חיבור פגו תוקף או לא תקינים')}
               </h3>
               <p className="text-yellow-800 mb-4">
-                {language === 'en' 
-                  ? 'To use the AI Assistant, you need to configure your AWS Bedrock credentials in Settings.' 
-                  : 'כדי להשתמש בעוזר ה-AI, עליך להגדיר את פרטי החיבור ל-AWS Bedrock בהגדרות.'}
+                {!isConfigured
+                  ? (language === 'en' 
+                    ? 'To use the AI Assistant, you need to configure your AWS Bedrock credentials in Settings.' 
+                    : 'כדי להשתמש בעוזר ה-AI, עליך להגדיר את פרטי החיבור ל-AWS Bedrock בהגדרות.')
+                  : (language === 'en'
+                    ? 'Your AWS credentials have expired or are invalid. Please update them in Settings to continue using the AI Assistant.'
+                    : 'פרטי החיבור שלך ל-AWS פגו תוקף או לא תקינים. נא לעדכן אותם בהגדרות כדי להמשיך להשתמש בעוזר ה-AI.')}
               </p>
               <Link
                 href="/settings"
@@ -1071,7 +1091,9 @@ CyberArk Technical Support
             <>
               <button
                 onClick={handleAnalyze}
-                className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300"
+                disabled={connectionStatus !== 'connected'}
+                className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white py-4 px-6 rounded-xl font-semibold hover:shadow-lg transform hover:scale-105 transition-all duration-300 disabled:opacity-50 disabled:cursor-not-allowed disabled:transform-none disabled:hover:shadow-none"
+                title={connectionStatus !== 'connected' ? (language === 'he' ? 'נא להתחבר תחילה בהגדרות' : 'Please connect in Settings first') : ''}
               >
                 {t.analyzeButton}
               </button>
